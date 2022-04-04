@@ -1,15 +1,16 @@
 plugins {
     id 'com.android.application'
-    id "org.sonarqube" version "3.3"
+
 }
 
 android {
-    compileSdk 31
+    compileSdk 30
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "at.moritzmusel.cluedo"
         minSdk 25
-        targetSdk 31
+        targetSdk 30
         versionCode 1
         versionName "1.0"
 
@@ -38,12 +39,4 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-}
-
-sonarqube {
-    properties {
-        property "sonar.projectKey", "SE2-1-cluedo_cluedo"
-        property "sonar.organization", "se2-1-cluedo"
-        property "sonar.host.url", "https://sonarcloud.io"
-    }
 }
