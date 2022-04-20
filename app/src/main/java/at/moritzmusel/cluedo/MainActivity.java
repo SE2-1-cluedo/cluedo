@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_test_button);
         Button button = findViewById(R.id.button);
         button.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, BoardActivity.class)));
         // Test push ch

@@ -4,30 +4,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F6F6F6"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="240dp"
-        android:text="Hello World!"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="163dp"
-        android:layout_marginTop="65dp"
-        android:layout_marginEnd="154dp"
-        android:layout_marginBottom="242dp"
-        android:text="GotoBoard"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <ImageView
+        android:id="@+id/img_logo"
+        android:layout_width="326dp"
+        android:layout_height="231dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="43dp"
+        android:contentDescription="@string/logo_descritption"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo_mainmenu" />
 
+    <Button
+        android:id="@+id/btn_startgame"
+        android:layout_width="260dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="74dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="75dp"
+        android:background="@drawable/custom_button"
+        android:text="@string/start_game"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_logo" />
+
+    <Button
+        android:id="@+id/btn_close_app"
+        android:layout_width="260dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="74dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="77dp"
+        android:background="@drawable/custom_button"
+        android:text="@string/closeApp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_tutorial" />
+
+    <Button
+        android:id="@+id/btn_tutorial"
+        android:layout_width="260dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="76dp"
+        android:background="@drawable/custom_button"
+        android:text="@string/tutorial_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_startgame" />
 </androidx.constraintlayout.widget.ConstraintLayout>
