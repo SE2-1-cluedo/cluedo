@@ -4,4 +4,6 @@
     <string name="help_button">Help</string>
     <string name="closeApp">Close App</string>
     <string name="logo_descritption">The logo of the game.</string>
+    <string name="gamerules">Gamerules</string>
+    <string name="command">Commands</string>
 </resources>

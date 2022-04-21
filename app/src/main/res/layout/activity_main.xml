@@ -38,29 +38,44 @@
         android:id="@+id/btn_close_app"
         android:layout_width="260dp"
         android:layout_height="60dp"
-        android:layout_marginStart="74dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="77dp"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="76dp"
         android:background="@drawable/custom_button"
         android:text="@string/closeApp"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_help" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_commands" />
 
     <Button
-        android:id="@+id/btn_help"
+        android:id="@+id/btn_gamerules"
         android:layout_width="260dp"
         android:layout_height="60dp"
         android:layout_marginStart="75dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="76dp"
         android:background="@drawable/custom_button"
-        android:text="@string/help_button"
+        android:text="@string/gamerules"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_startgame"
+        tools:ignore="TextContrastCheck" />
+
+    <Button
+        android:id="@+id/btn_commands"
+        android:layout_width="260dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="76dp"
+        android:background="@drawable/custom_button"
+        android:text="@string/command"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_gamerules"
         tools:ignore="TextContrastCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>

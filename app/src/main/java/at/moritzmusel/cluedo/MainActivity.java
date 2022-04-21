@@ -5,17 +5,46 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_button);
-        Button button = findViewById(R.id.button);
+        setContentView(R.layout.activity_main);
+        final Button button = findViewById(R.id.button);
+
+        final Button startGame = findViewById(R.id.btn_startgame);
+        startGame.setOnClickListener(this);
+        final Button gamerules = findViewById(R.id.btn_gamerules);
+        gamerules.setOnClickListener(this);
+        final Button closeApp = findViewById(R.id.btn_close_app);
+        closeApp.setOnClickListener(this);
+        final Button commands = findViewById(R.id.btn_commands);
+        commands.setOnClickListener(this);
+
         button.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, BoardActivity.class)));
         // Test push ch
         Log.i("Test", "Test");
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.btn_startgame){
+            //Aufruf zur Beginn des Spieles
+        }
+        if(view.getId() == R.id.btn_gamerules){
+            //Aufruf zum Link der Regeln
+        }
+        if(view.getId() == R.id.btn_commands){
+            //Aufruf zur Erklärung der Elemente
+        }
+        if(view.getId() == R.id.btn_close_app){
+            finish();
+            System.exit(0);
+        }
     }
 }
