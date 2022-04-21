@@ -26,12 +26,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final Button commands = findViewById(R.id.btn_commands);
         commands.setOnClickListener(this);
 
-        button.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, BoardActivity.class)));
+        //button.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, BoardActivity.class)));
         // Test push ch
         Log.i("Test", "Test");
 
     }
-
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_startgame){
@@ -48,4 +47,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             System.exit(0);
         }
     }
+
+
 }
