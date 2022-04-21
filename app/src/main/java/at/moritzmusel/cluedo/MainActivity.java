@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=S_WEloTcKmI")));
         }
         if(view.getId() == R.id.btn_commands){
-            //Aufruf zur Erklärung der Elemente
+            Intent i = new Intent(MainActivity.this, CommandsActivity.class);
+            startActivity(i);
         }
         if(view.getId() == R.id.btn_close_app){
             finish();
