@@ -39,6 +39,7 @@ public class Dice {
     public void throwDice()  {
         Random r = new Random();
         int i = r.nextInt(4)+1;
+        Gameplay.rollDiceForPlayer(i);
         Animation animation = AnimationUtils.loadAnimation(diceView.getContext(), R.anim.rotate_dice);
         diceView.startAnimation(animation);
         switch (i){
