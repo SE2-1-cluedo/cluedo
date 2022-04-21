@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Cluedo</string>
     <string name="start_game">Start Game</string>
-    <string name="tutorial_button">Cluedo Tutorial</string>
+    <string name="help_button">Help</string>
     <string name="closeApp">Close App</string>
     <string name="logo_descritption">The logo of the game.</string>
 </resources>
