@@ -3,6 +3,7 @@ package at.moritzmusel.cluedo;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Aufruf zur Beginn des Spieles
         }
         if(view.getId() == R.id.btn_gamerules){
-            //Aufruf zum Link der Regeln
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=S_WEloTcKmI")));
         }
         if(view.getId() == R.id.btn_commands){
             //Aufruf zur Erklärung der Elemente
