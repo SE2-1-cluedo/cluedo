@@ -25,7 +25,7 @@
         android:layout_width="260dp"
         android:layout_height="60dp"
         android:layout_marginStart="74dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="75dp"
         android:background="@drawable/custom_button"
         android:text="@string/start_game"

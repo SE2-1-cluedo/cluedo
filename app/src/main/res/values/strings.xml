@@ -6,4 +6,14 @@
     <string name="logo_descritption">The logo of the game.</string>
     <string name="gamerules">Gamerules</string>
     <string name="command">Commands</string>
+
+    <string name="game_explanation">
+        1) Choose a Host
+        2) Add the playsers
+    </string>
+    <string name="commands_explanation">
+        You can roll a dice to move to rooms. In the menu you can find a notepad to help you identify the culprit.
+        Also you can see your own cards, position and the map on the standard screen.
+    </string>
+
 </resources>
