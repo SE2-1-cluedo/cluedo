@@ -54,6 +54,8 @@ public class Dice {
             case 4:
                 diceView.setImageResource(R.drawable.dice4);
                 break;
+            default:
+                break;
         }
         numberRolled = i;
     }
