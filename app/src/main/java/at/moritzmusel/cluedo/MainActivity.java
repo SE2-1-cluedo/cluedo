@@ -15,7 +15,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Button button = findViewById(R.id.button);
 
         final Button startGame = findViewById(R.id.btn_startgame);
         startGame.setOnClickListener(this);
@@ -34,7 +33,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_startgame){
-            //Aufruf zur Beginn des Spieles
+            Intent i = new Intent(MainActivity.this, LobbyDecisionActivity.class);
+            startActivity(i);
         }
         if(view.getId() == R.id.btn_gamerules){
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=S_WEloTcKmI")));
