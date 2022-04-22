@@ -25,10 +25,12 @@ public class LobbyDecisionActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_create_lobby){
-
+            Intent i = new Intent(LobbyDecisionActivity.this, CreateLobbyActivity.class);
+            startActivity(i);
         }
         if(view.getId() == R.id.btn_join_lobby){
-
+            Intent i = new Intent(LobbyDecisionActivity.this, JoinLobbyActivity.class);
+            startActivity(i);
         }
         if(view.getId() == R.id.btn_back_to_main){
             Intent i = new Intent(LobbyDecisionActivity.this, MainActivity.class);
