@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".LobbyDecisionActivity"
+            android:exported="false" />
+        <activity
             android:name=".CommandsActivity"
             android:exported="false" />
         <activity
