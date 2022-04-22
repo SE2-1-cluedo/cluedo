@@ -8,9 +8,7 @@ import at.moritzmusel.cluedo.entities.Player;
 
 public class Gameplay {
     private static int numDice;
-    private static boolean isAbleToMove = false;
     private Character currentPlayer;
-    private static final Random rand = new Random();
     private final List<Player> players;
 
     /**
@@ -21,22 +19,45 @@ public class Gameplay {
         this.players = players;
     }
 
+    /**
+     * Called after the Player ends his/her turn
+     */
     public void endTurn(){
         currentPlayer = currentPlayer.nextPlayer();
-        isAbleToMove = false;
+        Player player = findPlayerByCharacterName(currentPlayer);
+        player.setIsAbleToMove(false);
     }
 
-    public void movePlayer(){
-        if(isAbleToMove){
-            Player player = findPlayerByCharacterName(currentPlayer);
-            player.setPositionOnBoard(player.getPositionOnBoard() + numDice);
+    /**
+     * Calculates the position of the Player after the dice was thrown depending on if
+     * he moved right or left
+     * dice was thrown and
+     * @param direction
+     *  1 (move right)     /    0 (move left)
+     */
+    public void movePlayer(byte direction){
+        Player player = findPlayerByCharacterName(currentPlayer);
+        player.setIsAbleToMove(true);
+        if(player.getIsAbleToMove()) {
+            int newPosition = calculatePosition(player.getPositionOnBoard(), direction, numDice);
+            player.setPositionOnBoard(newPosition);
             //movePlayerUi(player)
+            //dont allow dice throw again
         }
     }
+
+    /**
+     * Takes the result after the Player throw the dice and safes it in a variable
+     * @param numberRolled
+     * Takes the result after the dice throw
+     */
     public static void rollDiceForPlayer(int numberRolled){
        numDice = numberRolled;
-       isAbleToMove = true;
     }
+
+    /**
+     * Decides which Player/Character is able to move first
+     */
     public void DecidePlayerWhoMovesFirst(){
         currentPlayer = Character.Miss_Scarlet;
         Player firstPlayer = findPlayerByCharacterName(currentPlayer);
@@ -52,6 +73,13 @@ public class Gameplay {
 
     }
 
+    /**
+     *
+     * @param character
+     * Find the Character belonging to a player
+     * @return
+     * Player who playing as the character
+     */
     public Player findPlayerByCharacterName(Character character){
         Player player = null;
         for (int i = 0; i < players.size(); i++) {
@@ -61,5 +89,25 @@ public class Gameplay {
             }
         }
        return player;
+    }
+
+    /**
+     * @param position
+     * the current position of the player on board
+     * @param direction
+     * if the player wants to move right(1) or left(0)
+     * @param diceNum
+     * the number thrown by the player
+     * @return
+     * final position that the position is a valid field on the board
+     */
+    private int calculatePosition(int position, byte direction, int diceNum){
+        int finalPosition;
+        if(direction == 1){
+            finalPosition = position + diceNum <= 9 ? diceNum + position : (diceNum + position) - 9;
+        }else{
+            finalPosition = position - diceNum > 0 ? position - diceNum : (position - diceNum) + 9;
+        }
+        return finalPosition;
     }
 }

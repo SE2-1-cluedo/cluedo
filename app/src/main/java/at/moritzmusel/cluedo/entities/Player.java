@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Player {
     private final int playerId;
     private int positionOnBoard;
+    private boolean isAbleToMove = false;
     private final Character playerCharacterName;
     private final ArrayList<Integer> playerOwnedCards;
 
@@ -40,4 +41,11 @@ public class Player {
         return playerOwnedCards;
     }
 
+    public boolean getIsAbleToMove() {
+        return isAbleToMove;
+    }
+
+    public void setIsAbleToMove(boolean ableToMove) {
+        isAbleToMove = ableToMove;
+    }
 }
