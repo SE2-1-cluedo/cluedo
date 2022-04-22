@@ -9,7 +9,7 @@ public enum Character {
      *
      * @return --- the next character in turn.
      */
-    public Character nextPlayer() {
+    public Character getNextCharacter() {
         switch (this) {
             case Colonel_Mustard:
                 return Mrs_White;

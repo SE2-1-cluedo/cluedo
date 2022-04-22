@@ -4,16 +4,23 @@ import java.util.ArrayList;
 
 public class Player {
     private final int playerId;
-    private int positionOnBoard;
+    private int positionOnBoard = 1;
     private boolean isAbleToMove = false;
     private final Character playerCharacterName;
     private final ArrayList<Integer> playerOwnedCards;
 
-    public Player(int playerId, int positionOnBoard,
+    /**
+     * @param playerId
+     * Player ID assigned by the Server
+     * @param playerCharacterName
+     * Choosen by the player
+     * @param playerOwnedCards
+     * Cluedo Cards owned by the players referred through their unique ID
+     */
+    public Player(int playerId,
                   Character playerCharacterName,
                   ArrayList<Integer> playerOwnedCards) {
         this.playerId = playerId;
-        this.positionOnBoard = positionOnBoard;
         this.playerCharacterName = playerCharacterName;
         this.playerOwnedCards = playerOwnedCards;
     }

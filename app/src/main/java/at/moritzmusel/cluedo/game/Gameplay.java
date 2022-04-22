@@ -1,7 +1,6 @@
 package at.moritzmusel.cluedo.game;
 
 import java.util.List;
-import java.util.Random;
 
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
@@ -22,10 +21,11 @@ public class Gameplay {
     /**
      * Called after the Player ends his/her turn
      */
-    public void endTurn(){
-        currentPlayer = currentPlayer.nextPlayer();
+    public Character endTurn(){
         Player player = findPlayerByCharacterName(currentPlayer);
         player.setIsAbleToMove(false);
+        decideCharacterWhoMovesNext();
+        return currentPlayer;
     }
 
     /**
@@ -60,35 +60,50 @@ public class Gameplay {
      */
     public void DecidePlayerWhoMovesFirst(){
         currentPlayer = Character.Miss_Scarlet;
-        Player firstPlayer = findPlayerByCharacterName(currentPlayer);
         while(true) {
-            if(firstPlayer != null){
+            Player firstPlayer = findPlayerByCharacterName(currentPlayer);
+            if(firstPlayer == null){
+                currentPlayer = currentPlayer.getNextCharacter();
+            }else {
                 currentPlayer = firstPlayer.getPlayerCharacterName();
                 break;
-            }else {
-                assert currentPlayer != null;
-                currentPlayer = currentPlayer.nextPlayer();
             }
         }
 
     }
 
+    private void decideCharacterWhoMovesNext(){
+        while(true) {
+            assert currentPlayer != null;
+            currentPlayer= currentPlayer.getNextCharacter();
+            Player player = findPlayerByCharacterName(currentPlayer);
+            if(player != null){
+                currentPlayer = player.getPlayerCharacterName();
+                break;
+            }
+        }
+    }
+
     /**
      *
      * @param character
-     * Find the Character belonging to a player
+     * Find the Character belonging to a player if not return null
      * @return
      * Player who playing as the character
      */
     public Player findPlayerByCharacterName(Character character){
-        Player player = null;
-        for (int i = 0; i < players.size(); i++) {
-            if(players.get(i).getPlayerCharacterName().equals(character)) {
-                player = players.get(i);
-                break;
+        int countCharacters = 1;
+        while(true) {
+            for (int i = 0; i < players.size(); i++) {
+                if (players.get(i).getPlayerCharacterName() == character) {
+                    return players.get(i);
+                }else if (countCharacters > 6) {
+                    return null;
+                }
             }
+            assert character != null;
+            countCharacters++;
         }
-       return player;
     }
 
     /**
@@ -109,5 +124,17 @@ public class Gameplay {
             finalPosition = position - diceNum > 0 ? position - diceNum : (position - diceNum) + 9;
         }
         return finalPosition;
+    }
+
+    public static void setNumDice(int numDice) {
+        Gameplay.numDice = numDice;
+    }
+
+    public Character getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(Character currentPlayer) {
+        this.currentPlayer = currentPlayer;
     }
 }
