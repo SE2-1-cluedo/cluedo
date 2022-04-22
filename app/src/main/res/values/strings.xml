@@ -18,8 +18,12 @@
 
     <!-- Für die Lobby -->
     <string name="create_lobby">Create Lobby</string>
+    <string name="currently_joined">Currently joined</string>
+    <string name="start">Start</string>
+    <string name="send_link">Send Link</string>
+
     <string name="join_lobby">Join Lobby</string>
-    <string name="lobby_title">Do you want to create a Lobby <br/>or do you want to join one?</string>
+    <string name="lobby_title">Do you want to create a Lobby <br />or do you want to join one?</string>
     <string name="back">Back</string>
 
 </resources>

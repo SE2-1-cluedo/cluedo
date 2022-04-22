@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".JoinLobbyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateLobbyActivity"
+            android:exported="false" />
+        <activity
             android:name=".LobbyDecisionActivity"
             android:exported="false" />
         <activity
