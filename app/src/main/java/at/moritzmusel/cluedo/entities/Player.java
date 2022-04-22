@@ -1,13 +1,14 @@
 package at.moritzmusel.cluedo.entities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
     private final int playerId;
     private int positionOnBoard = 1;
     private boolean isAbleToMove = false;
     private final Character playerCharacterName;
-    private final ArrayList<Integer> playerOwnedCards;
+    private final List<Integer> playerOwnedCards;
 
     /**
      * @param playerId
@@ -19,7 +20,7 @@ public class Player {
      */
     public Player(int playerId,
                   Character playerCharacterName,
-                  ArrayList<Integer> playerOwnedCards) {
+                  List<Integer> playerOwnedCards) {
         this.playerId = playerId;
         this.playerCharacterName = playerCharacterName;
         this.playerOwnedCards = playerOwnedCards;
@@ -44,7 +45,7 @@ public class Player {
         return playerCharacterName;
     }
 
-    public ArrayList<Integer> getPlayerOwnedCards() {
+    public List<Integer> getPlayerOwnedCards() {
         return playerOwnedCards;
     }
 

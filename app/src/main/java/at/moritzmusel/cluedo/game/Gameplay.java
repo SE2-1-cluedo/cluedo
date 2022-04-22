@@ -58,8 +58,8 @@ public class Gameplay {
     /**
      * Decides which Player/Character is able to move first
      */
-    public void DecidePlayerWhoMovesFirst(){
-        currentPlayer = Character.Miss_Scarlet;
+    public void decidePlayerWhoMovesFirst(){
+        currentPlayer = Character.MISS_SCARLET;
         while(true) {
             Player firstPlayer = findPlayerByCharacterName(currentPlayer);
             if(firstPlayer == null){
@@ -101,7 +101,6 @@ public class Gameplay {
                     return null;
                 }
             }
-            assert character != null;
             countCharacters++;
         }
     }
