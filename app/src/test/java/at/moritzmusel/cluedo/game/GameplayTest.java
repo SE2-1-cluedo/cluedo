@@ -43,14 +43,14 @@ public class GameplayTest {
     public void endTurn() {
         game.decidePlayerWhoMovesFirst();
         Character currentPlayer = game.endTurn();
-        assertEquals(currentPlayer,MRS_WHITE);
+        assertEquals(MRS_WHITE,currentPlayer);
     }
 
     @Test
     public void endTurnOfLastPlayer() {
         game.setCurrentPlayer(PROFESSOR_PLUM);
         Character currentPlayer = game.endTurn();
-        assertEquals(currentPlayer, MISS_SCARLET);
+        assertEquals(MISS_SCARLET,currentPlayer);
     }
 
     @Test

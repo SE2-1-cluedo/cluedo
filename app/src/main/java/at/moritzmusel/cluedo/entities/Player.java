@@ -1,6 +1,5 @@
 package at.moritzmusel.cluedo.entities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
