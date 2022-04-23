@@ -47,6 +47,34 @@ public class Gameplay {
     }
 
     /**
+     * method to use the secret passage if the player is on the field 9 , 5, 7 or 2
+     * cant throw dice after the use of the passage
+     */
+    public void useSecretPassage(){
+        Player player = findPlayerByCharacterName(currentPlayer);
+        int position = player.getPositionOnBoard();
+        player.setIsAbleToMove(true);
+        if(player.getIsAbleToMove()) {
+            switch(position) {
+                case 9:
+                    player.setPositionOnBoard(5); //move from salon to winter garden
+                    break;
+                case 5:
+                    player.setPositionOnBoard(9); //move from winter garden to salon
+                    break;
+                case 2:
+                    player.setPositionOnBoard(7);
+                    break; //move from working room to kitchen
+                case 7:
+                    player.setPositionOnBoard(2); //move from kitchen to working room
+                    break;
+            }
+            //move player UI
+            //disable dice throw
+        }
+    }
+
+    /**
      * Takes the result after the Player throw the dice and safes it in a variable
      * @param numberRolled
      * Takes the result after the dice throw
