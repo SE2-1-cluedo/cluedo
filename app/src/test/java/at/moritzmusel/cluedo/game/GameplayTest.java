@@ -112,12 +112,30 @@ public class GameplayTest {
     }
 
     @Test
+    public void useSecretPassageWorkingRoomToKitchen() {
+        game.decidePlayerWhoMovesFirst();
+        Player player = game.findPlayerByCharacterName(game.getCurrentPlayer());
+        player.setPositionOnBoard(2);
+        game.useSecretPassage();
+        assertEquals(7, player.getPositionOnBoard());
+    }
+
+    @Test
     public void useSecretPassageSalonToWinterGarden() {
         game.decidePlayerWhoMovesFirst();
         Player player = game.findPlayerByCharacterName(game.getCurrentPlayer());
         player.setPositionOnBoard(9);
         game.useSecretPassage();
         assertEquals(5, player.getPositionOnBoard());
+    }
+
+    @Test
+    public void useSecretPassageWinterGardenToSalon() {
+        game.decidePlayerWhoMovesFirst();
+        Player player = game.findPlayerByCharacterName(game.getCurrentPlayer());
+        player.setPositionOnBoard(5);
+        game.useSecretPassage();
+        assertEquals(9, player.getPositionOnBoard());
     }
 
     @Test
