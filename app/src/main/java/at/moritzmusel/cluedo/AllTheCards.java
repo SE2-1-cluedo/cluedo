@@ -2,8 +2,6 @@ package at.moritzmusel.cluedo;
 
 import java.util.LinkedList;
 
-import at.moritzmusel.cluedo.Card;
-
 public class AllTheCards {
 
     private LinkedList<Card> gamecards = new LinkedList<>();
@@ -50,7 +48,16 @@ public class AllTheCards {
         gamecards.add(pipe);
         gamecards.add(wrench);
 
-
+        //Rooms
+        gamecards.add(hall);
+        gamecards.add(lounge);
+        gamecards.add(dining_room);
+        gamecards.add(kitchen);
+        gamecards.add(ballroom);
+        gamecards.add(conservatory);
+        gamecards.add(billiard_room);
+        gamecards.add(library);
+        gamecards.add(study);
 
         return gamecards;
     }
