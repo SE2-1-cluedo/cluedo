@@ -22,5 +22,15 @@ public class AllTheCards {
     public  Card pipe = new Card(10, "Pipe", CardType.WEAPON);
     public Card wrench = new Card(11, "Wrench", CardType.WEAPON);
 
+    public Card hall = new Card(12, "Hall", CardType.ROOM);
+    public Card lounge = new Card(13, "Lounge", CardType.ROOM);
+    public Card dining_room = new Card(14, "Dining Room", CardType.ROOM);
+    public Card kitchen = new Card(15, "Kitchen", CardType.ROOM);
+    public Card ballroom = new Card(16, "Ballroom", CardType.ROOM);
+    public Card conservatory = new Card(17, "Conservatory", CardType.ROOM);
+    public Card billiard_room = new Card(18, "Billiard Room", CardType.ROOM);
+    public Card library = new Card(19, "Library", CardType.ROOM);
+    public Card study = new Card(20, "Study", CardType.ROOM);
+
 
 }
