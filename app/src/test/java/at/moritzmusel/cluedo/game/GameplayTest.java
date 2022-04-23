@@ -1,6 +1,8 @@
 package at.moritzmusel.cluedo.game;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
@@ -100,6 +102,37 @@ public class GameplayTest {
         assertEquals(player1Pos,player2Pos);
     }
 
+    @Test
+    public void useSecretPassageKitchenToWorkingRoom() {
+        game.decidePlayerWhoMovesFirst();
+        Player player = game.findPlayerByCharacterName(game.getCurrentPlayer());
+        player.setPositionOnBoard(7);
+        game.useSecretPassage();
+        assertEquals(2, player.getPositionOnBoard());
+    }
+
+    @Test
+    public void useSecretPassageSalonToWinterGarden() {
+        game.decidePlayerWhoMovesFirst();
+        Player player = game.findPlayerByCharacterName(game.getCurrentPlayer());
+        player.setPositionOnBoard(9);
+        game.useSecretPassage();
+        assertEquals(5, player.getPositionOnBoard());
+    }
+
+    @Test
+    public void currentPlayerIsAllowedToUseSecretPassage(){
+        game.decidePlayerWhoMovesFirst();
+        Player player = game.findPlayerByCharacterName(game.getCurrentPlayer());
+        player.setPositionOnBoard(9);
+        assertTrue(game.isAllowedToUseSecretPassage());
+    }
+
+    @Test
+    public void currentPlayerIsNotAllowedToUseSecretPassage(){
+        game.decidePlayerWhoMovesFirst();
+        assertFalse(game.isAllowedToUseSecretPassage());
+    }
 
     @Test
     public void decidePlayerWhoMovesFirst() {
