@@ -11,8 +11,7 @@ public class Gameplay {
     private final List<Player> players;
 
     /**
-     * @param players
-     *      all the Players in the Session
+     * @param players all the Players in the Session
      */
     public Gameplay(List<Player> players) {
         this.players = players;
@@ -21,7 +20,7 @@ public class Gameplay {
     /**
      * Called after the Player ends his/her turn
      */
-    public Character endTurn(){
+    public Character endTurn() {
         Player player = findPlayerByCharacterName(currentPlayer);
         player.setIsAbleToMove(false);
         decideCharacterWhoMovesNext();
@@ -32,13 +31,13 @@ public class Gameplay {
      * Calculates the position of the Player after the dice was thrown depending on if
      * he moved right or left
      * dice was thrown and
-     * @param direction
-     *  1 (move right)     /    0 (move left)
+     *
+     * @param direction 1 (move right)     /    0 (move left)
      */
-    public void movePlayer(byte direction){
+    public void movePlayer(byte direction) {
         Player player = findPlayerByCharacterName(currentPlayer);
         player.setIsAbleToMove(true);
-        if(player.getIsAbleToMove()) {
+        if (player.getIsAbleToMove()) {
             int newPosition = calculatePosition(player.getPositionOnBoard(), direction, numDice);
             player.setPositionOnBoard(newPosition);
             //movePlayerUi(player)
@@ -50,12 +49,12 @@ public class Gameplay {
      * method to use the secret passage if the player is on the field 9 , 5, 7 or 2
      * cant throw dice after the use of the passage
      */
-    public void useSecretPassage(){
+    public void useSecretPassage() {
         Player player = findPlayerByCharacterName(currentPlayer);
         int position = player.getPositionOnBoard();
         player.setIsAbleToMove(true);
-        if(player.getIsAbleToMove()) {
-            switch(position) {
+        if (player.getIsAbleToMove()) {
+            switch (position) {
                 case 9:
                     player.setPositionOnBoard(5); //move from salon to winter garden
                     break;
@@ -76,10 +75,10 @@ public class Gameplay {
 
     /**
      * Checks if the current Player is allowed to use the Secret Passage
-     * @return
-     * true if allowed / false if isnt allowed
+     *
+     * @return true if allowed / false if isnt allowed
      */
-    public boolean isAllowedToUseSecretPassage(){
+    public boolean isAllowedToUseSecretPassage() {
         Player player = findPlayerByCharacterName(currentPlayer);
         int position = player.getPositionOnBoard();
         return position == 2 || position == 7 || position == 9 || position == 5;
@@ -87,23 +86,23 @@ public class Gameplay {
 
     /**
      * Takes the result after the Player throw the dice and safes it in a variable
-     * @param numberRolled
-     * Takes the result after the dice throw
+     *
+     * @param numberRolled Takes the result after the dice throw
      */
-    public static void rollDiceForPlayer(int numberRolled){
-       numDice = numberRolled;
+    public static void rollDiceForPlayer(int numberRolled) {
+        numDice = numberRolled;
     }
 
     /**
      * Decides which Player/Character is able to move first
      */
-    public void decidePlayerWhoMovesFirst(){
+    public void decidePlayerWhoMovesFirst() {
         currentPlayer = Character.MISS_SCARLET;
-        while(true) {
+        while (true) {
             Player firstPlayer = findPlayerByCharacterName(currentPlayer);
-            if(firstPlayer == null){
+            if (firstPlayer == null) {
                 currentPlayer = currentPlayer.getNextCharacter();
-            }else {
+            } else {
                 currentPlayer = firstPlayer.getPlayerCharacterName();
                 break;
             }
@@ -111,12 +110,12 @@ public class Gameplay {
 
     }
 
-    private void decideCharacterWhoMovesNext(){
-        while(true) {
+    private void decideCharacterWhoMovesNext() {
+        while (true) {
             assert currentPlayer != null;
-            currentPlayer= currentPlayer.getNextCharacter();
+            currentPlayer = currentPlayer.getNextCharacter();
             Player player = findPlayerByCharacterName(currentPlayer);
-            if(player != null){
+            if (player != null) {
                 currentPlayer = player.getPlayerCharacterName();
                 break;
             }
@@ -124,19 +123,16 @@ public class Gameplay {
     }
 
     /**
-     *
-     * @param character
-     * Find the Character belonging to a player if not return null
-     * @return
-     * Player who playing as the character
+     * @param character Find the Character belonging to a player if not return null
+     * @return Player who playing as the character
      */
-    public Player findPlayerByCharacterName(Character character){
+    public Player findPlayerByCharacterName(Character character) {
         int countCharacters = 1;
-        while(true) {
+        while (true) {
             for (int i = 0; i < players.size(); i++) {
                 if (players.get(i).getPlayerCharacterName() == character) {
                     return players.get(i);
-                }else if (countCharacters > 6) {
+                } else if (countCharacters > 6) {
                     return null;
                 }
             }
@@ -145,20 +141,16 @@ public class Gameplay {
     }
 
     /**
-     * @param position
-     * the current position of the player on board
-     * @param direction
-     * if the player wants to move right(1) or left(0)
-     * @param diceNum
-     * the number thrown by the player
-     * @return
-     * final position that the position is a valid field on the board
+     * @param position  the current position of the player on board
+     * @param direction if the player wants to move right(1) or left(0)
+     * @param diceNum   the number thrown by the player
+     * @return final position that the position is a valid field on the board
      */
-    private int calculatePosition(int position, byte direction, int diceNum){
+    private int calculatePosition(int position, byte direction, int diceNum) {
         int finalPosition;
-        if(direction == 1){
+        if (direction == 1) {
             finalPosition = position + diceNum <= 9 ? diceNum + position : (diceNum + position) - 9;
-        }else{
+        } else {
             finalPosition = position - diceNum > 0 ? position - diceNum : (position - diceNum) + 9;
         }
         return finalPosition;
