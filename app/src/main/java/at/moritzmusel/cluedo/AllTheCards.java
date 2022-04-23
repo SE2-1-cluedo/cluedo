@@ -42,6 +42,15 @@ public class AllTheCards {
         gamecards.add(colonelMustard);
         gamecards.add(drOrchid);
 
+        //Weapons
+        gamecards.add(dagger);
+        gamecards.add(candlestick);
+        gamecards.add(pistol);
+        gamecards.add(rope);
+        gamecards.add(pipe);
+        gamecards.add(wrench);
+
+
 
         return gamecards;
     }
