@@ -75,6 +75,17 @@ public class Gameplay {
     }
 
     /**
+     * Checks if the current Player is allowed to use the Secret Passage
+     * @return
+     * true if allowed / false if isnt allowed
+     */
+    public boolean isAllowedToUseSecretPassage(){
+        Player player = findPlayerByCharacterName(currentPlayer);
+        int position = player.getPositionOnBoard();
+        return position == 2 || position == 7 || position == 9 || position == 5;
+    }
+
+    /**
      * Takes the result after the Player throw the dice and safes it in a variable
      * @param numberRolled
      * Takes the result after the dice throw
