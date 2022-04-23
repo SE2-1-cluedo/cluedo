@@ -32,5 +32,20 @@ public class AllTheCards {
     public Card library = new Card(19, "Library", CardType.ROOM);
     public Card study = new Card(20, "Study", CardType.ROOM);
 
+    public LinkedList<Card> getGameCards(){
+
+        //GameFigures
+        gamecards.add(missScarlett);
+        gamecards.add(profPlum);
+        gamecards.add(reverendGreen);
+        gamecards.add(mrsPeacock);
+        gamecards.add(colonelMustard);
+        gamecards.add(drOrchid);
+
+
+        return gamecards;
+    }
+
+
 
 }
