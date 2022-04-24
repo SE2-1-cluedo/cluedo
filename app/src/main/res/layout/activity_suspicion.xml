@@ -164,7 +164,7 @@
         app:srcCompat="@drawable/white_klein" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/cknife"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="72dp"
@@ -173,14 +173,14 @@
         android:layout_marginBottom="154dp"
         android:background="#F6F6F6"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton2"
+        app:layout_constraintEnd_toStartOf="@+id/cpipe"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView8"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/dolch_klein" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/cpipe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -195,7 +195,7 @@
         app:srcCompat="@drawable/heizungsrohr_klein" />
 
     <ImageButton
-        android:id="@+id/imageButton3"
+        android:id="@+id/ccandlestick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
@@ -205,13 +205,13 @@
         android:background="#F6F6F6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageButton2"
+        app:layout_constraintStart_toEndOf="@+id/cpipe"
         app:layout_constraintTop_toBottomOf="@+id/textView8"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/leuchter_klein" />
 
     <ImageButton
-        android:id="@+id/imageButton4"
+        android:id="@+id/crope"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="31dp"
@@ -221,12 +221,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton"
+        app:layout_constraintTop_toBottomOf="@+id/cknife"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/seil_klein" />
 
     <ImageButton
-        android:id="@+id/imageButton5"
+        android:id="@+id/cgun"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="72dp"
@@ -235,14 +235,14 @@
         android:layout_marginBottom="38dp"
         android:background="#F6F6F6"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton4"
+        app:layout_constraintEnd_toStartOf="@+id/crope"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton2"
+        app:layout_constraintTop_toBottomOf="@+id/cpipe"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/pistole_klein" />
 
     <ImageButton
-        android:id="@+id/imageButton6"
+        android:id="@+id/cwrench"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="66dp"
@@ -252,13 +252,13 @@
         android:background="#F6F6F6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageButton4"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton3"
+        app:layout_constraintStart_toEndOf="@+id/crope"
+        app:layout_constraintTop_toBottomOf="@+id/ccandlestick"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/rohrzange_klein" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/submit"
         android:layout_width="190dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="130dp"
@@ -272,7 +272,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton4"
+        app:layout_constraintTop_toBottomOf="@+id/crope"
         app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
