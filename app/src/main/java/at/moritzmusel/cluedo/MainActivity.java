@@ -34,8 +34,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_startgame){
-            Intent choose = new Intent(MainActivity.this, ChooseActivity.class);
+            Intent choose = new Intent(MainActivity.this, SuspicionActivity.class);
             startActivity(choose);
+
+           // Intent choose = new Intent(MainActivity.this, ChooseActivity.class);
+           // startActivity(choose);
         }
         if(view.getId() == R.id.btn_gamerules){
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=S_WEloTcKmI")));
