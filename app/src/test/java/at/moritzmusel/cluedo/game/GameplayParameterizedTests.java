@@ -29,8 +29,8 @@ public class GameplayParameterizedTests {
     Player Player5;
     Gameplay game;
     Gameplay game2;
-    ArrayList<Player> players;
-    ArrayList<Player> players2;
+    ArrayList<Player> playersEven;
+    ArrayList<Player> playersOdd;
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
@@ -51,15 +51,15 @@ public class GameplayParameterizedTests {
 
     @Before
     public void setUp() {
-        Player1 = new Player(1, MISS_SCARLET, new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 25)));
-        Player2 = new Player(2, THE_REVEREND_GREEN, new ArrayList<>(Arrays.asList(6, 7, 8, 9)));
-        Player3 = new Player(3, PROFESSOR_PLUM, new ArrayList<>(Arrays.asList(11, 12, 13, 14, 26)));
-        Player4 = new Player(4, MRS_PEACOCK, new ArrayList<>(Arrays.asList(15, 16, 17, 18, 19)));
-        Player5 = new Player(5, MRS_WHITE, new ArrayList<>(Arrays.asList(20, 21, 22, 23, 24)));
-        players = new ArrayList<>(Arrays.asList(Player1, Player2, Player3, Player4, Player5));
-        players2 = new ArrayList<>(Arrays.asList(Player3, Player4, Player5));
-        game = new Gameplay(players);
-        game2 = new Gameplay(players2);
+        Player1 = new Player(1, MISS_SCARLET);
+        Player2 = new Player(2, THE_REVEREND_GREEN);
+        Player3 = new Player(3, PROFESSOR_PLUM);
+        Player4 = new Player(4, MRS_PEACOCK);
+        Player5 = new Player(5, MRS_WHITE);
+        playersEven = new ArrayList<>(Arrays.asList(Player1, Player2, Player3, Player4, Player5));
+        playersOdd = new ArrayList<>(Arrays.asList(Player2,Player3, Player4, Player5));
+        game = new Gameplay(playersEven);
+        game2 = new Gameplay(playersOdd);
         Gameplay.setNumDice(3);
     }
 
