@@ -1,5 +1,7 @@
 package at.moritzmusel.cluedo.game;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import at.moritzmusel.cluedo.entities.Character;
@@ -122,6 +124,50 @@ public class Gameplay {
         }
     }
 
+
+    public void distributeCluedoCards(){
+        //if player is host schick die random distribution an andere
+        generateCluedoCards();
+        //send infos to Players
+
+        //else nicht host set die Cluedo cards
+        //update player Cards
+    }
+
+    /**
+     * randomized the Cluedo Cards and safes them in the players card list
+     */
+    void generateCluedoCards(){
+        ArrayList<Integer> playerCards = generateRandomCards(1, 26);
+        int j = 0;
+        for(int i = 0; i < playerCards.size();i++){
+            if(players.size() == j){
+                j = 0;
+            }
+            players.get(j).setPlayerCard(playerCards.get(i));
+            j++;
+        }
+    }
+
+    /**
+     * Fill a List with numbers from min to max and then randomize it through Collection.shuffle
+     * which randomly permutes elements in a given list.
+     * @param min
+     * smallest Card in deck
+     * @param max
+     * biggest Card in deck
+     * @return
+     * a sorted integer List with the numbers min to max
+     */
+    private ArrayList<Integer> generateRandomCards(int min, int max){
+        ArrayList<Integer> cards = new ArrayList<>();
+        for(int i = min;i <= max;i++){
+            cards.add(i);
+        }
+        Collections.shuffle(cards);
+        return cards;
+    }
+
     /**
      * @param character Find the Character belonging to a player if not return null
      * @return Player who playing as the character
@@ -155,6 +201,7 @@ public class Gameplay {
         }
         return finalPosition;
     }
+
 
     public static void setNumDice(int numDice) {
         Gameplay.numDice = numDice;
