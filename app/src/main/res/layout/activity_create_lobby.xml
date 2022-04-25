@@ -22,16 +22,30 @@
         tools:ignore="TextContrastCheck" />
 
     <Button
-        android:id="@+id/btn_send_link"
+        android:id="@+id/btn_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginBottom="50dp"
         android:background="@drawable/custom_button"
-        android:text="@string/send_link"
+        android:text="@string/back"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_send_link2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="13dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/custom_button"
+        android:text="@string/send_link"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_lobby_start"
+        app:layout_constraintStart_toEndOf="@+id/btn_back" />
 
     <Button
         android:id="@+id/btn_lobby_start"
@@ -49,11 +63,9 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="156dp"
+        android:layout_marginStart="98dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="157dp"
-        android:text="@string/currently_joined"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/join_via"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_create_lobby" />
 
@@ -62,10 +74,22 @@
         android:layout_width="275dp"
         android:layout_height="300dp"
         android:layout_marginStart="67dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="68dp"
         android:background="@android:drawable/screen_background_light_transparent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+    <TextView
+        android:id="@+id/txt_lobbyid"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/design_default_color_error"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/txt_create_lobby" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,7 +22,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_lobby);
-        final Button send_link = findViewById(R.id.btn_send_link);
+        final Button send_link = findViewById(R.id.btn_back);
         send_link.setOnClickListener(this);
         final Button start = findViewById(R.id.btn_lobby_start);
         start.setOnClickListener(this);
@@ -35,7 +35,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.btn_send_link){
+        if(view.getId() == R.id.btn_back){
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");//Hier wird dann der Einladungslink weitergesendet.
