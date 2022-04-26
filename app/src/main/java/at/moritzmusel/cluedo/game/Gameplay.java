@@ -3,6 +3,7 @@ package at.moritzmusel.cluedo.game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
@@ -11,6 +12,8 @@ public class Gameplay {
     private static int numDice;
     private Character currentPlayer;
     private final List<Player> players;
+    private ArrayList<Integer> clueCards = new ArrayList<>();
+    private final Random rand = new Random();
 
     /**
      * @param players all the Players in the Session
@@ -40,6 +43,10 @@ public class Gameplay {
         Player player = findPlayerByCharacterName(currentPlayer);
         player.setIsAbleToMove(true);
         if (player.getIsAbleToMove()) {
+            if(numDice == 4){
+                drawClueCard();
+                //wait for answers
+            }
             int newPosition = calculatePosition(player.getPositionOnBoard(), direction, numDice);
             player.setPositionOnBoard(newPosition);
             //movePlayerUi(player)
@@ -128,12 +135,41 @@ public class Gameplay {
 
 
     public void distributeCluedoCards(){
-        //if player is host schick die random distribution an andere
+        //if player is host
         generateCluedoCards();
-        //send infos to Players
+        //send die generierten Cluedo Cards zu den Spielern
 
-        //else nicht host set die Cluedo cards
-        //update player Cards
+        //else nicht host
+        //update player Cluedo Cards
+    }
+
+    /**
+     * Draw a Random Card from the Clue Cards staple
+     * and delete it from the staple
+     */
+    private void drawClueCard(){
+        int cardDrawn = getRandomIntInRange(21,50);
+        if(clueCards.size() == 1){
+            cardDrawn = clueCards.get(0);
+            //no Cards left
+        }else{
+            while(true){
+                if(clueCards.contains(cardDrawn)){
+                    cardDrawn = clueCards.indexOf(cardDrawn);
+                    break;
+                }else{
+                    cardDrawn = getRandomIntInRange(21,50);
+                }
+            }
+        }
+        //send cardDrawn to UI and to other Players
+        clueCards.remove(cardDrawn);
+        //send rest of Cluedo Cards to Players
+    }
+
+    public void generateClueCards(){
+        //if host send to other players
+        clueCards = generateRandomCards(21,50);
     }
 
     /**
@@ -206,6 +242,10 @@ public class Gameplay {
         return finalPosition;
     }
 
+    private int getRandomIntInRange(int min,int max) {
+        int range = max - min + 1;
+        return min + (int)(Math.random() * range);
+    }
 
     public static void setNumDice(int numDice) {
         Gameplay.numDice = numDice;
