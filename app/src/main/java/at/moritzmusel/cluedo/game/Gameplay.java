@@ -77,7 +77,6 @@ public class Gameplay {
 
     /**
      * Checks if the current Player is allowed to use the Secret Passage
-     *
      * @return true if allowed / false if isnt allowed
      */
     public boolean isAllowedToUseSecretPassage() {
@@ -112,6 +111,9 @@ public class Gameplay {
 
     }
 
+    /**
+     * which character moves next
+     */
     private void decideCharacterWhoMovesNext() {
         while (true) {
             assert currentPlayer != null;
@@ -138,7 +140,9 @@ public class Gameplay {
      * randomized the Cluedo Cards and safes them in the players card list
      */
     void generateCluedoCards(){
-        ArrayList<Integer> playerCards = generateRandomCards(1, 26);
+        ArrayList<Integer> playerCards = generateRandomCards(0,20);
+        //playerCard.contains(getKillerCardFromNetwork)
+        //delete those cards
         int j = 0;
         for(int i = 0; i < playerCards.size();i++){
             if(players.size() == j){

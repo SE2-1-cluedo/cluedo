@@ -160,19 +160,19 @@ public class GameplayTest {
     @Test
     public void checkIfCluedoCardsAreEvenDistributedForEvenPlayers(){
         gameEven.generateCluedoCards();
-        assertEquals(7,Player2.getPlayerOwnedCards().size());
-        assertEquals(7,Player3.getPlayerOwnedCards().size());
-        assertEquals(6,Player4.getPlayerOwnedCards().size());
-        assertEquals(6,Player5.getPlayerOwnedCards().size());
+        assertEquals(6,Player2.getPlayerOwnedCards().size());
+        assertEquals(5,Player3.getPlayerOwnedCards().size());
+        assertEquals(5,Player4.getPlayerOwnedCards().size());
+        assertEquals(5,Player5.getPlayerOwnedCards().size());
     }
 
     @Test
     public void checkIfCluedoCardsAreEvenDistributedForOddPlayers(){
         gameOdd.generateCluedoCards();
-        assertEquals(6,Player1.getPlayerOwnedCards().size());
-        assertEquals(5,Player2.getPlayerOwnedCards().size());
-        assertEquals(5,Player3.getPlayerOwnedCards().size());
-        assertEquals(5,Player4.getPlayerOwnedCards().size());
-        assertEquals(5,Player5.getPlayerOwnedCards().size());
+        assertEquals(5,Player1.getPlayerOwnedCards().size());
+        assertEquals(4,Player2.getPlayerOwnedCards().size());
+        assertEquals(4,Player3.getPlayerOwnedCards().size());
+        assertEquals(4,Player4.getPlayerOwnedCards().size());
+        assertEquals(4,Player5.getPlayerOwnedCards().size());
     }
 }

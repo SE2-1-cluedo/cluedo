@@ -27,5 +27,4 @@ public enum Character {
                 return null;
         }
     }
-
 }
