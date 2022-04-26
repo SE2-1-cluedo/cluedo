@@ -12,6 +12,8 @@ public class BoardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.board);
+
         setContentView(R.layout.activity_board);
 
         ImageView diceView = findViewById(R.id.diceView);
