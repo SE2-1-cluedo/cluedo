@@ -136,23 +136,25 @@ public class GameplayTest {
     public void checkIfTheGeneratedCluedoCardsAreUnique(){
         gameOdd.generateCluedoCards();
         ArrayList<Integer> allPlayerCards = new ArrayList<>();
-        ArrayList<Integer> compared = new ArrayList<>();
         boolean check = false;
-
         allPlayerCards.addAll(Player1.getPlayerOwnedCards());
         allPlayerCards.addAll(Player2.getPlayerOwnedCards());
         allPlayerCards.addAll(Player3.getPlayerOwnedCards());
         allPlayerCards.addAll(Player4.getPlayerOwnedCards());
         allPlayerCards.addAll(Player5.getPlayerOwnedCards());
+        int size = allPlayerCards.size();
 
-        compared.add(allPlayerCards.get(0));
-        for(int i = 1; i < allPlayerCards.size(); i++){
+        for(int i = 0; i < size; i++){
             int toCheck = allPlayerCards.get(i);
-            if(compared.contains(toCheck) && toCheck > 0 && toCheck < 27){
+            if(allPlayerCards.size() == 1){
+                break;
+            }
+            allPlayerCards.remove((Integer) toCheck);
+            size--;
+            if(allPlayerCards.contains(toCheck) && toCheck >= 0 && toCheck <= 20){
                 check = true;
                 break;
             }
-            compared.add(toCheck);
         }
         assertFalse(check);
     }
@@ -167,12 +169,63 @@ public class GameplayTest {
     }
 
     @Test
-    public void checkIfCluedoCardsAreEvenDistributedForOddPlayers(){
+    public void checkIfCluedoCardsAreEvenDistributedForOddPlayers() {
         gameOdd.generateCluedoCards();
-        assertEquals(5,Player1.getPlayerOwnedCards().size());
-        assertEquals(4,Player2.getPlayerOwnedCards().size());
-        assertEquals(4,Player3.getPlayerOwnedCards().size());
-        assertEquals(4,Player4.getPlayerOwnedCards().size());
-        assertEquals(4,Player5.getPlayerOwnedCards().size());
+        assertEquals(5, Player1.getPlayerOwnedCards().size());
+        assertEquals(4, Player2.getPlayerOwnedCards().size());
+        assertEquals(4, Player3.getPlayerOwnedCards().size());
+        assertEquals(4, Player4.getPlayerOwnedCards().size());
+        assertEquals(4, Player5.getPlayerOwnedCards().size());
+    }
+
+    @Test
+    public void checkIfClueCardsAreGenerated(){
+        gameOdd.generateClueCards();
+        assertEquals(29,gameOdd.getClueCards().size());
+    }
+
+    @Test
+    public void checkIfClueCardsAreUnique(){
+        gameOdd.generateClueCards();
+        ArrayList<Integer> clueCards = new ArrayList<>(gameOdd.getClueCards());
+        boolean check = false;
+        int toCheck;
+        int size = clueCards.size();
+
+        for(int i = 0; i < size; i++){
+            toCheck = clueCards.get(i);
+            if(clueCards.size() == 1){
+                break;
+            }
+            clueCards.remove((Integer) toCheck);
+            size--;
+            if(clueCards.contains(toCheck) && toCheck >= 0 && toCheck <= 20){
+                check = true;
+                break;
+            }
+        }
+        assertFalse(check);
+    }
+
+    @Test
+    public void drawClueCardAfterDiceThrow4() {
+        Gameplay.setNumDice(4);
+        gameOdd.decidePlayerWhoMovesFirst();
+        gameOdd.generateClueCards();
+        gameOdd.movePlayer((byte)1);
+        assertEquals(28,gameOdd.getClueCards().size());
+    }
+
+    @Test
+    public void drawLastClueCard(){
+        ArrayList<Integer> clueCards = new ArrayList<>();
+        clueCards.add(1);
+        Gameplay.setNumDice(4);
+        gameOdd.decidePlayerWhoMovesFirst();
+        gameOdd.generateClueCards();
+        gameOdd.setClueCards(clueCards);
+        gameOdd.movePlayer((byte)1);
+        assertEquals(0,gameOdd.getClueCards().size());
+        assertEquals(1,gameOdd.getCardDrawn());
     }
 }

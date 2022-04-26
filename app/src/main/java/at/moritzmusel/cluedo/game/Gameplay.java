@@ -14,6 +14,7 @@ public class Gameplay {
     private final List<Player> players;
     private ArrayList<Integer> clueCards = new ArrayList<>();
     private final Random rand = new Random();
+    private int cardDrawn;
 
     /**
      * @param players all the Players in the Session
@@ -148,28 +149,29 @@ public class Gameplay {
      * and delete it from the staple
      */
     private void drawClueCard(){
-        int cardDrawn = getRandomIntInRange(21,50);
+        cardDrawn = getRandomIntInRange(21,50);
         if(clueCards.size() == 1){
             cardDrawn = clueCards.get(0);
             //no Cards left
         }else{
             while(true){
                 if(clueCards.contains(cardDrawn)){
-                    cardDrawn = clueCards.indexOf(cardDrawn);
                     break;
+                }else if(cardDrawn < 51){
+                    cardDrawn++;
                 }else{
-                    cardDrawn = getRandomIntInRange(21,50);
+                    cardDrawn = 0;
                 }
             }
         }
         //send cardDrawn to UI and to other Players
-        clueCards.remove(cardDrawn);
+        clueCards.remove((Integer) cardDrawn);
         //send rest of Cluedo Cards to Players
     }
 
     public void generateClueCards(){
         //if host send to other players
-        clueCards = generateRandomCards(21,50);
+        clueCards = generateRandomCards(21,49);
     }
 
     /**
@@ -257,5 +259,17 @@ public class Gameplay {
 
     public void setCurrentPlayer(Character currentPlayer) {
         this.currentPlayer = currentPlayer;
+    }
+
+    public ArrayList<Integer> getClueCards() {
+        return clueCards;
+    }
+
+    public void setClueCards(ArrayList<Integer> clueCards) {
+        this.clueCards = clueCards;
+    }
+
+    public int getCardDrawn() {
+        return cardDrawn;
     }
 }
