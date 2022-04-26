@@ -246,7 +246,7 @@ public class Gameplay {
 
     private int getRandomIntInRange(int min,int max) {
         int range = max - min + 1;
-        return min + (int)(Math.random() * range);
+        return min + rand.nextInt(range);
     }
 
     public static void setNumDice(int numDice) {
@@ -261,12 +261,12 @@ public class Gameplay {
         this.currentPlayer = currentPlayer;
     }
 
-    public ArrayList<Integer> getClueCards() {
+    public List<Integer> getClueCards() {
         return clueCards;
     }
 
-    public void setClueCards(ArrayList<Integer> clueCards) {
-        this.clueCards = clueCards;
+    public void setClueCards(List<Integer> clueCards) {
+        this.clueCards = (ArrayList<Integer>) clueCards;
     }
 
     public int getCardDrawn() {
