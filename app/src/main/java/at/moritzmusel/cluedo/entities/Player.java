@@ -1,6 +1,7 @@
 package at.moritzmusel.cluedo.entities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
     private final int playerId;
@@ -40,7 +41,7 @@ public class Player {
         return playerCharacterName;
     }
 
-    public ArrayList<Integer> getPlayerOwnedCards() {
+    public List<Integer> getPlayerOwnedCards() {
         return playerOwnedCards;
     }
 
