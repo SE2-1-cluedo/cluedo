@@ -35,10 +35,10 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
             startActivity(i);
         }
         if(view.getId() == R.id.btn_lobby_join){
-            if(enter_id.getText().equals(getGameId())){
+            //if(getEnterId().equals(getGameId())){
                 Intent i = new Intent(JoinLobbyActivity.this, LobbyWaitingActivity.class);
                 startActivity(i);
-            }
+            //}
         }
     }
 
@@ -46,5 +46,9 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
         //Muss noch mit Netwerk verknüpt werden.
         String id = "12345";
         return id;
+    }
+
+    public String getEnterId(){
+        return enter_id.getText().toString();
     }
 }
