@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".LobbyWaitingActivity"
+            android:exported="false" />
+        <activity
             android:name=".JoinLobbyActivity"
             android:exported="false" />
         <activity

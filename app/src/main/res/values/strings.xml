@@ -18,9 +18,14 @@
 
     <!-- Für die Lobby -->
     <string name="create_lobby">Create Lobby</string>
+    <string name="lobby">Lobby</string>
     <string name="join_via">Join via:</string>
     <string name="start">Start</string>
     <string name="send_link">Send Link</string>
+    <string name="waiting">Waiting...</string>
+    <string name="game_id">Game ID:</string>
+    <string name="enter_id">Enter ID</string>
+    <string name="join">Join</string>
 
     <string name="join_lobby">Join Lobby</string>
     <string name="lobby_title">Do you want to create a Lobby <br />or do you want to join one?</string>

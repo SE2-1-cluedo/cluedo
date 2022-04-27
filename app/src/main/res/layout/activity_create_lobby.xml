@@ -31,7 +31,8 @@
         android:text="@string/back"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="TextContrastCheck" />
 
     <Button
         android:id="@+id/btn_send_link2"
@@ -45,7 +46,8 @@
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_lobby_start"
-        app:layout_constraintStart_toEndOf="@+id/btn_back" />
+        app:layout_constraintStart_toEndOf="@+id/btn_back"
+        tools:ignore="TextContrastCheck" />
 
     <Button
         android:id="@+id/btn_lobby_start"
@@ -57,7 +59,8 @@
         android:text="@string/start"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="TextContrastCheck" />
 
     <TextView
         android:id="@+id/textView8"
@@ -86,7 +89,7 @@
         android:id="@+id/txt_lobbyid"
         android:layout_width="100dp"
         android:layout_height="20dp"
-        android:layout_marginStart="19dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:textColor="@color/design_default_color_error"
         app:layout_constraintStart_toEndOf="@+id/textView8"
