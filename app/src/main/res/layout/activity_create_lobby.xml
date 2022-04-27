@@ -35,7 +35,7 @@
         tools:ignore="TextContrastCheck" />
 
     <Button
-        android:id="@+id/btn_send_link2"
+        android:id="@+id/btn_send_link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="13dp"
