@@ -32,6 +32,7 @@
     <string name="back">Back</string>
     <string name="Selection_suspicious">Selection suspicious</string>
     <string name="Selection_weapon">Selection weapon</string>
+    <string name="choose_the_character_you_want_to_play_with">Choose the character you want to play with</string>
 
     <string-array name="person_array">
         <item>Professor Plum</item>

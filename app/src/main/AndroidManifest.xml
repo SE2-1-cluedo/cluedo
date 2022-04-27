@@ -35,6 +35,9 @@
             android:name=".SuspicionActivity"
             android:exported="false" />
         <activity
+            android:name=".ChooseActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

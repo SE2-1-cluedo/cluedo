@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="#F6F6F6"
+    tools:context=".ChooseActivity">
+
+    <ImageView
+        android:id="@+id/choose_plum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="73dp"
+        app:layout_constraintEnd_toStartOf="@+id/choose_peacock"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_green"
+        app:srcCompat="@drawable/plum" />
+
+    <ImageView
+        android:id="@+id/choose_green"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="116dp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_mustard"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/green" />
+
+    <ImageView
+        android:id="@+id/choose_mustard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="116dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.972"
+        app:layout_constraintStart_toEndOf="@+id/choose_green"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/mustard" />
+
+    <ImageView
+        android:id="@+id/choose_peacock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/choose_plum"
+        app:layout_constraintTop_toBottomOf="@+id/choose_mustard"
+        app:srcCompat="@drawable/peacock" />
+
+    <ImageView
+        android:id="@+id/choose_scarlett"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="73dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/choose_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_plum"
+        app:srcCompat="@drawable/scarlett" />
+
+    <ImageView
+        android:id="@+id/choose_white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/choose_scarlett"
+        app:layout_constraintTop_toBottomOf="@+id/choose_peacock"
+        app:srcCompat="@drawable/white" />
+
+    <TextView
+        android:id="@+id/choose_character"
+        android:layout_width="227dp"
+        android:layout_height="86dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="14dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/choose_the_character_you_want_to_play_with"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/choose_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_green"
+        android:layout_width="123dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/custom_button"
+        android:text="Green"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_green" />
+
+    <Button
+        android:id="@+id/btn_mustard"
+        android:layout_width="123dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="48dp"
+        android:background="@drawable/custom_button"
+        android:text="Mustard"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_mustard" />
+
+    <Button
+        android:id="@+id/btn_plum"
+        android:layout_width="123dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/custom_button"
+        android:text="plum"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_plum" />
+
+    <Button
+        android:id="@+id/btn_peacock"
+        android:layout_width="123dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="48dp"
+        android:background="@drawable/custom_button"
+        android:text="peacock"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_peacock" />
+
+    <Button
+        android:id="@+id/btn_scarlett"
+        android:layout_width="123dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/custom_button"
+        android:text="scarlett"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_scarlett" />
+
+    <Button
+        android:id="@+id/btn_white"
+        android:layout_width="123dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="48dp"
+        android:background="@drawable/custom_button"
+        android:text="white"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_white" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
