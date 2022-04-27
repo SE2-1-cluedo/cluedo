@@ -6,20 +6,80 @@
     android:layout_height="match_parent"
     android:background="#F6F6F6">
 
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="321dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="12dp"
+        android:fontFamily="sans-serif"
+        android:text="players choise "
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/personSelect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_weapon" />
+
+    <TextView
+        android:id="@+id/personSelect"
+        android:layout_width="321dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="15dp"
+        android:fontFamily="sans-serif"
+        android:text="selected person"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/weaponSelect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.487"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView14" />
+
+    <TextView
+        android:id="@+id/weaponSelect"
+        android:layout_width="321dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="40dp"
+        android:fontFamily="sans-serif"
+        android:text="selected weapon"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/submit_Accusation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/personSelect" />
+
     <Button
         android:id="@+id/submit_Accusation"
         android:layout_width="141dp"
         android:layout_height="48dp"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="44dp"
-        android:layout_marginBottom="250dp"
+        android:layout_marginBottom="56dp"
         android:background="@drawable/custom_button"
         android:text="Accusation"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/submit_Suspicion"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_weapon" />
+        app:layout_constraintTop_toBottomOf="@+id/weaponSelect" />
 
     <Spinner
         android:id="@+id/spinner_weapon"
@@ -41,7 +101,7 @@
         android:layout_width="319dp"
         android:layout_height="34dp"
         android:layout_marginStart="63dp"
-        android:layout_marginTop="112dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="64dp"
         android:layout_marginBottom="40dp"
         android:fontFamily="sans-serif"
@@ -52,6 +112,7 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/textView10"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -71,8 +132,10 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_person" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner_person"
+        app:layout_constraintVertical_bias="0.153" />
 
     <TextView
         android:id="@+id/textView10"
@@ -107,10 +170,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setRoom" />
+        app:layout_constraintTop_toBottomOf="@+id/currentRoom" />
 
     <TextView
-        android:id="@+id/setRoom"
+        android:id="@+id/currentRoom"
         android:layout_width="321dp"
         android:layout_height="27dp"
         android:layout_marginStart="40dp"
@@ -133,24 +196,26 @@
         android:layout_width="141dp"
         android:layout_height="48dp"
         android:layout_marginStart="44dp"
-        android:layout_marginBottom="250dp"
+        android:layout_marginTop="41dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/custom_button"
         android:text="Suspicion"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/submit_Accusation"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weaponSelect"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Spinner
         android:id="@+id/spinner_person"
         android:layout_width="342dp"
         android:layout_height="48dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="33dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="40dp"
         android:contentDescription="@string/Selection_suspicious"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.454"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
