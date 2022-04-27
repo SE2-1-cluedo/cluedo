@@ -48,7 +48,7 @@
         tools:ignore="TextContrastCheck" />
 
     <EditText
-        android:id="@+id/txt_game_id"
+        android:id="@+id/txt_enter_id"
         android:layout_width="212dp"
         android:layout_height="55dp"
         android:layout_marginStart="100dp"
