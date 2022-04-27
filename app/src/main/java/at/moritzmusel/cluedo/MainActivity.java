@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_startgame){
+
             Intent i = new Intent(MainActivity.this, LobbyDecisionActivity.class);
             startActivity(i);
         }

@@ -28,7 +28,7 @@
     <string name="Selection_suspicious">Selection suspicious</string>
     <string name="Selection_weapon">Selection weapon</string>
 
-    <string-array name="spinner_person">
+    <string-array name="person_array">
         <item>Professor Plum</item>
         <item>Reverend Green</item>
         <item>Miss Scarlett</item>
@@ -37,13 +37,26 @@
         <item>Mrs. White</item>
     </string-array>
 
-    <string-array name="spinner_weapon">
+    <string-array name="weapons_array">
         <item>Dagger</item>
         <item>Pistole</item>
         <item>Rope</item>
         <item>Pipe</item>
         <item>Candlestick</item>
         <item>Wrench</item>
+    </string-array>
+
+
+    <string-array name="rooms_array">
+        <item>Lounge</item>
+        <item>Dining Room</item>
+        <item>Billiard Room</item>
+        <item>Study</item>
+        <item>Hall</item>
+        <item>Library</item>
+        <item>Ballroom</item>
+        <item>Conservatory</item>
+        <item>Kitchen</item>
     </string-array>
 
 </resources>
