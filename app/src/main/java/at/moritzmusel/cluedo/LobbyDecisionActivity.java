@@ -33,8 +33,9 @@ public class LobbyDecisionActivity extends AppCompatActivity implements View.OnC
             startActivity(i);
         }
         if(view.getId() == R.id.btn_back_to_main){
-            Intent i = new Intent(LobbyDecisionActivity.this, MainActivity.class);
-            startActivity(i);
+            //Intent i = new Intent(LobbyDecisionActivity.this, MainActivity.class);
+            //startActivity(i);
+            finish();
         }
     }
 }

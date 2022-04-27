@@ -21,17 +21,17 @@ public class LobbyWaitingActivity extends AppCompatActivity implements View.OnCl
     private int playerCounter = 1;
     private TextView game_id;
     private Button back;
-    private EditText number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby_waiting);
+
         back = findViewById(R.id.btn_back_to_join_lobby);
         back.setOnClickListener(this);
 
         game_id = findViewById(R.id.txt_lobby_id);
-        number = findViewById(R.id.txt_enter_id);
+        setGameId();
 
         playerlist = findViewById(R.id.playerlist);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, playerItems);
@@ -42,8 +42,9 @@ public class LobbyWaitingActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_back_to_join_lobby){
-            Intent i = new Intent(LobbyWaitingActivity.this, JoinLobbyActivity.class);
-            startActivity(i);
+            //Intent i = new Intent(LobbyWaitingActivity.this, JoinLobbyActivity.class);
+            //startActivity(i);
+            finish();
         }
     }
     public void addPlayer(View view) {
@@ -53,6 +54,6 @@ public class LobbyWaitingActivity extends AppCompatActivity implements View.OnCl
     }
     public void setGameId(){
         //Über das Netzwerk die Id für das Spiel bekommen und anzeigen.
-        number.setText("12345");
+        game_id.setText("12345");
     }
 }

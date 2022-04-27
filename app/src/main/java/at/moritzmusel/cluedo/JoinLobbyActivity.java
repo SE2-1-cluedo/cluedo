@@ -31,8 +31,9 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_back_to_lobbydecision){
-            Intent i = new Intent(JoinLobbyActivity.this, LobbyDecisionActivity.class);
-            startActivity(i);
+            //Intent i = new Intent(JoinLobbyActivity.this, LobbyDecisionActivity.class);
+            //startActivity(i);
+            finish();
         }
         if(view.getId() == R.id.btn_lobby_join){
             //if(getEnterId().equals(getGameId())){

@@ -60,8 +60,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
         }
         if(view.getId() == R.id.btn_back){
-            Intent i = new Intent(CreateLobbyActivity.this, LobbyDecisionActivity.class);
-            startActivity(i);
+            //Intent i = new Intent(CreateLobbyActivity.this, LobbyDecisionActivity.class);
+            //startActivity(i);
+            finish();
         }
     }
 
