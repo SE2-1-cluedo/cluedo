@@ -6,9 +6,13 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
 import java.util.Random;
@@ -18,37 +22,78 @@ public class Network {
     private static String TAG = "Networking ";
     private static FirebaseDatabase fb = FirebaseDatabase.getInstance("https://cluedo-b12c1-default-rtdb.europe-west1.firebasedatabase.app/");
     private static DatabaseReference database = fb.getReference();
+    private static DatabaseReference games = database.child("games");
 
-    public static void initDB(){
-        if(fb == null || database == null){
-            fb = FirebaseDatabase.getInstance("https://cluedo-b12c1-default-rtdb.europe-west1.firebasedatabase.app/");
-            database = fb.getReference();
-        }
-    }
-    public static String createLobby() {
-        if(database==null){
-            Log.e(TAG, "Dont forget to call initDB()!");
+    public static String createLobby(FirebaseUser user) {
+        if(user==null){
+            Log.e(TAG, "Dont forget to authenticate and pass your Firebase user before calling `create Lobby`!");
             return null;
         }
         java.sql.Timestamp current = new java.sql.Timestamp(System.currentTimeMillis());
-        String gameid = "gameid-" + intToChars(current.hashCode());
-        DatabaseReference game = database.child("games").child(gameid);
-        game.child("Turn-Flag");
-        game.child("Players");
-        game.child("Killer");
-        return gameid;
-    }
-    public static void joinLobby(){
+        String gameID = intToChars(current.hashCode());
+        DatabaseReference game = database.child("games").child(gameID);
+        //add Turn Flag path
+        DatabaseReference turnFlag = game.child("turn-flag");
+        turnFlag.child("question").setValue("");
+        turnFlag.child("player-turn").setValue("");
+        turnFlag.child("killer").setValue("");
+        //add players path
+        game.child("players");
 
-    }
-    public static void leaveLobby(){
+        joinLobby(user, gameID);
 
+        return gameID;
     }
-    public static void startGame(){
-
+    public static boolean joinLobby(FirebaseUser user, String gameID){
+        if(user== null) return false;
+        games.child(gameID).child("players").child(user.getUid()).setValue("");
+        return true;
     }
-    public static void loginAnonymousUser(String username){
 
+    public static boolean leaveLobby(FirebaseUser user, String gameID){
+        if(user== null) return false;
+        games.child(gameID).child("players").child(user.getUid()).removeValue();
+        return true;
+    }
+    //TODO: Logik hier für das Verteilen von Karten
+    public static void startGame(String gameID){
+        DatabaseReference game = games.child(gameID);
+        //Setze killer
+        game.child("killer").setValue("");
+        //Entferne die 3 Karten aus dem Pool->anschließend die restlichen karten im Kreis verteilen (18Karten)
+        game.child("cards").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot child : snapshot.getChildren()){
+                    //TODO: Cards distribute Logic
+                    givePlayerCards(child.getKey(), /*Logik für karten verteilen*/new int[]{1,2,3}, gameID);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, error.getMessage());
+            }
+        });
+    }
+    //Gib Spieler Karten
+    public static void givePlayerCards(String uuid, int[] cardIDs, String gameID){
+        games.child(gameID).child("players").child(uuid).child("cards").setValue(cardIDs);
+    }
+    //Für Karten zum Ausscheiden hinzu
+    public static void addPlayerEliminationCard(FirebaseUser user, int cardID, String gameID){
+        DatabaseReference eliminations = games.child(gameID).child("players").child(user.getUid()).child("elimination");
+        eliminations.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String eliminatedCards = (String) dataSnapshot.getValue();
+                eliminations.setValue(eliminatedCards + " " + cardID);
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG, error.getMessage());
+            }
+        });
     }
 
     private static String intToChars(int number) {

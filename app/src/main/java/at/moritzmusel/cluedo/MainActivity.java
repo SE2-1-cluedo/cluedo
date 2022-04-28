@@ -33,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
         //Network instance, currently for testing
         Network n = new Network();
         //n.initDB();
-        n.createLobby();
+        signInAnonymously();
+        n.createLobby(mAuth.getCurrentUser());
         //end
         button.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, BoardActivity.class)));
     }
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         //Falls Nutzer eingeloggt->Überspringe Login Screen, ansonsten `signInAnonymously()`
         if(user != null){
             //Skippe hier Login Button oder so, keine Ahnung Bro
+            Log.i(TAG_AUTH, user.getUid());
         }else{
            signInAnonymously();
         }
