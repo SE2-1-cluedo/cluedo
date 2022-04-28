@@ -11,18 +11,24 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
+    private Button startGame;
+    private Button gamerules;
+    private Button closeApp;
+    private Button commands;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Button startGame = findViewById(R.id.btn_startgame);
+        startGame = findViewById(R.id.btn_startgame);
         startGame.setOnClickListener(this);
-        final Button gamerules = findViewById(R.id.btn_gamerules);
+        gamerules = findViewById(R.id.btn_gamerules);
         gamerules.setOnClickListener(this);
-        final Button closeApp = findViewById(R.id.btn_close_app);
+        closeApp = findViewById(R.id.btn_close_app);
         closeApp.setOnClickListener(this);
-        final Button commands = findViewById(R.id.btn_commands);
+        commands = findViewById(R.id.btn_commands);
         commands.setOnClickListener(this);
 
         //button.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, BoardActivity.class)));
@@ -33,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_startgame){
-
             Intent i = new Intent(MainActivity.this, LobbyDecisionActivity.class);
             startActivity(i);
         }
