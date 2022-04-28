@@ -1,3 +1,68 @@
 <resources>
     <string name="app_name">Cluedo</string>
+    <string name="start_game">Start Game</string>
+    <string name="help_button">Help</string>
+    <string name="closeApp">Close App</string>
+    <string name="logo_descritption">The logo of the game.</string>
+    <string name="gamerules">Gamerules</string>
+    <string name="command">Commands</string>
+    <!-- Für die Erklärung des MainScreens -->
+    <string name="game_explanation">
+        1) Choose a Host
+        2) Add the playsers
+    </string>
+    <string name="commands_explanation">
+        You can roll a dice to move to rooms. In the menu you can find a notepad to help you identify the culprit.
+        Also you can see your own cards, position and the map on the standard screen.
+    </string>
+
+    <!-- Für die Lobby -->
+    <string name="create_lobby">Create Lobby</string>
+    <string name="lobby">Lobby</string>
+    <string name="join_via">Join via:</string>
+    <string name="start">Start</string>
+    <string name="send_link">Send Link</string>
+    <string name="waiting">Waiting...</string>
+    <string name="game_id">Game ID:</string>
+    <string name="enter_id">Enter ID</string>
+    <string name="join">Join</string>
+
+    <string name="join_lobby">Join Lobby</string>
+    <string name="lobby_title">Do you want to create a Lobby <br />or do you want to join one?</string>
+    <string name="back">Back</string>
+    <string name="Selection_suspicious">Selection suspicious</string>
+    <string name="Selection_weapon">Selection weapon</string>
+    <string name="choose_the_character_you_want_to_play_with">Choose the character you want to play with</string>
+
+    <string-array name="person_array">
+        <item>Professor Plum</item>
+        <item>Reverend Green</item>
+        <item>Miss Scarlett</item>
+        <item>Mrs Peacock</item>
+        <item>Colonel Mustard</item>
+        <item>Mrs. White</item>
+    </string-array>
+
+    <string-array name="weapons_array">
+        <item>Dagger</item>
+        <item>Pistole</item>
+        <item>Rope</item>
+        <item>Pipe</item>
+        <item>Candlestick</item>
+        <item>Wrench</item>
+    </string-array>
+
+
+    <string-array name="rooms_array">
+        <item>Lounge</item>
+        <item>Dining Room</item>
+        <item>Billiard Room</item>
+        <item>Study</item>
+        <item>Hall</item>
+        <item>Library</item>
+        <item>Ballroom</item>
+        <item>Conservatory</item>
+        <item>Kitchen</item>
+    </string-array>
+
 </resources>
