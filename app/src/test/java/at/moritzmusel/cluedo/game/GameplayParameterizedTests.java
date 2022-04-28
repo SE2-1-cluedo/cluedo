@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static at.moritzmusel.cluedo.entities.Character.MISS_SCARLET;
 import static at.moritzmusel.cluedo.entities.Character.MRS_PEACOCK;
-import static at.moritzmusel.cluedo.entities.Character.MRS_WHITE;
+import static at.moritzmusel.cluedo.entities.Character.DR_ORCHID;
 import static at.moritzmusel.cluedo.entities.Character.PROFESSOR_PLUM;
 import static at.moritzmusel.cluedo.entities.Character.THE_REVEREND_GREEN;
 
@@ -55,7 +55,7 @@ public class GameplayParameterizedTests {
         Player2 = new Player(2, THE_REVEREND_GREEN);
         Player3 = new Player(3, PROFESSOR_PLUM);
         Player4 = new Player(4, MRS_PEACOCK);
-        Player5 = new Player(5, MRS_WHITE);
+        Player5 = new Player(5, DR_ORCHID);
         playersEven = new ArrayList<>(Arrays.asList(Player1, Player2, Player3, Player4, Player5));
         playersOdd = new ArrayList<>(Arrays.asList(Player2,Player3, Player4, Player5));
         game = new Gameplay(playersEven);

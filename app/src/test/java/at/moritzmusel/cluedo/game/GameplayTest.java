@@ -33,7 +33,7 @@ public class GameplayTest {
         Player2 = new Player(2, THE_REVEREND_GREEN);
         Player3 = new Player(3, PROFESSOR_PLUM);
         Player4 = new Player(4, MRS_PEACOCK);
-        Player5 = new Player(5, MRS_WHITE);
+        Player5 = new Player(5, DR_ORCHID);
         playersOdd = new ArrayList<>(Arrays.asList(Player1, Player2, Player3, Player4, Player5));
         playersEven = new ArrayList<>(Arrays.asList(Player2,Player3, Player4, Player5));
         gameOdd = new Gameplay(playersOdd);
@@ -45,7 +45,7 @@ public class GameplayTest {
     public void endTurn() {
         gameOdd.decidePlayerWhoMovesFirst();
         Character currentPlayer = gameOdd.endTurn();
-        assertEquals(MRS_WHITE, currentPlayer);
+        assertEquals(DR_ORCHID, currentPlayer);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class GameplayTest {
     public void decidePlayerWhoMovesWhenScarlettIsNotPlayed() {
         gameEven = new Gameplay(playersEven);
         gameEven.decidePlayerWhoMovesFirst();
-        assertEquals(MRS_WHITE, gameEven.getCurrentPlayer());
+        assertEquals(DR_ORCHID, gameEven.getCurrentPlayer());
     }
 
     @Test
