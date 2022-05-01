@@ -34,7 +34,7 @@ public class Network {
     //Wird aufgerufen wenn eine Lobby erstellt wird
     public static String createLobby(FirebaseUser user) {
         if(user==null){
-            Log.e(TAG, "Dont forget to authenticate and pass your Firebase user before calling `create Lobby`!");
+            Log.e(TAG, "Dont forget to authenticate and pass your Firebase user before calling `createLobby()`!");
             return null;
         }
         java.sql.Timestamp current = new java.sql.Timestamp(System.currentTimeMillis());
