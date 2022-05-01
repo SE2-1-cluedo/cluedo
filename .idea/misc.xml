@@ -7,7 +7,31 @@
         <entry key="..\:/UNI/Cluedo SE2/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1395" />
         <entry key="..\:/UNI/Cluedo SE2/app/src/main/res/layout/activity_board.xml" value="0.2" />
         <entry key="..\:/UNI/Cluedo SE2/app/src/main/res/layout/activity_main.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/drawable/custom_button.xml" value="0.2605" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_board.xml" value="0.29030797101449274" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_board2.xml" value="0.35572916666666665" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_lobby_decision.xml" value="0.29030797101449274" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_ballroom.xml" value="0.29030797101449274" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_billiard.xml" value="0.29030797101449274" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_conservatory.xml" value="0.29030797101449274" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_dining.xml" value="0.22" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_hall.xml" value="0.29030797101449274" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_kitchen.xml" value="0.29030797101449274" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_library.xml" value="0.29030797101449274" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_lounge.xml" value="0.29030797101449274" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_study.xml" value="0.29030797101449274" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/test_board.xml" value="0.1" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/test_board2.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/morit/AndroidStudioProjects/Cluedo/app/src/main/res/layout/activity_main.xml" value="0.2421875" />
+        <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/drawable/custom_button.xml" value="0.1" />
+        <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/layout/activity_board.xml" value="0.31068840579710144" />
+        <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/layout/activity_commands.xml" value="0.33" />
+        <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/layout/activity_create_lobby.xml" value="0.3532608695652174" />
+        <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/layout/activity_help_settings.xml" value="0.3532608695652174" />
+        <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/layout/activity_join_lobby.xml" value="0.3532608695652174" />
+        <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/layout/activity_lobby_decision.xml" value="0.3532608695652174" />
+        <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/layout/activity_lobby_waiting.xml" value="0.3546195652173913" />
+        <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/layout/activity_main.xml" value="0.31068840579710144" />
       </map>
     </option>
   </component>
