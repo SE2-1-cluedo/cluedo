@@ -14,16 +14,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+
+import at.moritzmusel.cluedo.network.pojo.Card;
+import at.moritzmusel.cluedo.network.pojo.Player;
 
 public class Network {
     private static String TAG = "Networking ";
     private static FirebaseDatabase fb = FirebaseDatabase.getInstance("https://cluedo-b12c1-default-rtdb.europe-west1.firebasedatabase.app/");
     private static DatabaseReference database = fb.getReference();
     private static DatabaseReference games = database.child("games");
+    private static String currentGameID;
 
+
+    //Wird aufgerufen wenn eine Lobby erstellt wird
     public static String createLobby(FirebaseUser user) {
         if(user==null){
             Log.e(TAG, "Dont forget to authenticate and pass your Firebase user before calling `create Lobby`!");
@@ -31,6 +39,7 @@ public class Network {
         }
         java.sql.Timestamp current = new java.sql.Timestamp(System.currentTimeMillis());
         String gameID = intToChars(current.hashCode());
+        currentGameID = gameID;
         DatabaseReference game = database.child("games").child(gameID);
         //add Turn Flag path
         DatabaseReference turnFlag = game.child("turn-flag");
@@ -38,15 +47,18 @@ public class Network {
         turnFlag.child("player-turn").setValue("");
         turnFlag.child("killer").setValue("");
         //add players path
-        game.child("players");
-
-        joinLobby(user, gameID);
-
+        game.child("players").setValue("");
         return gameID;
     }
-    public static boolean joinLobby(FirebaseUser user, String gameID){
+    //Wird aufgerufen nachdem eine Lobby erstellt wurde. Es wird der Nutzer, welcher die Lobby erstellt hat hinzugefügt
+    //Parameter 3 "Player" enthält die bereits
+    public static boolean joinLobby(FirebaseUser user, String gameID, Player player){
         if(user== null) return false;
-        games.child(gameID).child("players").child(user.getUid()).setValue("");
+        DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
+        /*
+        p.child("cards").setValue(player.getCardsAsString());
+        p.child("cards-eliminated").setValue(player.getEliminatedCardsAsString());
+         */
         return true;
     }
 
@@ -96,6 +108,8 @@ public class Network {
         });
     }
 
+
+
     private static String intToChars(int number) {
         String rt = "";
         char[] tmp = (Integer.toString(number)+ ThreadLocalRandom.current().nextInt(10000, 99999)).toCharArray();
@@ -117,5 +131,9 @@ public class Network {
             }
         }
         return rt;
+    }
+
+    public static String getCurrentGameID() {
+        return currentGameID;
     }
 }
