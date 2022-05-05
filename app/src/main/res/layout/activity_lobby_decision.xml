@@ -44,8 +44,8 @@
 
     <Button
         android:id="@+id/btn_back_to_main"
-        android:layout_width="200"
-        android:layout_height="50"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/custom_button"
         android:text="@string/back"

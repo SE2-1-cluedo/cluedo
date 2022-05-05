@@ -21,8 +21,8 @@
 
     <Button
         android:id="@+id/btn_back"
-        android:layout_width="150"
-        android:layout_height="50"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/custom_button"
         android:text="@string/back"
@@ -34,8 +34,8 @@
 
     <Button
         android:id="@+id/btn_send_link"
-        android:layout_width="150"
-        android:layout_height="50"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/custom_button"
         android:text="@string/send_link"
@@ -47,7 +47,7 @@
 
     <Button
         android:id="@+id/btn_lobby_start"
-        android:layout_width="150dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginBottom="20dp"
         android:background="@drawable/custom_button"
