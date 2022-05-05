@@ -37,6 +37,8 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         join_id.setText(getGameID());
 
         playerlist = findViewById(R.id.playerlist);
+
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, playerItems);
         playerlist.setAdapter(adapter);
     }
@@ -55,9 +57,10 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             addPlayer(view);
 
         }
-        if(view.getId() == R.id.btn_startgame){
+        if(view.getId() == R.id.btn_lobby_start){
             //select the character screen
-
+            Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
+            startActivity(i);
         }
         if(view.getId() == R.id.btn_back){
             //Intent i = new Intent(CreateLobbyActivity.this, LobbyDecisionActivity.class);
