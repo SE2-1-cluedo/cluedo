@@ -8,4 +8,5 @@ Repo for SE2 cludeo game
 
 Currently ready for evaluation branches:
   feature/firebase-communicatio Musel <br>
+  feature/side Moser <br>
   ....
