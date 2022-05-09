@@ -2,9 +2,14 @@ package at.moritzmusel.cluedo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.res.Configuration;
+import android.graphics.Path;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import at.moritzmusel.cluedo.game.Dice;
@@ -52,6 +57,24 @@ public class BoardActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+    }
+
+    public void movePlayer(View v) {
+
+
+        Button lounge_position_1 = findViewById(R.id.lounge_position_1);
+        Button median1 = findViewById(R.id.median1);
+
+        Path path = new Path();
+        path.lineTo(median1.getX()-v.getX(),0);
+        path.lineTo(median1.getX()-v.getX(), lounge_position_1.getY() - v.getY());
+        path.lineTo(lounge_position_1.getX()-v.getX(),lounge_position_1.getY() - v.getY());
+
+
+        ObjectAnimator animation = ObjectAnimator.ofFloat(v,"translationX","translationY",path);
+        animation.setDuration(4000);
+        animation.start();
+
     }
 
     public void onButtonClick(View v) {
