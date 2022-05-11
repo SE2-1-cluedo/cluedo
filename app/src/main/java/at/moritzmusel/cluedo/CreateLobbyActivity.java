@@ -2,8 +2,10 @@ package at.moritzmusel.cluedo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -78,5 +80,11 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     public void addPlayer(View view) {
         playerItems.add("player "+playerCounter++);
         adapter.notifyDataSetChanged();
+        vibrate(300);
+    }
+
+    public void vibrate(int duration){
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(duration);
     }
 }
