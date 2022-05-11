@@ -38,21 +38,15 @@ public class Gameplay {
      * he moved right or left
      * dice was thrown and
      *
-     * @param direction 1 (move right)     /    0 (move left)
+     * @param position new position of player
      */
-    public void movePlayer(byte direction) {
+
+    //Todo: Fragen wie ich die position übergeben bekomm
+    public void updatePlayerPosition(int position) {
         Player player = findPlayerByCharacterName(currentPlayer);
-        player.setIsAbleToMove(true);
-        if (player.getIsAbleToMove()) {
-            if(numDice == 4){
-                drawClueCard();
-                //wait for answers
-            }
-            int newPosition = calculatePosition(player.getPositionOnBoard(), direction, numDice);
-            player.setPositionOnBoard(newPosition);
-            //movePlayerUi(player)
-            //dont allow dice throw again
-        }
+        //calculate position from room or pos x y dk
+        player.setPositionOnBoard(position);
+        //dont allow dice throw again
     }
 
     /**
