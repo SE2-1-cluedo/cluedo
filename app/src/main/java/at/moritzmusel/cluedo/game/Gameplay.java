@@ -78,6 +78,22 @@ public class Gameplay {
     }
 
     /**
+     * Called when a player left the game without finishing it
+     * and sending the cards of said player to the other active players
+     * @param player player who quit game
+     */
+    //Noch mit frontend und backen über das schicken und verteilen reden
+    public void quitGame(Player player){
+        List<Integer> cards = new ArrayList<Integer>();
+        for (int i = 0; i <players.size();i++){
+            if(players.get(i).equals(player)){
+                cards = players.get(i).getPlayerOwnedCards();
+            }
+        }
+        //send all cards to other players
+    }
+
+    /**
      * Checks if the current Player is allowed to use the Secret Passage
      * @return true if allowed / false if isnt allowed
      */
