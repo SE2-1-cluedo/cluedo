@@ -44,12 +44,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAuth = FirebaseAuth.getInstance();
         //end
         //Network instance, currently for testing
+
         Network n = new Network();
         //n.initDB();
         signInAnonymously();
         n.createLobby(mAuth.getCurrentUser());
         //end
-
         
         startGame = findViewById(R.id.btn_startgame);
         startGame.setOnClickListener(this);
@@ -124,6 +124,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             System.exit(0);
         }
     }
-
-
 }
