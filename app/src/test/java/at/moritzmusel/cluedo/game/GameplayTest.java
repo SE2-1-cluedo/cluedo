@@ -62,46 +62,6 @@ public class GameplayTest {
         Assert.assertFalse(Player1.getIsAbleToMove());
     }
 
-    @Test
-    public void movePlayerOverTheStartRight() {
-        gameOdd.decidePlayerWhoMovesFirst();
-        gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).setPositionOnBoard(9);
-        gameOdd.movePlayer((byte) 1);
-        assertEquals(3, gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard());
-    }
-
-    @Test
-    public void movePlayerOverTheStartLeft() {
-        gameOdd.decidePlayerWhoMovesFirst();
-        gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).setPositionOnBoard(2);
-        gameOdd.movePlayer((byte) 0);
-        assertEquals(8, gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard());
-    }
-
-    @Test
-    public void move2PlayersRightWithSameDiceResult() {
-        int player1Pos, player2Pos;
-        gameOdd.decidePlayerWhoMovesFirst();
-        gameOdd.movePlayer((byte) 1);
-        player1Pos = gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard();
-        gameOdd.endTurn();
-        gameOdd.movePlayer((byte) 1);
-        player2Pos = gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard();
-        assertEquals(player1Pos, player2Pos);
-    }
-
-    @Test
-    public void move2PlayersLeftWithSameDiceResult() {
-        int player1Pos, player2Pos;
-        gameOdd.decidePlayerWhoMovesFirst();
-        gameOdd.movePlayer((byte) 0);
-        player1Pos = gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard();
-        gameOdd.endTurn();
-        gameOdd.movePlayer((byte) 0);
-        player2Pos = gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard();
-        assertEquals(player1Pos, player2Pos);
-    }
-
 
     @Test
     public void currentPlayerIsNotAllowedToUseSecretPassage() {
@@ -212,8 +172,8 @@ public class GameplayTest {
         Gameplay.setNumDice(4);
         gameOdd.decidePlayerWhoMovesFirst();
         gameOdd.generateClueCards();
-        gameOdd.movePlayer((byte)1);
-        assertEquals(28,gameOdd.getClueCards().size());
+        gameOdd.updatePlayerPosition(3);
+        assertEquals(29,gameOdd.getClueCards().size());
     }
 
     @Test
@@ -224,8 +184,8 @@ public class GameplayTest {
         gameOdd.decidePlayerWhoMovesFirst();
         gameOdd.generateClueCards();
         gameOdd.setClueCards(clueCards);
-        gameOdd.movePlayer((byte)1);
-        assertEquals(0,gameOdd.getClueCards().size());
-        assertEquals(1,gameOdd.getCardDrawn());
+        gameOdd.updatePlayerPosition(3);
+        assertEquals(1,gameOdd.getClueCards().size());
+        assertEquals(0,gameOdd.getCardDrawn());
     }
 }
