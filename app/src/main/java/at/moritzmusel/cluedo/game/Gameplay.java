@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 
@@ -91,6 +92,45 @@ public class Gameplay {
             }
         }
         //send all cards to other players
+    }
+
+    /**
+     * Method to check if one of the players in the correct order has a card
+     * which is equal to one of the cards send. If yes the person who asked the question
+     * get the card added to their inventory. And update to the other players
+     * @param player Player how asked the question
+     * @param weapon the used weapon
+     * @param person the person who did it
+     * @param room the room
+     */
+    public void askPlayerAQuestion(Player player,Card weapon, Card person, Card room){
+        Character playerCharacter = player.getPlayerCharacterName();
+        boolean cardSend = false;
+        int counter = 0;
+        while(counter < players.size()-1) {
+            for (int i = 0; i < players.size(); i++) {
+                if (players.get(i).getPlayerCharacterName().equals(playerCharacter.getNextCharacter())) {
+                    Player current = players.get(i);
+                    if(current.getPlayerOwnedCards().contains(weapon.getId())){
+                        //send weapon id to player
+                        cardSend = true;
+                        break;
+                    }else if(current.getPlayerOwnedCards().contains(person.getId())){
+                        //send personid to player
+                        cardSend = true;
+                        break;
+                    }
+                    else if (current.getPlayerOwnedCards().contains(room.getId())){
+                        //send room id to player
+                        cardSend = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if(cardSend == false){
+            //Todo: sende nichts und hinweis an players
+        }
     }
 
     /**
