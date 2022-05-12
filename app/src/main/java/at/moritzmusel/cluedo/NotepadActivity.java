@@ -1,17 +1,19 @@
 package at.moritzmusel.cluedo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.textfield.TextInputLayout;
+
 import at.moritzmusel.cluedo.network.pojo.Card;
 
-public class NotepadActivity extends AppCompatActivity {
+public class NotepadActivity extends AppCompatActivity implements View.OnClickListener {
 
     at.moritzmusel.cluedo.Card card;
 
@@ -81,13 +83,19 @@ public class NotepadActivity extends AppCompatActivity {
     private EditText colLibraryInput;
     private EditText colStudyInput;
 
+    private Button btn_closeNotepad;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notepad);
 
-        colScarlett = findViewById(R.id.colScarlett);
+        btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
+        btn_closeNotepad.setOnClickListener(this);
+
+
+       /* colScarlett = findViewById(R.id.colScarlett);
         colPlum = findViewById(R.id.colPlum);
         colGreen = findViewById(R.id.colGreen);
         colPeacock = findViewById(R.id.colPeacock);
@@ -108,7 +116,7 @@ public class NotepadActivity extends AppCompatActivity {
         colBilliard = findViewById(R.id.colBilliard);
         colLibrary = findViewById(R.id.colLibrary);
         colStudy = findViewById(R.id.colStudy);
-
+*/
         pl1Scarlett = findViewById(R.id.pl1Scarlett);
         pl1Plum = findViewById(R.id.pl1Plum);
         pl1Green = findViewById(R.id.pl1Green);
@@ -153,21 +161,23 @@ public class NotepadActivity extends AppCompatActivity {
         colLibraryInput = findViewById(R.id.colLibraryInput);
         colStudyInput = findViewById(R.id.colStudyInput);
 
-
     }
 
+    @Override
+    public void onClick(View view) {
+         if (view.getId() == R.id.btn_closeNotepad) {
+           finish();
+        }
+    }
 
-
-
-
-    public int findId(View view){
+    public int findId(View view) {
         int idFound;
         switch (view.getId()) {
             case R.id.colScarlett:
-               idFound =  0;
+                idFound = 0;
                 break;
             case R.id.colPlum:
-                idFound =  1;
+                idFound = 1;
                 break;
             case R.id.colGreen:
                 idFound = 2;
@@ -176,7 +186,7 @@ public class NotepadActivity extends AppCompatActivity {
                 idFound = 3;
                 break;
             case R.id.colMustard:
-                idFound =  4;
+                idFound = 4;
                 break;
             case R.id.colOrchid:
                 idFound = 5;
@@ -224,7 +234,7 @@ public class NotepadActivity extends AppCompatActivity {
                 idFound = 19;
                 break;
             case R.id.colStudy:
-                idFound  = 20;
+                idFound = 20;
                 break;
             default:
                 idFound = 99;
@@ -301,4 +311,6 @@ public class NotepadActivity extends AppCompatActivity {
 
 
     }
+
+
 }

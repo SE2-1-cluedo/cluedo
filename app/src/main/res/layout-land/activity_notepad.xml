@@ -1,27 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+
+    <Button
+        android:id="@+id/btn_closeNotepad"
+        android:layout_width="123dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="600dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/custom_button"
+        android:text="Back to map"
+        android:textColor="#2E7D32"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="866dp"
+        android:layout_height="294dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="17dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.132">
 
         <TableLayout
             android:id="@+id/table_header"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TableRow
-                android:layout_width="185dp"
-                android:layout_height="169dp">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
 
                 <LinearLayout
@@ -37,7 +61,7 @@
                         android:layout_height="match_parent"
                         android:text="NOTEPAD"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="#689F38"
                         android:textStyle="bold" />
 
                     <TextView
@@ -47,17 +71,17 @@
                         android:text="Checked?"
                         android:textAlignment="textStart"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="#689F38"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/col2"
-                        android:layout_width="621dp"
+                        android:layout_width="351dp"
                         android:layout_height="match_parent"
                         android:text="Notes"
                         android:textAlignment="textStart"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="#689F38"
                         android:textStyle="bold" />
 
 
@@ -70,7 +94,7 @@
 
                 <TextView
                     android:id="@+id/colPersons"
-                    android:layout_width="135dp"
+                    android:layout_width="match_parent"
                     android:layout_height="28dp"
                     android:background="@color/colorPrimaryDark"
                     android:text="Persons"
@@ -104,7 +128,8 @@
                     <CheckBox
                         android:id="@+id/pl1Scarlett"
                         android:layout_width="125dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="TouchTargetSizeCheck" />
 
                     <EditText
                         android:id="@+id/colScarlettInput"
@@ -113,7 +138,7 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="textPersonName"
-                        />
+                        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
 
                 </LinearLayout>
@@ -143,7 +168,8 @@
                     <CheckBox
                         android:id="@+id/pl1Plum"
                         android:layout_width="125dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="TouchTargetSizeCheck" />
 
                     <EditText
                         android:id="@+id/colPlumInput"
@@ -152,7 +178,7 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="textPersonName"
-                        />
+                        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
 
                 </LinearLayout>
@@ -180,7 +206,8 @@
                     <CheckBox
                         android:id="@+id/pl1Green"
                         android:layout_width="125dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="TouchTargetSizeCheck" />
 
                     <EditText
                         android:id="@+id/colGreenInput"
@@ -189,7 +216,7 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="textPersonName"
-                        />
+                        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
                 </LinearLayout>
             </TableRow>
@@ -216,7 +243,8 @@
                     <CheckBox
                         android:id="@+id/pl1Peackock"
                         android:layout_width="125dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="TouchTargetSizeCheck" />
 
                     <EditText
                         android:id="@+id/colPeacockInput"
@@ -225,7 +253,7 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="textPersonName"
-                        />
+                        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
                 </LinearLayout>
             </TableRow>
 
@@ -251,7 +279,8 @@
                     <CheckBox
                         android:id="@+id/pl1Mustard"
                         android:layout_width="125dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="TouchTargetSizeCheck" />
 
                     <EditText
                         android:id="@+id/colMustardInput"
@@ -260,7 +289,7 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="textPersonName"
-                        />
+                        tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
 
                 </LinearLayout>
@@ -288,16 +317,17 @@
                     <CheckBox
                         android:id="@+id/pl1Orchid"
                         android:layout_width="125dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        tools:ignore="TouchTargetSizeCheck" />
 
                     <EditText
                         android:id="@+id/colOrchidInput"
-                        android:layout_width="wrap_content"
+                        android:layout_width="569dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="textPersonName"
-                        />
+                        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
                 </LinearLayout>
             </TableRow>
 
@@ -349,7 +379,7 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="textPersonName"
-                        />
+                        tools:ignore="SpeakableTextPresentCheck" />
 
 
                 </LinearLayout>
@@ -385,8 +415,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
 
                 </LinearLayout>
@@ -423,8 +452,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
@@ -459,8 +487,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
@@ -495,8 +522,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
@@ -531,8 +557,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
@@ -583,8 +608,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
@@ -619,8 +643,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
@@ -655,8 +678,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
@@ -691,8 +713,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
@@ -727,8 +748,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
@@ -763,8 +783,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
                 </LinearLayout>
             </TableRow>
 
@@ -798,8 +817,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
@@ -834,8 +852,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
@@ -870,8 +887,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
-                        android:inputType="textPersonName"
-                        />
+                        android:inputType="textPersonName" />
 
                 </LinearLayout>
             </TableRow>
