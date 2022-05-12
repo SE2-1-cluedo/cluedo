@@ -11,33 +11,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.pojo.Card;
 
 public class NotepadActivity extends AppCompatActivity implements View.OnClickListener {
 
     at.moritzmusel.cluedo.Card card;
-
-    private TextView colScarlett;
-    private TextView colPlum;
-    private TextView colGreen;
-    private TextView colPeacock;
-    private TextView colMustard;
-    private TextView colOrchid;
-    private TextView colDagger;
-    private TextView colCandlestick;
-    private TextView colPistol;
-    private TextView colRope;
-    private TextView colPipe;
-    private TextView colWrench;
-    private TextView colHall;
-    private TextView colLounge;
-    private TextView colDining;
-    private TextView colKitchen;
-    private TextView colBallroom;
-    private TextView colConservatory;
-    private TextView colBilliard;
-    private TextView colLibrary;
-    private TextView colStudy;
 
     private CheckBox pl1Scarlett;
     private CheckBox pl1Plum;
@@ -94,29 +73,6 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
         btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
         btn_closeNotepad.setOnClickListener(this);
 
-
-       /* colScarlett = findViewById(R.id.colScarlett);
-        colPlum = findViewById(R.id.colPlum);
-        colGreen = findViewById(R.id.colGreen);
-        colPeacock = findViewById(R.id.colPeacock);
-        colMustard = findViewById(R.id.colMustard);
-        colOrchid = findViewById(R.id.colOrchid);
-        colDagger = findViewById(R.id.colDagger);
-        colCandlestick = findViewById(R.id.colCandlestick);
-        colPistol = findViewById(R.id.colPistol);
-        colRope = findViewById(R.id.colRope);
-        colPipe = findViewById(R.id.colPipe);
-        colWrench = findViewById(R.id.colWrench);
-        colHall = findViewById(R.id.colHall);
-        colLounge = findViewById(R.id.colLounge);
-        colDining = findViewById(R.id.colDining);
-        colKitchen = findViewById(R.id.colKitchen);
-        colBallroom = findViewById(R.id.colBallroom);
-        colConservatory = findViewById(R.id.colConservatory);
-        colBilliard = findViewById(R.id.colBilliard);
-        colLibrary = findViewById(R.id.colLibrary);
-        colStudy = findViewById(R.id.colStudy);
-*/
         pl1Scarlett = findViewById(R.id.pl1Scarlett);
         pl1Plum = findViewById(R.id.pl1Plum);
         pl1Green = findViewById(R.id.pl1Green);
@@ -171,82 +127,15 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-
-
-    public int findId(View view) {
-        int idFound;
-        switch (view.getId()) {
-            case R.id.colScarlett:
-                idFound = 0;
-                break;
-            case R.id.colPlum:
-                idFound = 1;
-                break;
-            case R.id.colGreen:
-                idFound = 2;
-                break;
-            case R.id.colPeacock:
-                idFound = 3;
-                break;
-            case R.id.colMustard:
-                idFound = 4;
-                break;
-            case R.id.colOrchid:
-                idFound = 5;
-                break;
-            case R.id.colDagger:
-                idFound = 6;
-                break;
-            case R.id.colCandlestick:
-                idFound = 7;
-                break;
-            case R.id.colPistol:
-                idFound = 8;
-                break;
-            case R.id.colRope:
-                idFound = 9;
-                break;
-            case R.id.colPipe:
-                idFound = 10;
-                break;
-            case R.id.colWrench:
-                idFound = 11;
-                break;
-            case R.id.colHall:
-                idFound = 12;
-                break;
-            case R.id.colLounge:
-                idFound = 13;
-                break;
-            case R.id.colDining:
-                idFound = 14;
-                break;
-            case R.id.colKitchen:
-                idFound = 15;
-                break;
-            case R.id.colBallroom:
-                idFound = 16;
-                break;
-            case R.id.colConservatory:
-                idFound = 17;
-                break;
-            case R.id.colBilliard:
-                idFound = 18;
-                break;
-            case R.id.colLibrary:
-                idFound = 19;
-                break;
-            case R.id.colStudy:
-                idFound = 20;
-                break;
-            default:
-                idFound = 99;
+    public void setCheckedOwnedCards(Player player){
+        for (int i = 0; i < player.getPlayerOwnedCards().size(); i++) {
+            setCheckCard(player.getPlayerOwnedCards().get(i));
         }
-        return idFound;
     }
 
-    public void setCheckCard(Card card) {
-        switch (card.getCardID()) {
+
+    public void setCheckCard(int id) {
+        switch (id) {
             case 0:
                 pl1Scarlett.setChecked(true);
                 break;
