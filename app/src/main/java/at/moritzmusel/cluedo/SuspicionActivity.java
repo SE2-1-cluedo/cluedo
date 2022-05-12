@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import at.moritzmusel.cluedo.entities.Player;
+
 public class SuspicionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private String[] possiblePersons;
@@ -32,6 +34,7 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
     private ArrayAdapter<CharSequence> adapterWeapon;
     private Spinner person;
     private Spinner weapon;
+    private Player player;
 
     @SuppressLint("ResourceType")
     @Override
@@ -49,7 +52,7 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
 
         //Dropdown Waffe
-       adapterWeapon = ArrayAdapter.createFromResource(this, R.array.weapons_array, android.R.layout.simple_spinner_item);
+        adapterWeapon = ArrayAdapter.createFromResource(this, R.array.weapons_array, android.R.layout.simple_spinner_item);
         weapon = (Spinner) findViewById(spinner_weapon);
         weapon.setOnItemSelectedListener(this);
         adapterWeapon.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -61,10 +64,7 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
         roomsArray = getResources().getStringArray(R.array.rooms_array);
 
         //Textfeld aktueller Raum
-        selectedRoom = getCurrentRoom();
         currentRoom = findViewById(R.id.currentRoom);
-        currentRoom.setText(selectedRoom);
-
 
         //Button Bestätigung des Verdachts / Anklage
         accusation = findViewById(R.id.submit_Accusation);
@@ -90,10 +90,36 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
     }
 
-    private String getCurrentRoom() {
-
+    private void getSelectedRoom() {
         //TODO getCurrentRoom Funktionalität - mit Player/Network verknüpft?
-        return "";
+        switch (player.getPositionOnBoard()) {
+            case 12:
+                currentRoom.setText("Hall");
+                break;
+            case 13:
+                currentRoom.setText("Lounge");
+                break;
+            case 14:
+                currentRoom.setText("Dining Room");
+                break;
+            case 15:
+                currentRoom.setText("Kitchen");
+                break;
+            case 16:
+                currentRoom.setText("Ballroom");
+                break;
+            case 17:
+                currentRoom.setText("Conservatory");
+                break;
+            case 18:
+                currentRoom.setText("Billiard Room");
+                break;
+            case 19:
+                currentRoom.setText("Library");
+                break;
+            case 20:
+                currentRoom.setText("Study");
+        }
     }
 
     @Override
@@ -103,20 +129,15 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
                 selectedWeapon = adapterView.getItemAtPosition(i).toString();
                 if (selectedWeapon.equals(possibleWeapons[0])) {
                     weaponSelect.setText(selectedWeapon);
-                }
-                else if (selectedWeapon.equals(possibleWeapons[1])) {
+                } else if (selectedWeapon.equals(possibleWeapons[1])) {
                     weaponSelect.setText(selectedWeapon);
-                }
-                else if (selectedWeapon.equals(possibleWeapons[2])) {
+                } else if (selectedWeapon.equals(possibleWeapons[2])) {
                     weaponSelect.setText(selectedWeapon);
-                }
-                else if (selectedWeapon.equals(possibleWeapons[3])) {
+                } else if (selectedWeapon.equals(possibleWeapons[3])) {
                     weaponSelect.setText(selectedWeapon);
-                }
-                else if (selectedWeapon.equals(possibleWeapons[4])) {
+                } else if (selectedWeapon.equals(possibleWeapons[4])) {
                     weaponSelect.setText(selectedWeapon);
-                }
-                else if (selectedWeapon.equals(possibleWeapons[5])) {
+                } else if (selectedWeapon.equals(possibleWeapons[5])) {
                     weaponSelect.setText(selectedWeapon);
                 }
             }
@@ -127,20 +148,15 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
                 selectedPerson = adapterView.getItemAtPosition(i).toString();
                 if (selectedPerson.equals(possiblePersons[0])) {
                     personSelect.setText(selectedPerson);
-                }
-                else if (selectedPerson.equals(possiblePersons[1])) {
+                } else if (selectedPerson.equals(possiblePersons[1])) {
                     personSelect.setText(selectedPerson);
-                }
-                else if (selectedPerson.equals(possiblePersons[2])) {
+                } else if (selectedPerson.equals(possiblePersons[2])) {
                     personSelect.setText(selectedPerson);
-                }
-                else if (selectedPerson.equals(possiblePersons[3])) {
+                } else if (selectedPerson.equals(possiblePersons[3])) {
                     personSelect.setText(selectedPerson);
-                }
-                else if (selectedPerson.equals(possiblePersons[4])) {
+                } else if (selectedPerson.equals(possiblePersons[4])) {
                     personSelect.setText(selectedPerson);
-                }
-                else if (selectedPerson.equals(possiblePersons[5])) {
+                } else if (selectedPerson.equals(possiblePersons[5])) {
                     personSelect.setText(selectedPerson);
                 }
 
