@@ -27,6 +27,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         btn_mustard.setOnClickListener(this);
     }
 
+    //TODO Verknüpfe CHaracter mit Player / Wo soll die Seite eingefügt werden vor Lobby join/ nach Lobby join
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_green) {
