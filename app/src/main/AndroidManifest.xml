@@ -10,21 +10,40 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".LobbyWaitingActivity"
+            android:parentActivityName=".JoinLobbyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".JoinLobbyActivity"
+            android:parentActivityName=".LobbyDecisionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateLobbyActivity"
+            android:parentActivityName=".LobbyDecisionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LobbyDecisionActivity"
+            android:parentActivityName=".MainActivity"
+            android:exported="false" />
+        <activity
             android:name=".CommandsActivity"
             android:exported="false" />
         <activity
             android:name=".BoardActivity"
             android:exported="false" />
         <activity
+            android:name=".SuspicionActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChooseActivity"
             android:exported="false" />
         <activity
-            android:name=".SuspicionActivity"
+            android:name=".NotepadActivity"
+            android:screenOrientation="landscape"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,5 +1,6 @@
 package at.moritzmusel.cluedo.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
@@ -7,22 +8,18 @@ public class Player {
     private int positionOnBoard = 1;
     private boolean isAbleToMove = false;
     private final Character playerCharacterName;
-    private final List<Integer> playerOwnedCards;
+    private final ArrayList<Integer> playerOwnedCards = new ArrayList<>();
 
     /**
      * @param playerId
      * Player ID assigned by the Server
      * @param playerCharacterName
      * Choosen by the player
-     * @param playerOwnedCards
-     * Cluedo Cards owned by the players referred through their unique ID
      */
     public Player(int playerId,
-                  Character playerCharacterName,
-                  List<Integer> playerOwnedCards) {
+                  Character playerCharacterName) {
         this.playerId = playerId;
         this.playerCharacterName = playerCharacterName;
-        this.playerOwnedCards = playerOwnedCards;
     }
 
 
@@ -46,6 +43,10 @@ public class Player {
 
     public List<Integer> getPlayerOwnedCards() {
         return playerOwnedCards;
+    }
+
+    public void setPlayerCard(int playerCard) {
+        playerOwnedCards.add(playerCard);
     }
 
     public boolean getIsAbleToMove() {

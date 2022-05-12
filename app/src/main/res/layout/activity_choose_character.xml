@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="158dp"
+        android:layout_marginTop="116dp"
         app:layout_constraintEnd_toStartOf="@+id/btn_mustard"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,10 +35,10 @@
         android:id="@+id/choose_mustard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="158dp"
+        android:layout_marginTop="116dp"
         android:layout_marginEnd="50dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.971"
+        app:layout_constraintHorizontal_bias="0.972"
         app:layout_constraintStart_toEndOf="@+id/choose_green"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/mustard" />
@@ -81,8 +81,8 @@
         android:id="@+id/choose_character"
         android:layout_width="227dp"
         android:layout_height="86dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="82dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="14dp"
         android:fontFamily="sans-serif"
         android:text="@string/choose_the_character_you_want_to_play_with"
         android:textAlignment="center"
@@ -91,10 +91,8 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/choose_green"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_green"
@@ -103,8 +101,8 @@
         android:layout_marginStart="48dp"
         android:layout_marginTop="4dp"
         android:background="@drawable/custom_button"
-        android:textColor="@color/white"
         android:text="Green"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/choose_green" />
 
@@ -115,8 +113,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="48dp"
         android:background="@drawable/custom_button"
-        android:textColor="@color/white"
         android:text="Mustard"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/choose_mustard" />
 
@@ -127,8 +125,8 @@
         android:layout_marginStart="48dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/custom_button"
-        android:textColor="@color/white"
         android:text="plum"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/choose_plum" />
 
@@ -139,8 +137,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="48dp"
         android:background="@drawable/custom_button"
-        android:textColor="@color/white"
         android:text="peacock"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/choose_peacock" />
 
@@ -151,8 +149,8 @@
         android:layout_marginStart="48dp"
         android:layout_marginTop="4dp"
         android:background="@drawable/custom_button"
-        android:textColor="@color/white"
         android:text="scarlett"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/choose_scarlett" />
 
@@ -163,10 +161,11 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="48dp"
         android:background="@drawable/custom_button"
-        android:textColor="@color/white"
         android:text="white"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/choose_white" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
