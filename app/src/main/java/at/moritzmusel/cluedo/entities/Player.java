@@ -49,6 +49,7 @@ public class Player {
     public void setPlayerCard(int playerCard) {
         playerOwnedCards.add(playerCard);
     }
+    public void addCardsKnownThroughQuestions(int card){cardsKnownThroughQuestions.add(card);}
 
     public boolean getIsAbleToMove() {
         return isAbleToMove;

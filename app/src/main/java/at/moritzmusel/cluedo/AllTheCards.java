@@ -30,8 +30,7 @@ public class AllTheCards {
     public Card library = new Card(19, "Library", CardType.ROOM);
     public Card study = new Card(20, "Study", CardType.ROOM);
 
-    public LinkedList<Card> getGameCards(){
-
+    public AllTheCards(){
         //GameFigures
         gamecards.add(missScarlett);
         gamecards.add(profPlum);
@@ -58,7 +57,8 @@ public class AllTheCards {
         gamecards.add(billiard_room);
         gamecards.add(library);
         gamecards.add(study);
-
+    }
+    public LinkedList<Card> getGameCards(){
         return gamecards;
     }
 
