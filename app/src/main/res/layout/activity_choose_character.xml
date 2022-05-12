@@ -67,15 +67,17 @@
         app:srcCompat="@drawable/scarlett" />
 
     <ImageView
-        android:id="@+id/choose_white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/choose_orchid"
+        android:layout_width="120dp"
+        android:layout_height="131dp"
         android:layout_marginEnd="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/choose_scarlett"
         app:layout_constraintTop_toBottomOf="@+id/choose_peacock"
-        app:srcCompat="@drawable/white" />
+        app:layout_constraintVertical_bias="0.494"
+        app:srcCompat="@drawable/orchid" />
 
     <TextView
         android:id="@+id/choose_character"
@@ -155,17 +157,20 @@
         app:layout_constraintTop_toBottomOf="@+id/choose_scarlett" />
 
     <Button
-        android:id="@+id/btn_white"
+        android:id="@+id/btn_orchid"
         android:layout_width="123dp"
         android:layout_height="48dp"
+        android:layout_marginStart="69dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="48dp"
+        android:layout_marginBottom="86dp"
         android:background="@drawable/custom_button"
-        android:text="white"
+        android:text="Orchid"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/choose_white" />
-
+        app:layout_constraintStart_toEndOf="@+id/btn_scarlett"
+        app:layout_constraintTop_toBottomOf="@+id/choose_orchid" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
