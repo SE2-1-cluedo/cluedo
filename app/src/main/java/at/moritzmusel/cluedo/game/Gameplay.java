@@ -10,8 +10,9 @@ import at.moritzmusel.cluedo.entities.Player;
 
 public class Gameplay {
     private static int numDice;
+    private int stepsTaken = 0;
     private Character currentPlayer;
-    private final List<Player> players;
+    private List<Player> players;
     private ArrayList<Integer> clueCards = new ArrayList<>();
     private final Random rand = new Random();
     private int cardDrawn;
@@ -23,6 +24,7 @@ public class Gameplay {
         this.players = players;
     }
 
+    public Gameplay(){}
     /**
      * Called after the Player ends his/her turn
      */
@@ -53,6 +55,15 @@ public class Gameplay {
             //movePlayerUi(player)
             //dont allow dice throw again
         }
+    }
+
+    /**
+     * Is called in move-Methode Board Activity and checks if Player can still move
+     */
+    public void canMove(){
+        stepsTaken++;
+        if(stepsTaken == numDice)
+            findPlayerByCharacterName(currentPlayer).setIsAbleToMove(false);
     }
 
     /**
@@ -269,6 +280,9 @@ public class Gameplay {
         this.clueCards = (ArrayList<Integer>) clueCards;
     }
 
+    public List<Player> getPlayers() {
+        return players;
+    }
     public int getCardDrawn() {
         return cardDrawn;
     }

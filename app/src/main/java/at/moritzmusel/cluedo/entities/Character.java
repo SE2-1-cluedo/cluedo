@@ -1,7 +1,7 @@
 package at.moritzmusel.cluedo.entities;
 
 public enum Character {
-    MISS_SCARLET, COLONEL_MUSTARD, DR_ORCHID, THE_REVEREND_GREEN, MRS_PEACOCK, PROFESSOR_PLUM;
+    MISS_SCARLET, COLONEL_MUSTARD, MADAME_WHITE, REVEREND_GREEN, MRS_PEACOCK, PROFESSOR_PLUM;
 
     /**
      * This method returns the next character in turn. When current character ends turn,
@@ -12,16 +12,16 @@ public enum Character {
     public Character getNextCharacter() {
         switch (this) {
             case COLONEL_MUSTARD:
-                return DR_ORCHID;
+                return MADAME_WHITE;
             case MISS_SCARLET:
                 return COLONEL_MUSTARD;
             case MRS_PEACOCK:
                 return PROFESSOR_PLUM;
-            case DR_ORCHID:
-                return THE_REVEREND_GREEN;
+            case MADAME_WHITE:
+                return REVEREND_GREEN;
             case PROFESSOR_PLUM:
                 return MISS_SCARLET;
-            case THE_REVEREND_GREEN:
+            case REVEREND_GREEN:
                 return MRS_PEACOCK;
             default:
                 return null;

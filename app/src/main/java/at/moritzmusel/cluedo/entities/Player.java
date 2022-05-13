@@ -6,6 +6,7 @@ import java.util.List;
 public class Player {
     private final int playerId;
     private int positionOnBoard = 1;
+    private String positionOnBoardString = "startPoint";
     private boolean isAbleToMove = false;
     private final Character playerCharacterName;
     private final ArrayList<Integer> playerOwnedCards = new ArrayList<>();
@@ -21,6 +22,8 @@ public class Player {
         this.playerId = playerId;
         this.playerCharacterName = playerCharacterName;
     }
+
+
 
 
     //----------------------------------Getter and Setter----------------------------//
@@ -55,5 +58,13 @@ public class Player {
 
     public void setIsAbleToMove(boolean ableToMove) {
         isAbleToMove = ableToMove;
+    }
+
+    public String getPositionOnBoardString() {
+        return positionOnBoardString;
+    }
+
+    public void setPositionOnBoardString(String positionOnBoardString) {
+        this.positionOnBoardString = positionOnBoardString;
     }
 }
