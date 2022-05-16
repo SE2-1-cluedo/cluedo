@@ -38,21 +38,15 @@ public class Gameplay {
      * he moved right or left
      * dice was thrown and
      *
-     * @param direction 1 (move right)     /    0 (move left)
+     * @param position new position of player
      */
-    public void movePlayer(byte direction) {
+
+    //Todo: Fragen wie ich die position übergeben bekomm
+    public void updatePlayerPosition(int position) {
         Player player = findPlayerByCharacterName(currentPlayer);
-        player.setIsAbleToMove(true);
-        if (player.getIsAbleToMove()) {
-            if(numDice == 4){
-                drawClueCard();
-                //wait for answers
-            }
-            int newPosition = calculatePosition(player.getPositionOnBoard(), direction, numDice);
-            player.setPositionOnBoard(newPosition);
-            //movePlayerUi(player)
-            //dont allow dice throw again
-        }
+        //calculate position from room or pos x y dk
+        player.setPositionOnBoard(position);
+        //dont allow dice throw again
     }
 
     /**
@@ -81,6 +75,22 @@ public class Gameplay {
             //move player UI
             //disable dice throw
         }
+    }
+
+    /**
+     * Called when a player left the game without finishing it
+     * and sending the cards of said player to the other active players
+     * @param player player who quit game
+     */
+    //Noch mit frontend und backen über das schicken und verteilen reden
+    public void quitGame(Player player){
+        List<Integer> cards = new ArrayList<Integer>();
+        for (int i = 0; i <players.size();i++){
+            if(players.get(i).equals(player)){
+                cards = players.get(i).getPlayerOwnedCards();
+            }
+        }
+        //send all cards to other players
     }
 
     /**
