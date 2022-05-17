@@ -9,6 +9,7 @@ public class Player {
     private boolean isAbleToMove = false;
     private final Character playerCharacterName;
     private final ArrayList<Integer> playerOwnedCards = new ArrayList<>();
+    private final ArrayList<Integer> cardsKnownThroughQuestions = new ArrayList<>();
 
     /**
      * @param playerId
@@ -48,6 +49,7 @@ public class Player {
     public void setPlayerCard(int playerCard) {
         playerOwnedCards.add(playerCard);
     }
+    public void addCardsKnownThroughQuestions(int card){cardsKnownThroughQuestions.add(card);}
 
     public boolean getIsAbleToMove() {
         return isAbleToMove;
@@ -55,5 +57,9 @@ public class Player {
 
     public void setIsAbleToMove(boolean ableToMove) {
         isAbleToMove = ableToMove;
+    }
+
+    public ArrayList<Integer> getCardsKnownThroughQuestions() {
+        return cardsKnownThroughQuestions;
     }
 }
