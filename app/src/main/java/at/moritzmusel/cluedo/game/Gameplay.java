@@ -117,11 +117,13 @@ public class Gameplay {
                 break;
             }
         }
-        while (counter < players.size() - 1) {
+        while (counter < players.size()) {
             if(i >= players.size()){
                 i = 0;
             }
+
             Player current = checkWhoIsNextPlaying(players.get(i));
+            System.out.println("Player: "+ current.getPlayerCharacterName());
             if (current.getPlayerOwnedCards().contains(weapon.getId())) {
                 player.addCardsKnownThroughQuestions(weapon.getId());
                 cardSend = true;
@@ -135,6 +137,7 @@ public class Gameplay {
                 cardSend = true;
                 break;
             }
+            i++;
             counter++;
         }
         if(!cardSend){
@@ -152,11 +155,10 @@ public class Gameplay {
     private Player checkWhoIsNextPlaying(Player player){
         Character character = player.getPlayerCharacterName().getNextCharacter();
         while(true){
-            for(int i = 0; i < players.size(); i++) {
-                if (players.get(i).getPlayerCharacterName().equals(character)) {
-                    return players.get(i);
-                }
-                character = character.getNextCharacter();
+            character = character.getNextCharacter();
+            Player currentPlayer = findPlayerByCharacterName(character);
+            if (currentPlayer != null) {
+                return currentPlayer;
             }
         }
     }
