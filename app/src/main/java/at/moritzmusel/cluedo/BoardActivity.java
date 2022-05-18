@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -14,6 +16,9 @@ import at.moritzmusel.cluedo.game.Dice;
 
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
     private AllTheCards allcards;
+    private float x1, x2, y1, y2;
+    static final int MIN_SWIPE_DISTANCE = 150;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,5 +98,36 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             alertDialog.show();
         }
 
+    }
+
+    public void startNotepad(){
+        Intent intent = new Intent(this, NotepadActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
+    }
+
+    //EventListener für Swipe-Event
+    @Override
+    public boolean onTouchEvent (MotionEvent touchEvent){
+        switch(touchEvent.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                x1 = touchEvent.getX();
+                y1 = touchEvent.getY();
+                break;
+
+            case MotionEvent.ACTION_UP:
+                x2 = touchEvent.getX();
+                y2 = touchEvent.getY();
+                float swipeRight = x2-x1,
+                        swipeLeft = x1-x2;
+
+                if(swipeRight > MIN_SWIPE_DISTANCE){
+                    startNotepad();
+                } else if(swipeLeft > MIN_SWIPE_DISTANCE){
+                    //showCards();
+                }
+                break;
+        }
+        return false;
     }
 }

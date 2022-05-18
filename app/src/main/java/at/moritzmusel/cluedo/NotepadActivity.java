@@ -2,6 +2,7 @@ package at.moritzmusel.cluedo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -17,6 +18,8 @@ import at.moritzmusel.cluedo.network.pojo.Card;
 public class NotepadActivity extends AppCompatActivity implements View.OnClickListener {
 
     at.moritzmusel.cluedo.Card card;
+    float x1, x2;
+    static final int MIN_SWIPE_DISTANCE = 150;
 
     private CheckBox pl1Scarlett;
     private CheckBox pl1Plum;
@@ -131,6 +134,27 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
         for (int i = 0; i < player.getPlayerOwnedCards().size(); i++) {
             setCheckCard(player.getPlayerOwnedCards().get(i));
         }
+    }
+
+    @Override
+    public boolean onTouchEvent (MotionEvent touchEvent){
+        switch (touchEvent.getAction()) {
+
+            case MotionEvent.ACTION_DOWN:
+                x1 = touchEvent.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = touchEvent.getX();
+
+                float swipeLeft = x1 - x2;
+
+                if (swipeLeft > MIN_SWIPE_DISTANCE) {
+                    finish();
+                    overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
+                }
+                break;
+        }
+        return false;
     }
 
 
