@@ -18,6 +18,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private AllTheCards allcards;
     private float x1, x2, y1, y2;
     static final int MIN_SWIPE_DISTANCE = 150;
+    private ImageView image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         ImageButton cardView = findViewById(R.id.cardView);
         cardView.setOnClickListener(this);
+
+        image = new ImageView(this);
+        image.setImageResource(R.drawable.cardback);
 
 
     }
@@ -88,6 +92,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             alertDialog.setTitle("My Cards");
 
             alertDialog.setMessage("");
+            alertDialog.setView(image);
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                     new DialogInterface.OnClickListener() {
                         @Override
@@ -104,6 +109,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         Intent intent = new Intent(this, NotepadActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
+    }
+    public void startSuspicion(){
+        Intent intent = new Intent(this, SuspicionActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
     //EventListener für Swipe-Event
@@ -124,7 +134,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
-                    //showCards();
+                    startSuspicion();
                 }
                 break;
         }
