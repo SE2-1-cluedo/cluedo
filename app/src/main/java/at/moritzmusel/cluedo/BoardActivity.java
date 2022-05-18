@@ -88,18 +88,25 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.cardView){
-            AlertDialog alertDialog = new AlertDialog.Builder(BoardActivity.this).create();
-            alertDialog.setTitle("My Cards");
+            AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+            builder.setTitle("My Cards");
 
-            alertDialog.setMessage("");
-            alertDialog.setView(image);
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int i) {
-                            dialog.dismiss();
-                        }
-                    });
+            final String[] items = {allcards.getGameCards().get(0).getDesignation(),allcards.getGameCards().get(1).getDesignation(),allcards.getGameCards().get(2).getDesignation()};
+            //Später vielleicht mit den Bildern
+            //Nur Demo brauche Methode um die eigentlichen Karten zu bekommen
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+
+                }
+            });
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create();
+            AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
 
