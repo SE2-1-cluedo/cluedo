@@ -2,6 +2,8 @@ package at.moritzmusel.cluedo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -15,6 +17,7 @@ import org.w3c.dom.Text;
 public class JoinLobbyActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText enter_id;
+    private String enter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +28,7 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
         final Button join = findViewById(R.id.btn_lobby_join);
         join.setOnClickListener(this);
         enter_id = findViewById(R.id.txt_enter_id);
-
+        enter = getEnterId();
     }
 
     @Override
@@ -36,10 +39,28 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
             finish();
         }
         if(view.getId() == R.id.btn_lobby_join){
-            //if(getEnterId().equals(getGameId())){
+            enter = getEnterId();
+            //Checken ob die überhaupt exisitert
+            if(enter.isEmpty()){
+                new AlertDialog.Builder(JoinLobbyActivity.this)
+                        .setTitle("ERROR")
+                        .setMessage("The ENTER ID is false/empty")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).show();
+            }
+            else{
                 Intent i = new Intent(JoinLobbyActivity.this, LobbyWaitingActivity.class);
+                i.putExtra("decision",false);
+                i.putExtra(Intent.EXTRA_TEXT, enter);
+                //false = join
+                //true = create
                 startActivity(i);
-            //}
+            }
         }
     }
 

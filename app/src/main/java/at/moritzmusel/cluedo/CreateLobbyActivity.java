@@ -18,19 +18,26 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private ArrayList<String> playerItems = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     private int playerCounter = 1;
+    private Button send_link;
+    private Button start;
+    private Button back;
+    private boolean decision;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_lobby);
 
-        final Button send_link = findViewById(R.id.btn_send_link);
+        Intent intent = getIntent();
+        decision = intent.getBooleanExtra("decision", false);
+
+        send_link = findViewById(R.id.btn_send_link);
         send_link.setOnClickListener(this);
 
-        final Button start = findViewById(R.id.btn_lobby_start);
+        start = findViewById(R.id.btn_lobby_start);
         start.setOnClickListener(this);
 
-        final Button back = findViewById(R.id.btn_back);
+        back = findViewById(R.id.btn_back);
         back.setOnClickListener(this);
 
         TextView join_id = findViewById(R.id.txt_lobbyid);

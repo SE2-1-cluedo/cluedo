@@ -33,6 +33,7 @@ public class LobbyWaitingActivity extends AppCompatActivity implements View.OnCl
         game_id = findViewById(R.id.txt_lobby_id);
         setGameId();
 
+
         playerlist = findViewById(R.id.playerlist);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, playerItems);
         playerlist.setAdapter(adapter);
@@ -54,6 +55,8 @@ public class LobbyWaitingActivity extends AppCompatActivity implements View.OnCl
     }
     public void setGameId(){
         //Über das Netzwerk die Id für das Spiel bekommen und anzeigen.
-        game_id.setText("12345");
+        Intent intent = getIntent();
+        String id_from_joinlobby = intent.getStringExtra(Intent.EXTRA_TEXT);
+        game_id.setText(id_from_joinlobby);
     }
 }
