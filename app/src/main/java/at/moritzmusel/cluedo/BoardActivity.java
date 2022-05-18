@@ -91,7 +91,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
             builder.setTitle("My Cards");
 
-            final String[] items = {allcards.getGameCards().get(0).getDesignation(),allcards.getGameCards().get(1).getDesignation(),allcards.getGameCards().get(2).getDesignation()};
+            final String[] items = {allcards.getGameCards().get(0).getDesignation(),allcards.getGameCards().get(7).getDesignation(),allcards.getGameCards().get(20).getDesignation()};
             //Später vielleicht mit den Bildern
             //Nur Demo brauche Methode um die eigentlichen Karten zu bekommen
             builder.setItems(items, new DialogInterface.OnClickListener() {
