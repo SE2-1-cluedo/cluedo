@@ -2,7 +2,10 @@ package at.moritzmusel.cluedo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 public class CreateLobbyActivity extends AppCompatActivity implements View.OnClickListener{
 
     private ListView playerlist;
+    private TextView lobby_title;
     private ArrayList<String> playerItems = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     private int playerCounter = 1;
@@ -28,8 +32,11 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_lobby);
 
-        Intent intent = getIntent();
-        decision = intent.getBooleanExtra("decision", false);
+        lobby_title = findViewById(R.id.txt_create_lobby);
+
+        //Intent intent = getIntent();
+        decision = getIntent().getExtras().getBoolean("decision");
+        //checkCreateOrJoin(decision);
 
         send_link = findViewById(R.id.btn_send_link);
         send_link.setOnClickListener(this);
@@ -48,6 +55,15 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, playerItems);
         playerlist.setAdapter(adapter);
+
+        if(!decision){
+           start.setClickable(false);
+           //start.setBackgroundColor(getColor(R.color.gray));
+           start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
+           start.setText(R.string.waiting);
+           send_link.setVisibility(View.INVISIBLE);
+           lobby_title.setText(R.string.lobby);
+        }
     }
 
     @Override
@@ -77,13 +93,34 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     }
 
     public String getGameID() {
-        //Schnittstelle mit dem Netzwerk um die id zu bekommen.
-        String id = "12345";//Nur zum sehen ob es geht
-        return id;
+        if(decision){
+            //Schnittstelle mit dem Netzwerk um die id zu bekommen.
+            String id = "12345";//Nur zum sehen ob es geht
+            return id;
+        }else{
+            Intent intent = getIntent();
+            String id_from_joinlobby = intent.getStringExtra(Intent.EXTRA_TEXT);
+            return id_from_joinlobby;
+            //game_id.setText(id_from_joinlobby);
+        }
+
     }
 
     public void addPlayer(View view) {
         playerItems.add("player "+playerCounter++);
         adapter.notifyDataSetChanged();
+    }
+
+    public void checkCreateOrJoin(boolean decision){
+        new AlertDialog.Builder(CreateLobbyActivity.this)
+                .setTitle("Did it work?")
+                .setMessage("Join = false, Create = true: " + decision)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
     }
 }

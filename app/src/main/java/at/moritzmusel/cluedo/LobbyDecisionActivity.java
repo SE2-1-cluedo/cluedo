@@ -30,7 +30,7 @@ public class LobbyDecisionActivity extends AppCompatActivity implements View.OnC
     public void onClick(View view) {
         if(view.getId() == R.id.btn_create_lobby){
             Intent i = new Intent(LobbyDecisionActivity.this, CreateLobbyActivity.class);
-            i.putExtra("createLobby",1);
+            i.putExtra("decision",true);
             startActivity(i);
         }
         if(view.getId() == R.id.btn_join_lobby){

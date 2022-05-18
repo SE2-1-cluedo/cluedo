@@ -54,7 +54,7 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
                         }).show();
             }
             else{
-                Intent i = new Intent(JoinLobbyActivity.this, LobbyWaitingActivity.class);
+                Intent i = new Intent(JoinLobbyActivity.this, CreateLobbyActivity.class);
                 i.putExtra("decision",false);
                 i.putExtra(Intent.EXTRA_TEXT, enter);
                 //false = join
