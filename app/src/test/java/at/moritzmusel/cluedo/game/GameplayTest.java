@@ -3,6 +3,10 @@ package at.moritzmusel.cluedo.game;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import static java.util.Collections.addAll;
+
+import at.moritzmusel.cluedo.AllTheCards;
+import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 
@@ -38,7 +42,6 @@ public class GameplayTest {
         playersEven = new ArrayList<>(Arrays.asList(Player2,Player3, Player4, Player5));
         gameOdd = new Gameplay(playersOdd);
         gameEven = new Gameplay(playersEven);
-        Gameplay.setNumDice(3);
     }
 
     @Test
@@ -172,20 +175,46 @@ public class GameplayTest {
         Gameplay.setNumDice(4);
         gameOdd.decidePlayerWhoMovesFirst();
         gameOdd.generateClueCards();
-        gameOdd.updatePlayerPosition(3);
-        assertEquals(29,gameOdd.getClueCards().size());
+        gameOdd.updatePlayerPosition(1);
+        gameOdd.drawClueCard();
+        assertEquals(28,gameOdd.getClueCards().size());
     }
 
     @Test
     public void drawLastClueCard(){
         ArrayList<Integer> clueCards = new ArrayList<>();
         clueCards.add(1);
-        Gameplay.setNumDice(4);
         gameOdd.decidePlayerWhoMovesFirst();
         gameOdd.generateClueCards();
         gameOdd.setClueCards(clueCards);
-        gameOdd.updatePlayerPosition(3);
-        assertEquals(1,gameOdd.getClueCards().size());
-        assertEquals(0,gameOdd.getCardDrawn());
+        gameOdd.drawClueCard();
+        gameOdd.updatePlayerPosition(1);
+        assertEquals(0,gameOdd.getClueCards().size());
+        assertEquals(1,gameOdd.getCardDrawn());
+    }
+
+    @Test
+    public void quitGameTest(){
+        gameOdd.generateCluedoCards();
+        gameOdd.quitGame(Player1);
+        assertEquals(6, Player2.getPlayerOwnedCards().size());
+        assertEquals(5, Player3.getPlayerOwnedCards().size());
+        assertEquals(5, Player4.getPlayerOwnedCards().size());
+        assertEquals(5, Player5.getPlayerOwnedCards().size());
+    }
+
+    @Test
+    public void questionTest(){
+        Player1.getPlayerOwnedCards().clear();Player2.getPlayerOwnedCards().clear();Player3.getPlayerOwnedCards().clear();Player4.getPlayerOwnedCards().clear();Player5.getPlayerOwnedCards().clear();
+        Player2.getPlayerOwnedCards().add(1);Player2.getPlayerOwnedCards().add(4);Player2.getPlayerOwnedCards().add(5);Player2.getPlayerOwnedCards().add(9);
+        Player3.getPlayerOwnedCards().add(10);Player3.getPlayerOwnedCards().add(11);Player3.getPlayerOwnedCards().add(3);Player3.getPlayerOwnedCards().add(2);
+        Player4.getPlayerOwnedCards().add(13);Player4.getPlayerOwnedCards().add(20);Player4.getPlayerOwnedCards().add(19);Player4.getPlayerOwnedCards().add(6);
+        Player5.getPlayerOwnedCards().add(7);Player5.getPlayerOwnedCards().add(8);Player5.getPlayerOwnedCards().add(15);Player5.getPlayerOwnedCards().add(14);
+
+        gameOdd.decidePlayerWhoMovesFirst();
+        AllTheCards allCluedoCards = new AllTheCards();
+        gameOdd.askPlayerAQuestion(Player1,allCluedoCards.getGameCards().get(3),allCluedoCards.getGameCards().get(10),allCluedoCards.getGameCards().get(17));
+        int result = Player1.getCardsKnownThroughQuestions().get(0);
+        assertEquals(10,result);
     }
 }
