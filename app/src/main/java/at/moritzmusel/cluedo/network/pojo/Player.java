@@ -2,6 +2,7 @@ package at.moritzmusel.cluedo.network.pojo;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
@@ -14,9 +15,9 @@ public class Player {
     private int character = -1;
     //weapons: 7-12
 
-    public Player(List<Card> cards, List<Card> eliminationCards) {
+    public Player(List<Card> cards) {
         this.cards = cards;
-        this.eliminationCards = eliminationCards;
+        this.eliminationCards = new  ArrayList<>();
     }
 
     public int getcRoom() {

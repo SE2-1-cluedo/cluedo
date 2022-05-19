@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Killer {
-    private boolean validCards = true;
+    private boolean validCards;
     private List<Card> cards;
 
     public Killer(List<Card> cards) throws IllegalArgumentException {
