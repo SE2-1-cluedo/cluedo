@@ -33,6 +33,7 @@
     <string name="Selection_suspicious">Selection suspicious</string>
     <string name="Selection_weapon">Selection weapon</string>
     <string name="choose_the_character_you_want_to_play_with">Choose the character you want to play with</string>
+    <string name="back_to_map">Back to map</string>
 
     <string-array name="person_array">
         <item>Professor Plum</item>
@@ -40,7 +41,7 @@
         <item>Miss Scarlett</item>
         <item>Mrs Peacock</item>
         <item>Colonel Mustard</item>
-        <item>Mrs. White</item>
+        <item>Dr. Orchid</item>
     </string-array>
 
     <string-array name="weapons_array">
@@ -54,6 +55,30 @@
 
 
     <string-array name="rooms_array">
+        <item>Lounge</item>
+        <item>Dining Room</item>
+        <item>Billiard Room</item>
+        <item>Study</item>
+        <item>Hall</item>
+        <item>Library</item>
+        <item>Ballroom</item>
+        <item>Conservatory</item>
+        <item>Kitchen</item>
+    </string-array>
+
+    <string-array name="all">
+        <item>Professor Plum</item>
+        <item>Reverend Green</item>
+        <item>Miss Scarlett</item>
+        <item>Mrs Peacock</item>
+        <item>Colonel Mustard</item>
+        <item>Dr. Orchid</item>
+        <item>Dagger</item>
+        <item>Pistole</item>
+        <item>Rope</item>
+        <item>Pipe</item>
+        <item>Candlestick</item>
+        <item>Wrench</item>
         <item>Lounge</item>
         <item>Dining Room</item>
         <item>Billiard Room</item>
