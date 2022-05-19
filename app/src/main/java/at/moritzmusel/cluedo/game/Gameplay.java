@@ -1,11 +1,14 @@
 package at.moritzmusel.cluedo.game;
 
-import java.security.SecureRandom;
+
+import static java.sql.DriverManager.println;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 
@@ -41,21 +44,15 @@ public class Gameplay {
      * he moved right or left
      * dice was thrown and
      *
-     * @param direction 1 (move right)     /    0 (move left)
+     * @param position new position of player
      */
-    public void movePlayer(byte direction) {
+
+    //Todo: Fragen wie ich die position übergeben bekomm
+    public void updatePlayerPosition(int position) {
         Player player = findPlayerByCharacterName(currentPlayer);
-        player.setIsAbleToMove(true);
-        if (player.getIsAbleToMove()) {
-            if(numDice == 4){
-                drawClueCard();
-                //wait for answers
-            }
-            int newPosition = calculatePosition(player.getPositionOnBoard(), direction, numDice);
-            player.setPositionOnBoard(newPosition);
-            //movePlayerUi(player)
-            //dont allow dice throw again
-        }
+        //calculate position from room or pos x y dk
+        player.setPositionOnBoard(position);
+        //dont allow dice throw again
     }
 
     /**
@@ -95,6 +92,88 @@ public class Gameplay {
         }
     }
 
+    /**
+     * Called when a player left the game without finishing it
+     * and sending the cards of said player to the other active players
+     * @param player player who quit game
+     */
+    //Noch mit frontend und backend über das schicken und verteilen reden
+    public void quitGame(Player player){
+        List<Integer> cards = new ArrayList<>();
+        for (int i = 0; i <players.size();i++){
+            if(players.get(i).equals(player)){
+                cards = players.get(i).getPlayerOwnedCards();
+            }
+        }
+        players.remove(player);
+        distributeCardsEquallyToPlayers(cards);
+        //send all cards to other players
+    }
+
+    /**
+     * Method to check if one of the players in the correct order has a card
+     * which is equal to one of the cards send. If yes the person who asked the question
+     * get the card added to their inventory. And update to the other players
+     * @param player Player how asked the question
+     * @param weapon the used weapon
+     * @param person the person who did it
+     * @param room the room
+     */
+    public void askPlayerAQuestion(Player player, Card person,Card weapon, Card room){
+        boolean cardSend = false;
+        int counter = 0;
+        int i = 0;
+
+        for(; i < players.size();i++){
+            if(players.get(i).equals(player)){
+                break;
+            }
+        }
+        while (counter < players.size()) {
+            if(i >= players.size()){
+                i = 0;
+            }
+
+            Player current = checkWhoIsNextPlaying(players.get(i));
+            System.out.println("Player: "+ current.getPlayerCharacterName());
+            if (current.getPlayerOwnedCards().contains(weapon.getId())) {
+                player.addCardsKnownThroughQuestions(weapon.getId());
+                cardSend = true;
+                break;
+            } else if (current.getPlayerOwnedCards().contains(person.getId())) {
+                player.addCardsKnownThroughQuestions(person.getId());
+                cardSend = true;
+                break;
+            } else if (current.getPlayerOwnedCards().contains(room.getId())) {
+                player.addCardsKnownThroughQuestions(room.getId());
+                cardSend = true;
+                break;
+            }
+            i++;
+            counter++;
+        }
+        if(!cardSend){
+            //Todo: sende nichts und hinweis an players
+            System.out.println("Nichts gefunden");
+        }
+        //send updated cards to other players and which player showed the card to whom
+    }
+
+    /**
+     * A method to check which player plays next
+     * @param player which player
+     * @return player whos turn is next
+     */
+    private Player checkWhoIsNextPlaying(Player player){
+        Character character = player.getPlayerCharacterName().getNextCharacter();
+        while(true){
+            character = character.getNextCharacter();
+            Player currentPlayer = findPlayerByCharacterName(character);
+            if (currentPlayer != null) {
+                return currentPlayer;
+            }
+        }
+    }
     /**
      * Checks if the current Player is allowed to use the Secret Passage
      * @return true if allowed / false if isnt allowed
@@ -160,7 +239,7 @@ public class Gameplay {
      * Draw a Random Card from the Clue Cards staple
      * and delete it from the staple
      */
-    private void drawClueCard(){
+    public void drawClueCard(){
         cardDrawn = getRandomIntInRange(21,50);
         if(clueCards.size() == 1){
             cardDrawn = clueCards.get(0);
@@ -259,6 +338,19 @@ public class Gameplay {
     private int getRandomIntInRange(int min,int max) {
         int range = max - min + 1;
         return min + rand.nextInt(range);
+    }
+
+    private void distributeCardsEquallyToPlayers(List<Integer> cards){
+        int i = 0;
+        int j = 0;
+        while(i < cards.size()){
+            if(j >= players.size()){
+                j = 0;
+            }
+            players.get(j).getPlayerOwnedCards().add(cards.get(i));
+            i++;
+            j++;
+        }
     }
 
     public static void setNumDice(int numDice) {

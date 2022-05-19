@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        placeholderMethod_updateUI(currentUser);
+        //FirebaseUser currentUser = mAuth.getCurrentUser();
+        //placeholderMethod_updateUI(currentUser);
     }
     //Methode um Nutzer anonym anzumelden falls nicht angemeldet
     private void signInAnonymously() {

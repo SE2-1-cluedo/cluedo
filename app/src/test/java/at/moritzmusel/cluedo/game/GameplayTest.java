@@ -3,6 +3,10 @@ package at.moritzmusel.cluedo.game;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import static java.util.Collections.addAll;
+
+import at.moritzmusel.cluedo.AllTheCards;
+import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 
@@ -38,7 +42,6 @@ public class GameplayTest {
         playersEven = new ArrayList<>(Arrays.asList(Player2,Player3, Player4, Player5));
         gameOdd = new Gameplay(playersOdd);
         gameEven = new Gameplay(playersEven);
-        Gameplay.setNumDice(3);
     }
 
     @Test
@@ -60,46 +63,6 @@ public class GameplayTest {
         gameOdd.decidePlayerWhoMovesFirst();
         endTurn();
         Assert.assertFalse(Player1.getIsAbleToMove());
-    }
-
-    @Test
-    public void movePlayerOverTheStartRight() {
-        gameOdd.decidePlayerWhoMovesFirst();
-        gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).setPositionOnBoard(9);
-        gameOdd.movePlayer((byte) 1);
-        assertEquals(3, gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard());
-    }
-
-    @Test
-    public void movePlayerOverTheStartLeft() {
-        gameOdd.decidePlayerWhoMovesFirst();
-        gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).setPositionOnBoard(2);
-        gameOdd.movePlayer((byte) 0);
-        assertEquals(8, gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard());
-    }
-
-    @Test
-    public void move2PlayersRightWithSameDiceResult() {
-        int player1Pos, player2Pos;
-        gameOdd.decidePlayerWhoMovesFirst();
-        gameOdd.movePlayer((byte) 1);
-        player1Pos = gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard();
-        gameOdd.endTurn();
-        gameOdd.movePlayer((byte) 1);
-        player2Pos = gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard();
-        assertEquals(player1Pos, player2Pos);
-    }
-
-    @Test
-    public void move2PlayersLeftWithSameDiceResult() {
-        int player1Pos, player2Pos;
-        gameOdd.decidePlayerWhoMovesFirst();
-        gameOdd.movePlayer((byte) 0);
-        player1Pos = gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard();
-        gameOdd.endTurn();
-        gameOdd.movePlayer((byte) 0);
-        player2Pos = gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard();
-        assertEquals(player1Pos, player2Pos);
     }
 
 
@@ -212,7 +175,8 @@ public class GameplayTest {
         Gameplay.setNumDice(4);
         gameOdd.decidePlayerWhoMovesFirst();
         gameOdd.generateClueCards();
-        gameOdd.movePlayer((byte)1);
+        gameOdd.updatePlayerPosition(1);
+        gameOdd.drawClueCard();
         assertEquals(28,gameOdd.getClueCards().size());
     }
 
@@ -220,12 +184,37 @@ public class GameplayTest {
     public void drawLastClueCard(){
         ArrayList<Integer> clueCards = new ArrayList<>();
         clueCards.add(1);
-        Gameplay.setNumDice(4);
         gameOdd.decidePlayerWhoMovesFirst();
         gameOdd.generateClueCards();
         gameOdd.setClueCards(clueCards);
-        gameOdd.movePlayer((byte)1);
+        gameOdd.drawClueCard();
+        gameOdd.updatePlayerPosition(1);
         assertEquals(0,gameOdd.getClueCards().size());
         assertEquals(1,gameOdd.getCardDrawn());
+    }
+
+    @Test
+    public void quitGameTest(){
+        gameOdd.generateCluedoCards();
+        gameOdd.quitGame(Player1);
+        assertEquals(6, Player2.getPlayerOwnedCards().size());
+        assertEquals(5, Player3.getPlayerOwnedCards().size());
+        assertEquals(5, Player4.getPlayerOwnedCards().size());
+        assertEquals(5, Player5.getPlayerOwnedCards().size());
+    }
+
+    @Test
+    public void questionTest(){
+        Player1.getPlayerOwnedCards().clear();Player2.getPlayerOwnedCards().clear();Player3.getPlayerOwnedCards().clear();Player4.getPlayerOwnedCards().clear();Player5.getPlayerOwnedCards().clear();
+        Player2.getPlayerOwnedCards().add(1);Player2.getPlayerOwnedCards().add(4);Player2.getPlayerOwnedCards().add(5);Player2.getPlayerOwnedCards().add(9);
+        Player3.getPlayerOwnedCards().add(10);Player3.getPlayerOwnedCards().add(11);Player3.getPlayerOwnedCards().add(3);Player3.getPlayerOwnedCards().add(2);
+        Player4.getPlayerOwnedCards().add(13);Player4.getPlayerOwnedCards().add(20);Player4.getPlayerOwnedCards().add(19);Player4.getPlayerOwnedCards().add(6);
+        Player5.getPlayerOwnedCards().add(7);Player5.getPlayerOwnedCards().add(8);Player5.getPlayerOwnedCards().add(15);Player5.getPlayerOwnedCards().add(14);
+
+        gameOdd.decidePlayerWhoMovesFirst();
+        AllTheCards allCluedoCards = new AllTheCards();
+        gameOdd.askPlayerAQuestion(Player1,allCluedoCards.getGameCards().get(3),allCluedoCards.getGameCards().get(10),allCluedoCards.getGameCards().get(17));
+        int result = Player1.getCardsKnownThroughQuestions().get(0);
+        assertEquals(10,result);
     }
 }

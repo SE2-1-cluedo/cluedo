@@ -40,6 +40,10 @@
             android:name=".ChooseActivity"
             android:exported="false" />
         <activity
+            android:name=".NotepadActivity"
+            android:screenOrientation="landscape"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
