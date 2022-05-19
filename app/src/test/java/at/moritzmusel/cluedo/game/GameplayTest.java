@@ -29,11 +29,11 @@ public class GameplayTest {
 
     @Before
     public void setUp() {
-        Player1 = new Player(1, MISS_SCARLET);
+        Player1 = new Player(1, MISS_SCARLETT);
         Player2 = new Player(2, REVEREND_GREEN);
         Player3 = new Player(3, PROFESSOR_PLUM);
         Player4 = new Player(4, MRS_PEACOCK);
-        Player5 = new Player(5, MADAME_WHITE);
+        Player5 = new Player(5, DR_ORCHID);
         playersOdd = new ArrayList<>(Arrays.asList(Player1, Player2, Player3, Player4, Player5));
         playersEven = new ArrayList<>(Arrays.asList(Player2,Player3, Player4, Player5));
         gameOdd = new Gameplay(playersOdd);
@@ -45,14 +45,14 @@ public class GameplayTest {
     public void endTurn() {
         gameOdd.decidePlayerWhoMovesFirst();
         Character currentPlayer = gameOdd.endTurn();
-        assertEquals(MADAME_WHITE, currentPlayer);
+        assertEquals(DR_ORCHID, currentPlayer);
     }
 
     @Test
     public void endTurnOfLastPlayer() {
         gameOdd.setCurrentPlayer(PROFESSOR_PLUM);
         Character currentPlayer = gameOdd.endTurn();
-        assertEquals(MISS_SCARLET, currentPlayer);
+        assertEquals(MISS_SCARLETT, currentPlayer);
     }
 
     @Test
@@ -112,14 +112,14 @@ public class GameplayTest {
     @Test
     public void decidePlayerWhoMovesFirst() {
         gameOdd.decidePlayerWhoMovesFirst();
-        assertEquals(MISS_SCARLET, gameOdd.getCurrentPlayer());
+        assertEquals(MISS_SCARLETT, gameOdd.getCurrentPlayer());
     }
 
     @Test
     public void decidePlayerWhoMovesWhenScarlettIsNotPlayed() {
         gameEven = new Gameplay(playersEven);
         gameEven.decidePlayerWhoMovesFirst();
-        assertEquals(MADAME_WHITE, gameEven.getCurrentPlayer());
+        assertEquals(DR_ORCHID, gameEven.getCurrentPlayer());
     }
 
     @Test

@@ -2,8 +2,8 @@ package at.moritzmusel.cluedo.game;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static at.moritzmusel.cluedo.entities.Character.MADAME_WHITE;
-import static at.moritzmusel.cluedo.entities.Character.MISS_SCARLET;
+import static at.moritzmusel.cluedo.entities.Character.DR_ORCHID;
+import static at.moritzmusel.cluedo.entities.Character.MISS_SCARLETT;
 import static at.moritzmusel.cluedo.entities.Character.MRS_PEACOCK;
 import static at.moritzmusel.cluedo.entities.Character.PROFESSOR_PLUM;
 import static at.moritzmusel.cluedo.entities.Character.REVEREND_GREEN;
@@ -51,11 +51,11 @@ public class GameplayParameterizedTests {
 
     @Before
     public void setUp() {
-        Player1 = new Player(1, MISS_SCARLET);
+        Player1 = new Player(1, MISS_SCARLETT);
         Player2 = new Player(2, REVEREND_GREEN);
         Player3 = new Player(3, PROFESSOR_PLUM);
         Player4 = new Player(4, MRS_PEACOCK);
-        Player5 = new Player(5, MADAME_WHITE);
+        Player5 = new Player(5, DR_ORCHID);
         playersEven = new ArrayList<>(Arrays.asList(Player1, Player2, Player3, Player4, Player5));
         playersOdd = new ArrayList<>(Arrays.asList(Player2,Player3, Player4, Player5));
         game = new Gameplay(playersEven);

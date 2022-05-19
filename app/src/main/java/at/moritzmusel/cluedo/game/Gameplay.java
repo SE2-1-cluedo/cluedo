@@ -1,5 +1,6 @@
 package at.moritzmusel.cluedo.game;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +15,7 @@ public class Gameplay {
     private Character currentPlayer;
     private List<Player> players;
     private ArrayList<Integer> clueCards = new ArrayList<>();
-    private final Random rand = new Random();
+    private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
 
     /**
@@ -117,7 +118,7 @@ public class Gameplay {
      * Decides which Player/Character is able to move first
      */
     public void decidePlayerWhoMovesFirst() {
-        currentPlayer = Character.MISS_SCARLET;
+        currentPlayer = Character.MISS_SCARLETT;
         while (true) {
             Player firstPlayer = findPlayerByCharacterName(currentPlayer);
             if (firstPlayer == null) {
