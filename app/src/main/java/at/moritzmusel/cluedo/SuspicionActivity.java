@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -67,6 +68,7 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
         //Textfeld aktueller Raum
         currentRoom = findViewById(R.id.currentRoom);
+       // getSelectedRoom();
 
         //Button Bestätigung des Verdachts / Anklage
         accusation = findViewById(R.id.submit_Accusation);
@@ -74,7 +76,8 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
             //TODO Button accusation Funktionalität
             @Override
             public void onClick(View view) {
-
+                Intent i = new Intent(SuspicionActivity.this, BoardActivity.class);
+                startActivity(i);
             }
         }));
         suspicion = findViewById(R.id.submit_Suspicion);
@@ -82,7 +85,8 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
             //TODO Button suspicion Funktionaität
             @Override
             public void onClick(View view) {
-
+                Intent i = new Intent(SuspicionActivity.this, BoardActivity.class);
+                startActivity(i);
             }
         });
 
@@ -95,32 +99,35 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
     private void getSelectedRoom() {
         //TODO getCurrentRoom Funktionalität - mit Player/Network verknüpft?
         switch (player.getPositionOnBoard()) {
-            case 12:
+            case 13:
                 currentRoom.setText("Hall");
                 break;
-            case 13:
+            case 14:
                 currentRoom.setText("Lounge");
                 break;
-            case 14:
+            case 15:
                 currentRoom.setText("Dining Room");
                 break;
-            case 15:
+            case 16:
                 currentRoom.setText("Kitchen");
                 break;
-            case 16:
+            case 17:
                 currentRoom.setText("Ballroom");
                 break;
-            case 17:
+            case 18:
                 currentRoom.setText("Conservatory");
                 break;
-            case 18:
+            case 19:
                 currentRoom.setText("Billiard Room");
                 break;
-            case 19:
+            case 20:
                 currentRoom.setText("Library");
                 break;
-            case 20:
+            case 21:
                 currentRoom.setText("Study");
+            default:
+                currentRoom.setText(" ");
+
         }
     }
 
@@ -141,6 +148,9 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
                     weaponSelect.setText(selectedWeapon);
                 } else if (selectedWeapon.equals(possibleWeapons[5])) {
                     weaponSelect.setText(selectedWeapon);
+                } else {
+                    String nothing = "You have to choose a weapon";
+                    Toast.makeText(this, nothing, Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -160,8 +170,10 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
                     personSelect.setText(selectedPerson);
                 } else if (selectedPerson.equals(possiblePersons[5])) {
                     personSelect.setText(selectedPerson);
+                } else {
+                    String nothing = "You have to choose a person";
+                    Toast.makeText(this, nothing, Toast.LENGTH_SHORT).show();
                 }
-
 
             }
         }
@@ -171,12 +183,6 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        Context context = getApplicationContext();
-        CharSequence text = "You have to choose a weapon and a person!";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
     }
 
 
