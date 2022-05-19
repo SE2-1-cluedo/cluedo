@@ -6,6 +6,7 @@ import static at.moritzmusel.cluedo.R.id.spinner_weapon;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import at.moritzmusel.cluedo.entities.Player;
 
@@ -169,6 +171,12 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
+        Context context = getApplicationContext();
+        CharSequence text = "You have to choose a weapon and a person!";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 
 

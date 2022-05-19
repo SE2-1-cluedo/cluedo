@@ -15,7 +15,7 @@
         You can roll a dice to move to rooms. In the menu you can find a notepad to help you identify the culprit.
         Also you can see your own cards, position and the map on the standard screen.
     </string>
-    <string name="choose_the_character_you_want_to_play_with">Choose the character you want to play with</string>
+
 
     <!-- Für die Lobby -->
     <string name="create_lobby">Create Lobby</string>
