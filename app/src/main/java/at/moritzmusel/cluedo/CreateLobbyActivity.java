@@ -55,8 +55,11 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, playerItems);
         playerlist.setAdapter(adapter);
+        //addPlayer(playerlist);
 
-        if(!decision){
+        if(decision) {
+
+        }else{
            start.setClickable(false);
            //start.setBackgroundColor(getColor(R.color.gray));
            start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
@@ -77,7 +80,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             Intent shareIntent = Intent.createChooser(sendIntent, null);
             startActivity(shareIntent);
 
-            addPlayer(view);
+            //addPlayer(view);
 
         }
         if(view.getId() == R.id.btn_lobby_start){
@@ -107,8 +110,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     }
 
     public void addPlayer(View view) {
-        playerItems.add("player "+playerCounter++);
+        playerItems.add("Player "+playerCounter++);
         adapter.notifyDataSetChanged();
+
     }
 
     public void checkCreateOrJoin(boolean decision){
