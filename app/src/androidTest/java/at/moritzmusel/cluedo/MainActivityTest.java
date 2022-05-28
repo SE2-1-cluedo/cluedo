@@ -36,7 +36,7 @@ public class MainActivityTest {
             new ActivityScenarioRule<>(MainActivity.class);
 
     @Test
-    public void mainActivityTest2() {
+    public void mainActivityTest() {
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.btn_startgame), withText("Start Game"),
                         childAtPosition(
