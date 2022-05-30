@@ -6,7 +6,6 @@ import java.util.List;
 public class Player {
     private final int playerId;
     private int positionOnBoard = 1;
-    private String positionOnBoardString = "startPoint";
     private boolean isAbleToMove = false;
     private final Character playerCharacterName;
     private final ArrayList<Integer> playerOwnedCards = new ArrayList<>();
@@ -18,8 +17,7 @@ public class Player {
      * @param playerCharacterName
      * Choosen by the player
      */
-    public Player(int playerId,
-                  Character playerCharacterName) {
+    public Player(int playerId, Character playerCharacterName) {
         this.playerId = playerId;
         this.playerCharacterName = playerCharacterName;
     }
