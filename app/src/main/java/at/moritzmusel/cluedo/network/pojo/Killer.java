@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Killer {
     private List<Card> cards;
-    Killer(List<Card> cards){
+    public Killer(List<Card> cards){
         this.cards = cards;
     }
 

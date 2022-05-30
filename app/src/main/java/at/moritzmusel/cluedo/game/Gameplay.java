@@ -3,6 +3,7 @@ package at.moritzmusel.cluedo.game;
 
 import static java.sql.DriverManager.println;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.Random;
 import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.network.Network;
+import at.moritzmusel.cluedo.network.pojo.Killer;
 
 public class Gameplay {
     private static int numDice;
@@ -20,6 +23,7 @@ public class Gameplay {
     private ArrayList<Integer> clueCards = new ArrayList<>();
     private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
+    private Killer killer;
 
     /**
      * @param players all the Players in the Session
@@ -270,8 +274,16 @@ public class Gameplay {
      */
     void generateCluedoCards(){
         ArrayList<Integer> playerCards = generateRandomCards(0,20);
-        //playerCard.contains(getKillerCardFromNetwork)
-        //delete those cards
+        int counter = 0;
+        for(int i = 0; i < playerCards.size(); i++){
+            if(killer.getCards().get(0).getCardID() == playerCards.get(i)
+                    || killer.getCards().get(1).getCardID() == playerCards.get(i)
+                    || killer.getCards().get(2).getCardID() == playerCards.get(i)
+                    || counter >= 3){
+                playerCards.remove(i);
+                counter++;
+            }
+        }
         int j = 0;
         for(int i = 0; i < playerCards.size();i++){
             if(players.size() == j){
@@ -301,6 +313,10 @@ public class Gameplay {
         return cards;
     }
 
+    private at.moritzmusel.cluedo.network.pojo.Card generateRandomKillerCard(int min,int max){
+        return new at.moritzmusel.cluedo.network.pojo.Card(rand.nextInt(max-min + 1));
+    }
+
     /**
      * @param character Find the Character belonging to a player if not return null
      * @return Player who playing as the character
@@ -317,6 +333,54 @@ public class Gameplay {
             }
             countCharacters++;
         }
+    }
+
+
+    //characters: 1-6
+    //weapons: 7-12
+    //rooms: 13-21
+
+    /**
+     * Create New Game with connection to Database
+     */
+    public void createNewGame(){
+        List<at.moritzmusel.cluedo.network.pojo.Card> killerCards = new ArrayList<>();
+        killerCards.add(generateRandomKillerCard(1,6));
+        killerCards.add(generateRandomKillerCard(7,12));
+        killerCards.add(generateRandomKillerCard(13,21));
+        killer = new Killer(killerCards);
+        distributeCluedoCards();
+        generatePlayers();
+        //Network.startGame(Network.getCurrentGameID(),generatePlayers() ,killer);
+    }
+
+    /**
+     * Method to generate a List of players who are playing
+     * @return List of players
+     */
+    private List<at.moritzmusel.cluedo.network.pojo.Player> generatePlayers(){
+        List<at.moritzmusel.cluedo.network.pojo.Player> playerArray = new ArrayList<>();
+        for(int i = 0; i < players.size();i++){
+            at.moritzmusel.cluedo.network.pojo.Player player =
+                    new at.moritzmusel.cluedo.network.pojo.Player(convertIntegerToCards(players.get(i).getPlayerOwnedCards()));
+            playerArray.add(player);
+        }
+        return playerArray;
+    }
+
+
+    /**
+     * Convert a Integer List to a List of the Type Card
+     * @param integers integers to convert
+     * @return card List
+     */
+    private List<at.moritzmusel.cluedo.network.pojo.Card> convertIntegerToCards(List<Integer> integers){
+        List<at.moritzmusel.cluedo.network.pojo.Card> cards = new ArrayList<>();
+        for(int i = 0; i < integers.size(); i++){
+            at.moritzmusel.cluedo.network.pojo.Card card = new at.moritzmusel.cluedo.network.pojo.Card(integers.get(i));
+            cards.add(card);
+        }
+        return cards;
     }
 
     /**
