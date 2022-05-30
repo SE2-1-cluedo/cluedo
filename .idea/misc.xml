@@ -7,6 +7,7 @@
         <entry key="..\:/UNI/Cluedo SE2/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1395" />
         <entry key="..\:/UNI/Cluedo SE2/app/src/main/res/layout/activity_board.xml" value="0.2" />
         <entry key="..\:/UNI/Cluedo SE2/app/src/main/res/layout/activity_main.xml" value="0.17831813576494426" />
+        <entry key="..\:/UNI/cluedo/app/src/main/res/layout/test_board2.xml" value="0.30978260869565216" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/drawable/custom_button.xml" value="0.2605" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_board.xml" value="0.29030797101449274" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_board2.xml" value="0.35572916666666665" />
@@ -28,13 +29,10 @@
         <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_board.xml" value="0.14450619923044036" />
         <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_choose_character.xml" value="0.2975630611372381" />
         <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_lobby_decision.xml" value="0.15220179563916203" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_notepad.xml" value="0.20572354211663066" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_notepad_update.xml" value="0.33" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/list_headeroverall.xml" value="0.15220179563916203" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/list_headrow.xml" value="0.22" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/list_row.xml" value="0.33" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/list_rowheader2.xml" value="0.25" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/row_layout.xml" value="0.1628901239846088" />
+        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_notepad.xml" value="0.22" />
+        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_notepad_update.xml" value="0.25" />
+        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/list_row.xml" value="0.25" />
+        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/list_rowCHeckbox.xml" value="0.15220179563916203" />
         <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/test_board2.xml" value="0.14450619923044036" />
         <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/drawable/custom_button.xml" value="0.1" />
         <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/layout/activity_board.xml" value="0.31068840579710144" />

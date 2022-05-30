@@ -1,13 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/row_padding">
 
+    <CheckBox
+        android:id="@+id/checkbox2"
+        android:layout_width="57dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="257dp"
+        android:buttonTint="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true"
+        tools:ignore="DuplicateSpeakableTextCheck,DuplicateSpeakableTextCheck" />
+
+    <CheckBox
+        android:id="@+id/checkbox3"
+        android:layout_width="57dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="355dp"
+        android:buttonTint="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <CheckBox
+        android:id="@+id/checkbox1"
+        android:layout_width="57dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="166dp"
+        android:accessibilityTraversalBefore="@id/checkbox2"
+        android:buttonTint="@color/colorAccent"
+        android:clickable="true"
+        android:duplicateParentState="false"
+        android:focusable="true" />
+
+    <CheckBox
+        android:id="@+id/checkbox5"
+        android:layout_width="57dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="554dp"
+        android:buttonTint="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <CheckBox
+        android:id="@+id/checkbox6"
+        android:layout_width="57dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="671dp"
+        android:buttonTint="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true" />
+
     <TextView
         android:id="@+id/textNotepad"
-        android:layout_width="249dp"
-        android:layout_height="43dp"
+        android:layout_width="155dp"
+        android:layout_height="39dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="13dp"
@@ -17,22 +76,15 @@
         android:textStyle="bold" />
 
     <CheckBox
-        android:id="@+id/rowCheckbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/checkbox4"
+        android:layout_width="57dp"
+        android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginStart="275dp" />
-
-    <EditText
-        android:id="@+id/rowInput"
-        android:layout_width="427dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="0dp"
-        android:ems="10"
-        android:inputType="textPersonName" />
+        android:layout_marginStart="455dp"
+        android:buttonTint="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true" />
 
 
 </RelativeLayout>

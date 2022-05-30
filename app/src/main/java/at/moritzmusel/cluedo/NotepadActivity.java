@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 
 
@@ -18,6 +19,8 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
 
     private List<String> list;
     private Button btn_closeNotepad;
+    Card card;
+    CheckboxAdapter checkAdapter;
 
 
     @Override
@@ -27,15 +30,16 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
 
         String[] stringArray = getResources().getStringArray(R.array.all);
         list = new ArrayList<>(Arrays.asList(stringArray));
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.list_row, R.id.textNotepad, list);
-        ListView listView = (ListView) findViewById(R.id.listviewNotepad);
-        listView.setAdapter(arrayAdapter);
-
+        ListView listView = findViewById(R.id.listviewNotepad);
+        checkAdapter = new CheckboxAdapter(this, list);
+        listView.setAdapter(checkAdapter);
 
         btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
         btn_closeNotepad.setOnClickListener(this);
 
+
     }
+
 
     @Override
     public void onClick(View view) {
