@@ -7,6 +7,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -148,6 +150,45 @@ public class LobbyActivityTest {
         appCompatEditText.perform(replaceText("12345"), closeSoftKeyboard());
 
         pressBack();
+    }
+
+    @Test
+    public void lobbyJoinTextTest() {
+        onView(withId(R.id.btn_startgame)).perform(click());
+        onView(withId(R.id.btn_join_lobby)).perform(click());
+        onView(withId(R.id.txt_enter_id)).perform(replaceText("12345"));
+        onView(withId(R.id.txt_enter_id)).check(matches(withText("12345")));
+        onView(withId(R.id.btn_lobby_join)).perform(click());
+        onView(withId(R.id.txt_lobbyid)).check(matches(withText("12345")));
+    }
+
+    @Test
+    public void lobbySendLinkTest() {
+        onView(withId(R.id.btn_startgame)).perform(click());
+        onView(withId(R.id.btn_create_lobby)).perform(click());
+        onView(withId(R.id.btn_send_link)).perform(click());
+        ViewActions.pressBack();
+        onView(
+                allOf(withId(android.R.id.text1), withText("player 1"),
+                        withParent(allOf(withId(R.id.playerlist),
+                                withParent(IsInstanceOf.<View>instanceOf(android.view.ViewGroup.class)))),
+                        isDisplayed())).check(matches(withText("player 1")));
+
+    }
+    @Test
+    public void lobbyCreateTitleTest(){
+        onView(withId(R.id.btn_startgame)).perform(click());
+        onView(withId(R.id.btn_create_lobby)).perform(click());
+        onView(withId(R.id.txt_create_lobby)).check(matches(withText("Create Lobby")));
+    }
+
+    @Test
+    public void lobbyJoinTitleTest(){
+        onView(withId(R.id.btn_startgame)).perform(click());
+        onView(withId(R.id.btn_join_lobby)).perform(click());
+        onView(withId(R.id.txt_enter_id)).perform(replaceText("12345"));
+        onView(withId(R.id.btn_lobby_join)).perform(click());
+        onView(withId(R.id.txt_create_lobby)).check(matches(withText("Lobby")));
     }
 
     /*
