@@ -1,18 +1,14 @@
 package at.moritzmusel.cluedo.game;
 
 
-import static java.sql.DriverManager.println;
-
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
-import at.moritzmusel.cluedo.network.Network;
 import at.moritzmusel.cluedo.network.pojo.Killer;
 
 public class Gameplay {
@@ -244,7 +240,7 @@ public class Gameplay {
      * and delete it from the staple
      */
     public void drawClueCard(){
-        cardDrawn = getRandomIntInRange(21,50);
+        cardDrawn = getRandomIntInRange(22,51);
         if(clueCards.size() == 1){
             cardDrawn = clueCards.get(0);
             //no Cards left
@@ -266,24 +262,26 @@ public class Gameplay {
 
     public void generateClueCards(){
         //if host send to other players
-        clueCards = generateRandomCards(21,49);
+        clueCards = generateRandomCards(22,51);
     }
 
     /**
      * randomized the Cluedo Cards and safes them in the players card list
      */
     void generateCluedoCards(){
-        ArrayList<Integer> playerCards = generateRandomCards(0,20);
-        int counter = 0;
-        for(int i = 0; i < playerCards.size(); i++){
-            if(killer.getCards().get(0).getCardID() == playerCards.get(i)
-                    || killer.getCards().get(1).getCardID() == playerCards.get(i)
-                    || killer.getCards().get(2).getCardID() == playerCards.get(i)
-                    || counter >= 3){
-                playerCards.remove(i);
-                counter++;
+        ArrayList<Integer> cards = generateRandomCards(1,21);
+        List<Integer> playerCards = new ArrayList<>();
+        List<Integer> killerCards = new ArrayList<>();
+        killerCards.add(killer.getCards().get(0).getCardID());
+        killerCards.add(killer.getCards().get(1).getCardID());
+        killerCards.add(killer.getCards().get(2).getCardID());
+
+        for(int i = 0; i < cards.size(); i++){
+            if(!killerCards.contains(cards.get(i))){
+                playerCards.add(cards.get(i));
             }
         }
+
         int j = 0;
         for(int i = 0; i < playerCards.size();i++){
             if(players.size() == j){
@@ -313,8 +311,8 @@ public class Gameplay {
         return cards;
     }
 
-    private at.moritzmusel.cluedo.network.pojo.Card generateRandomKillerCard(int min,int max){
-        return new at.moritzmusel.cluedo.network.pojo.Card(rand.nextInt(max-min + 1));
+    public at.moritzmusel.cluedo.network.pojo.Card generateRandomKillerCard(int min,int max){
+        return new at.moritzmusel.cluedo.network.pojo.Card(rand.nextInt(max + 1 - min) + min);
     }
 
     /**
@@ -442,5 +440,10 @@ public class Gameplay {
     }
     public int getCardDrawn() {
         return cardDrawn;
+    }
+
+
+    public void setStepsTaken(int stepsTaken) {
+        this.stepsTaken = stepsTaken;
     }
 }

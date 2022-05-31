@@ -9,6 +9,7 @@ import at.moritzmusel.cluedo.AllTheCards;
 import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.network.pojo.Killer;
 
 import static at.moritzmusel.cluedo.entities.Character.*;
 
@@ -97,7 +98,7 @@ public class GameplayTest {
 
     @Test
     public void checkIfTheGeneratedCluedoCardsAreUnique(){
-        gameOdd.generateCluedoCards();
+        gameOdd.createNewGame();
         ArrayList<Integer> allPlayerCards = new ArrayList<>();
         boolean check = false;
         allPlayerCards.addAll(Player1.getPlayerOwnedCards());
@@ -124,27 +125,27 @@ public class GameplayTest {
 
     @Test
     public void checkIfCluedoCardsAreEvenDistributedForEvenPlayers(){
-        gameEven.generateCluedoCards();
-        assertEquals(6,Player2.getPlayerOwnedCards().size());
+        gameEven.createNewGame();
+        assertEquals(5,Player2.getPlayerOwnedCards().size());
         assertEquals(5,Player3.getPlayerOwnedCards().size());
-        assertEquals(5,Player4.getPlayerOwnedCards().size());
-        assertEquals(5,Player5.getPlayerOwnedCards().size());
+        assertEquals(4,Player4.getPlayerOwnedCards().size());
+        assertEquals(4,Player5.getPlayerOwnedCards().size());
     }
 
     @Test
     public void checkIfCluedoCardsAreEvenDistributedForOddPlayers() {
-        gameOdd.generateCluedoCards();
-        assertEquals(5, Player1.getPlayerOwnedCards().size());
+        gameOdd.createNewGame();
+        assertEquals(4, Player1.getPlayerOwnedCards().size());
         assertEquals(4, Player2.getPlayerOwnedCards().size());
         assertEquals(4, Player3.getPlayerOwnedCards().size());
-        assertEquals(4, Player4.getPlayerOwnedCards().size());
-        assertEquals(4, Player5.getPlayerOwnedCards().size());
+        assertEquals(3, Player4.getPlayerOwnedCards().size());
+        assertEquals(3, Player5.getPlayerOwnedCards().size());
     }
 
     @Test
     public void checkIfClueCardsAreGenerated(){
         gameOdd.generateClueCards();
-        assertEquals(29,gameOdd.getClueCards().size());
+        assertEquals(30,gameOdd.getClueCards().size());
     }
 
     @Test
@@ -177,7 +178,7 @@ public class GameplayTest {
         gameOdd.generateClueCards();
         gameOdd.updatePlayerPosition(1);
         gameOdd.drawClueCard();
-        assertEquals(28,gameOdd.getClueCards().size());
+        assertEquals(29,gameOdd.getClueCards().size());
     }
 
     @Test
@@ -192,15 +193,24 @@ public class GameplayTest {
         assertEquals(0,gameOdd.getClueCards().size());
         assertEquals(1,gameOdd.getCardDrawn());
     }
+    @Test
+    public void canMoveTest(){
+        gameOdd.decidePlayerWhoMovesFirst();
+        gameOdd.createNewGame();
+        gameOdd.setStepsTaken(2);
+        Gameplay.setNumDice(3);
+        gameOdd.canMove();
+        assertFalse(gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getIsAbleToMove());
+    }
 
     @Test
     public void quitGameTest(){
-        gameOdd.generateCluedoCards();
+        gameOdd.createNewGame();
         gameOdd.quitGame(Player1);
-        assertEquals(6, Player2.getPlayerOwnedCards().size());
+        assertEquals(5, Player2.getPlayerOwnedCards().size());
         assertEquals(5, Player3.getPlayerOwnedCards().size());
-        assertEquals(5, Player4.getPlayerOwnedCards().size());
-        assertEquals(5, Player5.getPlayerOwnedCards().size());
+        assertEquals(4, Player4.getPlayerOwnedCards().size());
+        assertEquals(4, Player5.getPlayerOwnedCards().size());
     }
 
     @Test
