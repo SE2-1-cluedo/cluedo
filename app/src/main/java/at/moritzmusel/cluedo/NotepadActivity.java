@@ -3,9 +3,7 @@ package at.moritzmusel.cluedo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ListView;
 
 
@@ -17,10 +15,8 @@ import java.util.List;
 
 public class NotepadActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private List<String> list;
-    private Button btn_closeNotepad;
-    Card card;
     CheckboxAdapter checkAdapter;
+    boolean checked;
 
 
     @Override
@@ -29,14 +25,13 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_notepad_update);
 
         String[] stringArray = getResources().getStringArray(R.array.all);
-        list = new ArrayList<>(Arrays.asList(stringArray));
+        List<String> list = new ArrayList<>(Arrays.asList(stringArray));
         ListView listView = findViewById(R.id.listviewNotepad);
         checkAdapter = new CheckboxAdapter(this, list);
         listView.setAdapter(checkAdapter);
 
-        btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
+        Button btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
         btn_closeNotepad.setOnClickListener(this);
-
 
     }
 
@@ -47,9 +42,5 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
             Intent back = new Intent(NotepadActivity.this, BoardActivity.class);
             startActivity(back);
         }
-    }
-
-    public void setCheckedOwnedCards() {
-
     }
 }
