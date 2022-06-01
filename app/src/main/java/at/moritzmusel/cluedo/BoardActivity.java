@@ -6,11 +6,15 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import at.moritzmusel.cluedo.game.Dice;
 
@@ -28,15 +32,59 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         allcards = new AllTheCards();
         allcards.getGameCards();
 
-        ImageView diceView = findViewById(R.id.diceView);
-        Dice dice = new Dice(diceView);
-        diceView.setOnClickListener(view -> dice.throwDice());
+
+        //diceView.setOnClickListener(view -> dice.throwDice());
 
         ImageButton cardView = findViewById(R.id.cardView);
         cardView.setOnClickListener(this);
 
         image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+        builder.setTitle("Throw Dice");
+
+        LayoutInflater inflater = getLayoutInflater();
+        View dialoglayout = inflater.inflate(R.layout.custom_dialog, null);
+        builder.setView(dialoglayout);
+
+
+        builder.setPositiveButton("Roll", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                /*ImageView diceView = findViewById(R.id.img_dice);
+                Dice dice = new Dice(diceView);
+                diceView.setOnClickListener(view -> dice.throwDice());*/
+            }
+        });
+
+        builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+        /*alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                setContentView(R.layout.test_board2);
+                ImageView image = (ImageView) alertDialog.findViewById(R.id.diceView);
+                Dice dice = new Dice(image);
+                image.setOnClickListener(view -> dice.throwDice());
+
+                Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.dice1);
+                float imageWidthInPX = (float)image.getWidth();
+
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
+                        Math.round(imageWidthInPX * (float)icon.getHeight() / (float)icon.getWidth()));
+                image.setLayoutParams(layoutParams);
+
+            }
+        });*/
 
 
     }
