@@ -48,7 +48,7 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
         //Dropdown Person
         adapterPerson = ArrayAdapter.createFromResource(this, R.array.person_array, android.R.layout.simple_spinner_item);
-        person = (Spinner) findViewById(R.id.spinner_person);
+        person =findViewById(R.id.spinner_person);
         person.setOnItemSelectedListener(this);
         adapterPerson.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         person.setAdapter(adapterPerson);
@@ -56,7 +56,7 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
         //Dropdown Waffe
         adapterWeapon = ArrayAdapter.createFromResource(this, R.array.weapons_array, android.R.layout.simple_spinner_item);
-        weapon = (Spinner) findViewById(spinner_weapon);
+        weapon = findViewById(spinner_weapon);
         weapon.setOnItemSelectedListener(this);
         adapterWeapon.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         weapon.setAdapter(adapterWeapon);
@@ -68,7 +68,9 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
         //Textfeld aktueller Raum
         currentRoom = findViewById(R.id.currentRoom);
-       // getSelectedRoom();
+        int room = player.getPositionOnBoard();
+        currentRoom.setText(roomsArray[room]);
+
 
         //Button Bestätigung des Verdachts / Anklage
         accusation = findViewById(R.id.submit_Accusation);
@@ -96,40 +98,6 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
     }
 
-    private void getSelectedRoom() {
-        //TODO getCurrentRoom Funktionalität - mit Player/Network verknüpft?
-        switch (player.getPositionOnBoard()) {
-            case 13:
-                currentRoom.setText("Hall");
-                break;
-            case 14:
-                currentRoom.setText("Lounge");
-                break;
-            case 15:
-                currentRoom.setText("Dining Room");
-                break;
-            case 16:
-                currentRoom.setText("Kitchen");
-                break;
-            case 17:
-                currentRoom.setText("Ballroom");
-                break;
-            case 18:
-                currentRoom.setText("Conservatory");
-                break;
-            case 19:
-                currentRoom.setText("Billiard Room");
-                break;
-            case 20:
-                currentRoom.setText("Library");
-                break;
-            case 21:
-                currentRoom.setText("Study");
-            default:
-                currentRoom.setText(" ");
-
-        }
-    }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
