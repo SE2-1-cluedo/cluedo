@@ -2,7 +2,6 @@ package at.moritzmusel.cluedo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,8 +11,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
-
 import at.moritzmusel.cluedo.game.Dice;
 
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
@@ -22,6 +19,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private float x1, x2, y1, y2;
     static final int MIN_SWIPE_DISTANCE = 150;
     private ImageView image;
+    Dice dice;
+    ImageView diceView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +32,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         evidenceCards = new EvidenceCards();
 
-        ImageView diceView = findViewById(R.id.diceView);
-        Dice dice = new Dice(diceView);
-        diceView.setOnClickListener(view -> dice.throwDice());
+        diceView = findViewById(R.id.diceView);
+        dice = new Dice(diceView);
+        diceView.setOnClickListener(this);
 
         ImageButton cardView = findViewById(R.id.cardView);
         cardView.setOnClickListener(this);
@@ -85,13 +84,16 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     public void onButtonReturn(View v){
         setContentView(R.layout.test_board2);
 
-        ImageView diceView = findViewById(R.id.diceView);
-        Dice dice = new Dice(diceView);
+        diceView = findViewById(R.id.diceView);
+        dice = new Dice(diceView);
         diceView.setOnClickListener(view -> dice.throwDice());
 
         if(dice.getNumberRolled() == 4){
             AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
             builder.setTitle("What is going on?");
+            builder.setMessage("You rolled the magnifying glass. A evidence card has been drawn." + "\n"
+                    + "It is revealed that the Card: " + evidenceCards.getCardName()
+                    + " is owned by: " + evidenceCards.getPlayer());
 
             builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
                 @Override
@@ -119,6 +121,24 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                 }
             });
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+        if(view.getId() == R.id.diceView){
+            AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+            builder.setTitle("What is going on?");
+            builder.setMessage("You rolled the magnifying glass." + "\n"
+                    + "A evidence card has been drawn." + "\n"
+                    + "It is revealed that the Card: " + evidenceCards.getDrawnCard().getDesignation() + "\n"
+                    + "is owned by: " + evidenceCards.getPlayer());
+
             builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

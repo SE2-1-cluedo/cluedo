@@ -30,9 +30,14 @@ public class EvidenceCards {
         Collections.shuffle(cards);
     }
 
-    public Card getCard(){
+    public Card getDrawnCard(){
         Card evidence_card = (Card) getCards().getFirst();
         setCards(moveCardToEnd(getCards()));
+        return evidence_card;
+    }
+
+    public Card getCard(){
+        Card evidence_card = (Card) getCards().getFirst();
         return evidence_card;
     }
 
@@ -61,6 +66,11 @@ public class EvidenceCards {
 
     public String getCardName(){
         return getCard().getDesignation();
+    }
+    public String getPlayer(){
+        String player = "Nobody";
+        //Hier if mit Netzwerk einfügen um zu überprüfen, wer die Karte in der Hand hält.
+        return player;
     }
 
     public int getCardId(){
