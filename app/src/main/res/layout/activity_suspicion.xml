@@ -53,14 +53,12 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="40dp"
         android:fontFamily="sans-serif"
         android:text="selected weapon"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/submit_Accusation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,14 +68,13 @@
         android:id="@+id/submit_Accusation"
         android:layout_width="141dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="44dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/custom_button"
         android:text="Accusation"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/submit_Suspicion" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Spinner
         android:id="@+id/spinner_weapon"
@@ -177,14 +174,12 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="14dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="47dp"
         android:fontFamily="sans-serif"
         android:text="TextView"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
@@ -193,17 +188,13 @@
         android:id="@+id/submit_Suspicion"
         android:layout_width="141dp"
         android:layout_height="48dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="41dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/custom_button"
         android:text="Suspicion"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/submit_Accusation"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weaponSelect"
-        app:layout_constraintVertical_bias="0.343" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Spinner
         android:id="@+id/spinner_person"
