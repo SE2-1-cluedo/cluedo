@@ -12,10 +12,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+
 import at.moritzmusel.cluedo.game.Dice;
 
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
     private AllTheCards allcards;
+    private ArrayList<Card> evidence_cards;
     private float x1, x2, y1, y2;
     static final int MIN_SWIPE_DISTANCE = 150;
     private ImageView image;
