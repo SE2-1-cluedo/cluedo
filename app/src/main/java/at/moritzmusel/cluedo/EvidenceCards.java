@@ -59,6 +59,14 @@ public class EvidenceCards {
         return data;
     }
 
+    public String getCardName(){
+        return getCard().getDesignation();
+    }
+
+    public int getCardId(){
+        return getCard().getId();
+    }
+
 
 
 }

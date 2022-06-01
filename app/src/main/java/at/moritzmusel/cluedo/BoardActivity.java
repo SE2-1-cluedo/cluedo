@@ -18,7 +18,7 @@ import at.moritzmusel.cluedo.game.Dice;
 
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
     private AllTheCards allcards;
-    private ArrayList<Card> evidence_cards;
+    private EvidenceCards evidenceCards;
     private float x1, x2, y1, y2;
     static final int MIN_SWIPE_DISTANCE = 150;
     private ImageView image;
@@ -30,6 +30,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         allcards = new AllTheCards();
         allcards.getGameCards();
+
+        evidenceCards = new EvidenceCards();
 
         ImageView diceView = findViewById(R.id.diceView);
         Dice dice = new Dice(diceView);
@@ -86,6 +88,21 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         ImageView diceView = findViewById(R.id.diceView);
         Dice dice = new Dice(diceView);
         diceView.setOnClickListener(view -> dice.throwDice());
+
+        if(dice.getNumberRolled() == 4){
+            AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+            builder.setTitle("What is going on?");
+
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
     }
 
     @Override
