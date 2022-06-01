@@ -3,6 +3,7 @@ package at.moritzmusel.cluedo.game;
 
 import static java.sql.DriverManager.println;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
