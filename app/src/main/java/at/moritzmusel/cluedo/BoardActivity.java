@@ -27,6 +27,10 @@ import android.widget.Toast;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
@@ -46,7 +50,10 @@ public class BoardActivity extends AppCompatActivity {
     ArrayList<Button> allPositions = new ArrayList<>();
     ArrayList<ImageView> allPlayers = new ArrayList<>();
     ArrayList<Button> secrets = new ArrayList<>();
-
+    ArrayList<ImageView> allWeapons = new ArrayList<>();
+    Integer[] help = {1,2,3,4,5,6,7,8,9};
+    List<Integer> helpList = Arrays.asList(help);
+    HashMap<Integer,String> freeWeaponPlaces = new HashMap<>();
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -85,6 +92,9 @@ public class BoardActivity extends AppCompatActivity {
             if(test instanceof Button && getResources().getResourceEntryName(test.getId()).contains("secret"))
                 secrets.add((Button) test);
 
+            else if(test instanceof  ImageView && getResources().getResourceEntryName(test.getId()).contains("w_"))
+                allWeapons.add((ImageView) test);
+
             else if (test instanceof Button && getResources().getResourceEntryName(test.getId()).matches("[a-z_]+[0-9]+"))
                 allPositions.add((Button) test);
 
@@ -101,23 +111,35 @@ public class BoardActivity extends AppCompatActivity {
                     @Override
                     public void onGlobalLayout() {
                         // Layout has happened here.
-                        System.out.println("Everything rendered");
-                        SecureRandom r = new SecureRandom();
-                        for(int i = 0; i < gp1.getPlayers().size(); i++) {
-                            for (int j = 0; j < allPlayers.size(); j++) {
-                                if (getResources().getResourceEntryName(allPlayers.get(j).getId()).equals(gp1.getPlayers().get(i).getPlayerCharacterName().name().split("[_]")[1].toLowerCase())) {
-                                    if (findViewById(allPlayers.get(i).getId()).getVisibility() == View.INVISIBLE) {
-                                        findViewById(allPlayers.get(j).getId()).setVisibility(View.VISIBLE);
-                                        String name = getResources().getResourceEntryName(allPlayers.get(j).getId())+"_";
-                                        int room = r.nextInt(9)+1;
-                                        Button startPlace = findViewById(createDestination(name,room));
-                                        findViewById(allPlayers.get(j).getId()).setX(startPlace.getX());
-                                        findViewById(allPlayers.get(j).getId()).setY(startPlace.getY());
-                                        gp1.getPlayers().get(i).setPositionOnBoard(room);
+                            System.out.println("Everything rendered");
+                            SecureRandom r = new SecureRandom();
+                            for (int i = 0; i < gp1.getPlayers().size(); i++) {
+                                for (int j = 0; j < allPlayers.size(); j++) {
+                                    if (getResources().getResourceEntryName(allPlayers.get(j).getId()).equals(gp1.getPlayers().get(i).getPlayerCharacterName().name().split("[_]")[1].toLowerCase())) {
+                                        if (findViewById(allPlayers.get(i).getId()).getVisibility() == View.INVISIBLE) {
+                                            findViewById(allPlayers.get(j).getId()).setVisibility(View.VISIBLE);
+                                            String name = getResources().getResourceEntryName(allPlayers.get(j).getId()) + "_";
+                                            int room = r.nextInt(9) + 1;
+                                            Button startPlace = findViewById(createDestination(name, room));
+                                            findViewById(allPlayers.get(j).getId()).setX(startPlace.getX());
+                                            findViewById(allPlayers.get(j).getId()).setY(startPlace.getY());
+                                            gp1.getPlayers().get(i).setPositionOnBoard(room);
+                                            System.out.println(getResources().getResourceEntryName(startPlace.getId()));
+                                        }
                                     }
                                 }
                             }
-                        }
+                        Collections.shuffle(helpList);
+                            helpList.toArray(help);
+                            for(int i = 0; i < help.length; i++){
+                                if(i < allWeapons.size()) {
+                                    Button startPosition = findViewById(createDestination("weapon", help[i]));
+                                    findViewById(allWeapons.get(i).getId()).setX(startPosition.getX());
+                                    findViewById(allWeapons.get(i).getId()).setY(startPosition.getY());
+                                    freeWeaponPlaces.put(help[i],getResources().getResourceEntryName(allWeapons.get(i).getId()));
+                                } else
+                                    freeWeaponPlaces.put(help[i],null);
+                            }
                         newPosition = gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard();
                         // Don't forget to remove your listener when you are done with it.
                         constraint.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -141,9 +163,10 @@ public class BoardActivity extends AppCompatActivity {
      * and calls the move methode
      */
     public void diceRolled() {
-        diceView.setOnClickListener(v -> System.out.println("Has been removed"));
+        diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
         gp1.setStepsTaken(0);
-        movePlayerWithArrows(newPosition);
+        //switchWeapon("dagger");
+        movePlayerWithArrows();
     }
 
     @Override
@@ -364,7 +387,51 @@ public class BoardActivity extends AppCompatActivity {
         return getResources().getIdentifier(character, "id", getPackageName());
     }
 
-    private void switchWeapon(){}
+    public void switchWeapon(String str) {
+        String weapon = "w_"+str;
+        int currentPosition = gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard();
+        if (freeWeaponPlaces.get(currentPosition) == null) {
+            for (ImageView IV:allWeapons) {
+                if (getResources().getResourceEntryName(IV.getId()).equals(weapon)) {
+                    IV.setX(findViewById(createDestination("weapon", currentPosition)).getX());
+                    IV.setX(findViewById(createDestination("weapon", currentPosition)).getY());
+                    for(int s: freeWeaponPlaces.keySet()) {
+                        if (Objects.equals(freeWeaponPlaces.get(s), weapon)) {
+                            freeWeaponPlaces.put(s, null);
+                            freeWeaponPlaces.put(currentPosition, weapon);
+                            System.out.println(currentPosition);
+                            System.out.println(s);
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        } else {
+            for (ImageView IV: allWeapons) {
+                if (getResources().getResourceEntryName(IV.getId()).equals(weapon)) {
+                    IV.setX(findViewById(createDestination("weapon", currentPosition)).getX());
+                    IV.setX(findViewById(createDestination("weapon", currentPosition)).getY());
+                    for(int s: freeWeaponPlaces.keySet()) {
+                        if(Objects.equals(freeWeaponPlaces.get(s), weapon)){
+                            for(ImageView v:allWeapons)
+                                if(getResources().getResourceEntryName(v.getId()).equals(freeWeaponPlaces.get(currentPosition))) {
+                                    v.setX(findViewById(createDestination("weapon", s)).getX());
+                                    v.setY(findViewById(createDestination("weapon", s)).getY());
+                                    System.out.println(getResources().getResourceEntryName(v.getId()));
+                                    break;
+                                }
+                            freeWeaponPlaces.put(s,freeWeaponPlaces.get(currentPosition));
+                            freeWeaponPlaces.put(currentPosition,weapon);
+                            System.out.println(currentPosition);
+                            System.out.println(s);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * moves a ImageView from one position to another and calls the method canMove from Gameplay
@@ -383,20 +450,19 @@ public class BoardActivity extends AppCompatActivity {
 
         setArrowsInvisible();
         gp1.canMove();
-        movePlayerWithArrows(newPosition);
+        movePlayerWithArrows();
     }
 
     /**
      * checks if a player is allowed to move and then shows the arrows to the adjacent rooms
      * also reassigns the clickListener to the dice if player is finished with moving
      *
-     * @param room input the position where the player is currently standing
      */
-    private void movePlayerWithArrows(int room) {
+    private void movePlayerWithArrows() {
 
         if (gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getIsAbleToMove()) {
                 activateSecrets();
-                switch (room) {
+                switch (newPosition) {
                     case 1:
                         findViewById(R.id.lounge_btn_down).setVisibility(View.VISIBLE);
 
@@ -534,47 +600,5 @@ public class BoardActivity extends AppCompatActivity {
                 break;
         }
         return false;
-    }
-
-    /**
-     * checks which room-Button has been clicked and
-     * changes the layout to the specific room
-     * @param v the button that has been clicked
-     */
-    public void onButtonClick(View v) {
-
-        //System.out.println(getResources().getResourceEntryName(v.getId())+" has been clicked");
-        /*
-        switch(getResources().getResourceEntryName(v.getId())){
-            case "lounge_button":
-                setContentView(R.layout.activity_room_lounge);
-                break;
-            case "conservatory_button":
-                setContentView(R.layout.activity_room_conservatory);
-                break;
-            case "ballroom_button":
-                setContentView(R.layout.activity_room_ballroom);
-                break;
-            case "dining_button":
-                setContentView(R.layout.activity_room_dining);
-                break;
-            case "kitchen_button":
-                setContentView(R.layout.activity_room_kitchen);
-                break;
-            case "library_button":
-                setContentView(R.layout.activity_room_library);
-                break;
-            case "billiard_button":
-                setContentView(R.layout.activity_room_billiard);
-                break;
-            case "study_button":
-                setContentView(R.layout.activity_room_study);
-                break;
-            case "hall_button":
-                setContentView(R.layout.activity_room_hall);
-                break;
-        }
-
-         */
     }
 }
