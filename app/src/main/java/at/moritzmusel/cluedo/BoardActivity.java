@@ -148,6 +148,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             builder.create();
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
+            
         }
 
     }
