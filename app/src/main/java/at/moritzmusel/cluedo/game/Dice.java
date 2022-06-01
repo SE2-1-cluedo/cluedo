@@ -4,6 +4,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 import at.moritzmusel.cluedo.R;
@@ -37,7 +38,7 @@ public class Dice {
      */
 
     public void throwDice()  {
-        Random r = new Random();
+        SecureRandom r = new SecureRandom();
         int i = r.nextInt(4)+1;
         Animation animation = AnimationUtils.loadAnimation(diceView.getContext(), R.anim.rotate_dice);
         diceView.startAnimation(animation);

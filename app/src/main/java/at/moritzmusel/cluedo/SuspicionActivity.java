@@ -6,6 +6,8 @@ import static at.moritzmusel.cluedo.R.id.spinner_weapon;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,6 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import at.moritzmusel.cluedo.entities.Player;
 
 public class SuspicionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -32,6 +37,7 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
     private ArrayAdapter<CharSequence> adapterWeapon;
     private Spinner person;
     private Spinner weapon;
+    private Player player;
 
     @SuppressLint("ResourceType")
     @Override
@@ -42,15 +48,15 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
         //Dropdown Person
         adapterPerson = ArrayAdapter.createFromResource(this, R.array.person_array, android.R.layout.simple_spinner_item);
-        person = (Spinner) findViewById(R.id.spinner_person);
+        person =findViewById(R.id.spinner_person);
         person.setOnItemSelectedListener(this);
         adapterPerson.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         person.setAdapter(adapterPerson);
 
 
         //Dropdown Waffe
-       adapterWeapon = ArrayAdapter.createFromResource(this, R.array.weapons_array, android.R.layout.simple_spinner_item);
-        weapon = (Spinner) findViewById(spinner_weapon);
+        adapterWeapon = ArrayAdapter.createFromResource(this, R.array.weapons_array, android.R.layout.simple_spinner_item);
+        weapon = findViewById(spinner_weapon);
         weapon.setOnItemSelectedListener(this);
         adapterWeapon.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         weapon.setAdapter(adapterWeapon);
@@ -61,9 +67,9 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
         roomsArray = getResources().getStringArray(R.array.rooms_array);
 
         //Textfeld aktueller Raum
-        selectedRoom = getCurrentRoom();
         currentRoom = findViewById(R.id.currentRoom);
-        currentRoom.setText(selectedRoom);
+        int room = player.getPositionOnBoard();
+        currentRoom.setText(roomsArray[room]);
 
 
         //Button Bestätigung des Verdachts / Anklage
@@ -72,7 +78,8 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
             //TODO Button accusation Funktionalität
             @Override
             public void onClick(View view) {
-
+                Intent i = new Intent(SuspicionActivity.this, BoardActivity.class);
+                startActivity(i);
             }
         }));
         suspicion = findViewById(R.id.submit_Suspicion);
@@ -80,7 +87,8 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
             //TODO Button suspicion Funktionaität
             @Override
             public void onClick(View view) {
-
+                Intent i = new Intent(SuspicionActivity.this, BoardActivity.class);
+                startActivity(i);
             }
         });
 
@@ -90,11 +98,6 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
     }
 
-    private String getCurrentRoom() {
-
-        //TODO getCurrentRoom Funktionalität - mit Player/Network verknüpft?
-        return "";
-    }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -103,21 +106,19 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
                 selectedWeapon = adapterView.getItemAtPosition(i).toString();
                 if (selectedWeapon.equals(possibleWeapons[0])) {
                     weaponSelect.setText(selectedWeapon);
-                }
-                else if (selectedWeapon.equals(possibleWeapons[1])) {
+                } else if (selectedWeapon.equals(possibleWeapons[1])) {
                     weaponSelect.setText(selectedWeapon);
-                }
-                else if (selectedWeapon.equals(possibleWeapons[2])) {
+                } else if (selectedWeapon.equals(possibleWeapons[2])) {
                     weaponSelect.setText(selectedWeapon);
-                }
-                else if (selectedWeapon.equals(possibleWeapons[3])) {
+                } else if (selectedWeapon.equals(possibleWeapons[3])) {
                     weaponSelect.setText(selectedWeapon);
-                }
-                else if (selectedWeapon.equals(possibleWeapons[4])) {
+                } else if (selectedWeapon.equals(possibleWeapons[4])) {
                     weaponSelect.setText(selectedWeapon);
-                }
-                else if (selectedWeapon.equals(possibleWeapons[5])) {
+                } else if (selectedWeapon.equals(possibleWeapons[5])) {
                     weaponSelect.setText(selectedWeapon);
+                } else {
+                    String nothing = "You have to choose a weapon";
+                    Toast.makeText(this, nothing, Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -127,23 +128,20 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
                 selectedPerson = adapterView.getItemAtPosition(i).toString();
                 if (selectedPerson.equals(possiblePersons[0])) {
                     personSelect.setText(selectedPerson);
-                }
-                else if (selectedPerson.equals(possiblePersons[1])) {
+                } else if (selectedPerson.equals(possiblePersons[1])) {
                     personSelect.setText(selectedPerson);
-                }
-                else if (selectedPerson.equals(possiblePersons[2])) {
+                } else if (selectedPerson.equals(possiblePersons[2])) {
                     personSelect.setText(selectedPerson);
-                }
-                else if (selectedPerson.equals(possiblePersons[3])) {
+                } else if (selectedPerson.equals(possiblePersons[3])) {
                     personSelect.setText(selectedPerson);
-                }
-                else if (selectedPerson.equals(possiblePersons[4])) {
+                } else if (selectedPerson.equals(possiblePersons[4])) {
                     personSelect.setText(selectedPerson);
-                }
-                else if (selectedPerson.equals(possiblePersons[5])) {
+                } else if (selectedPerson.equals(possiblePersons[5])) {
                     personSelect.setText(selectedPerson);
+                } else {
+                    String nothing = "You have to choose a person";
+                    Toast.makeText(this, nothing, Toast.LENGTH_SHORT).show();
                 }
-
 
             }
         }
