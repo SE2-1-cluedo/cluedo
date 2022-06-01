@@ -33,8 +33,8 @@ public class GameplayTest {
 
     @Before
     public void setUp() {
-        Player1 = new Player(1, MISS_SCARLET);
-        Player2 = new Player(2, THE_REVEREND_GREEN);
+        Player1 = new Player(1, MISS_SCARLETT);
+        Player2 = new Player(2, REVEREND_GREEN);
         Player3 = new Player(3, PROFESSOR_PLUM);
         Player4 = new Player(4, MRS_PEACOCK);
         Player5 = new Player(5, DR_ORCHID);
@@ -55,7 +55,7 @@ public class GameplayTest {
     public void endTurnOfLastPlayer() {
         gameOdd.setCurrentPlayer(PROFESSOR_PLUM);
         Character currentPlayer = gameOdd.endTurn();
-        assertEquals(MISS_SCARLET, currentPlayer);
+        assertEquals(MISS_SCARLETT, currentPlayer);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class GameplayTest {
     @Test
     public void decidePlayerWhoMovesFirst() {
         gameOdd.decidePlayerWhoMovesFirst();
-        assertEquals(MISS_SCARLET, gameOdd.getCurrentPlayer());
+        assertEquals(MISS_SCARLETT, gameOdd.getCurrentPlayer());
     }
 
     @Test

@@ -39,17 +39,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*
+
         //authentifiziere Nutzer zur einzigartigen zuordnung von spielern
         mAuth = FirebaseAuth.getInstance();
         //end
         //Network instance, currently for testing
+
         Network n = new Network();
         //n.initDB();
         signInAnonymously();
         n.createLobby(mAuth.getCurrentUser());
         //end
-        */
         
         startGame = findViewById(R.id.btn_startgame);
         startGame.setOnClickListener(this);
@@ -124,6 +124,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             System.exit(0);
         }
     }
-
-
 }

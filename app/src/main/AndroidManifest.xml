@@ -30,6 +30,8 @@
             android:exported="false" />
         <activity
             android:name=".BoardActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:exported="false" />
         <activity
             android:name=".SuspicionActivity"

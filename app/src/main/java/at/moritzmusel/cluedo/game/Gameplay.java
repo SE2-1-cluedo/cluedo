@@ -1,5 +1,6 @@
 package at.moritzmusel.cluedo.game;
 
+
 import static java.sql.DriverManager.println;
 
 import java.util.ArrayList;
@@ -13,10 +14,11 @@ import at.moritzmusel.cluedo.entities.Player;
 
 public class Gameplay {
     private static int numDice;
+    private int stepsTaken = 0;
     private Character currentPlayer;
-    private final List<Player> players;
+    private List<Player> players;
     private ArrayList<Integer> clueCards = new ArrayList<>();
-    private final Random rand = new Random();
+    private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
 
     /**
@@ -26,6 +28,7 @@ public class Gameplay {
         this.players = players;
     }
 
+    public Gameplay(){}
     /**
      * Called after the Player ends his/her turn
      */
@@ -50,6 +53,15 @@ public class Gameplay {
         //calculate position from room or pos x y dk
         player.setPositionOnBoard(position);
         //dont allow dice throw again
+    }
+
+    /**
+     * Is called in move-Methode Board Activity and checks if Player can still move
+     */
+    public void canMove(){
+        stepsTaken++;
+        if(stepsTaken == numDice)
+            findPlayerByCharacterName(currentPlayer).setIsAbleToMove(false);
     }
 
     /**
@@ -185,7 +197,7 @@ public class Gameplay {
      * Decides which Player/Character is able to move first
      */
     public void decidePlayerWhoMovesFirst() {
-        currentPlayer = Character.MISS_SCARLET;
+        currentPlayer = Character.MISS_SCARLETT;
         while (true) {
             Player firstPlayer = findPlayerByCharacterName(currentPlayer);
             if (firstPlayer == null) {
@@ -361,6 +373,9 @@ public class Gameplay {
         this.clueCards = (ArrayList<Integer>) clueCards;
     }
 
+    public List<Player> getPlayers() {
+        return players;
+    }
     public int getCardDrawn() {
         return cardDrawn;
     }
