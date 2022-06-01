@@ -28,4 +28,12 @@ public class Card{
         return type;
     }
 
+    @Override
+    public String toString() {
+        return "Card{" +
+                "id=" + id +
+                ", designation='" + designation + '\'' +
+                ", type=" + type +
+                '}';
+    }
 }
