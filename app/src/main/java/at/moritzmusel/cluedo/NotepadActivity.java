@@ -39,8 +39,9 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_closeNotepad) {
-            Intent back = new Intent(NotepadActivity.this, BoardActivity.class);
-            startActivity(back);
+            finish();
+          //  Intent back = new Intent(NotepadActivity.this, BoardActivity.class);
+           // startActivity(back);
         }
     }
 }
