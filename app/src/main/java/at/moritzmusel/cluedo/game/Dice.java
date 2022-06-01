@@ -57,9 +57,10 @@ public class Dice {
             default:
                 break;
         }
+        numberRolled = i;
         i = i == 4 ? 1 : i;
         Gameplay.rollDiceForPlayer(i);
-        numberRolled = i;
+
     }
 
 

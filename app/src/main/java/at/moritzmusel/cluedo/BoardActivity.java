@@ -132,23 +132,27 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             alertDialog.show();
         }
         if(view.getId() == R.id.diceView){
-            AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
-            builder.setTitle("What is going on?");
-            builder.setMessage("You rolled the magnifying glass." + "\n"
-                    + "A evidence card has been drawn." + "\n"
-                    + "It is revealed that the Card: " + evidenceCards.getDrawnCard().getDesignation() + "\n"
-                    + "is owned by: " + evidenceCards.getPlayer());
+            diceView = findViewById(R.id.diceView);
+            dice = new Dice(diceView);
+            dice.throwDice();
+            if(dice.getNumberRolled() == 4){
+                AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+                builder.setTitle("What is going on?");
+                builder.setMessage("You rolled the magnifying glass." + "\n"
+                        + "A evidence card has been drawn." + "\n"
+                        + "It is revealed that the Card: " + evidenceCards.getDrawnCard().getDesignation() + "\n"
+                        + "is owned by: " + evidenceCards.getPlayer());
 
-            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.create();
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-            
+                builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create();
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
         }
 
     }
