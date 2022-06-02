@@ -10,12 +10,16 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.app.ActionBar;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Intent;
 import android.content.res.Configuration;
 
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -39,10 +43,11 @@ public class BoardActivity extends AppCompatActivity {
 
     private View decorView, diceView;
     private AllTheCards allCards;
-    private float x1;
+    private float x1,x2, y1, y2;;
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
     Dice dice;
+    private ImageView image;
     private Gameplay gp1;
     private int newPosition;
     ArrayList<Button> allPositions = new ArrayList<>();
@@ -102,6 +107,11 @@ public class BoardActivity extends AppCompatActivity {
 
         }
 
+
+        ImageView diceView = findViewById(R.id.diceView);
+        Dice dice = new Dice(diceView);
+        diceView.setOnClickListener(view -> dice.throwDice());
+
         constraint.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -141,18 +151,21 @@ public class BoardActivity extends AppCompatActivity {
                         constraint.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
                 });
+        ImageButton cardView = findViewById(R.id.cardView);
+        cardView.setVisibility(View.VISIBLE);
+        cardView.setOnClickListener(v -> onCardViewClick());
 
-        diceView = findViewById(R.id.diceView);
-        dice = new Dice((ImageView) diceView);
+        image = new ImageView(this);
+        image.setImageResource(R.drawable.cardback);
+
         diceView.setOnClickListener(v -> {
             dice.throwDice();
             diceRolled();
         });
 
-        ImageButton cardView = findViewById(R.id.cardView);
-        cardView.setVisibility(View.VISIBLE);
-        cardView.setOnClickListener(v -> onCardViewClick());
+
     }
+
 
     /**
      * Called when dice gets rolled. Removes dice clickListener, resets stepsTaken in Gameplay
@@ -558,18 +571,11 @@ public class BoardActivity extends AppCompatActivity {
             alertDialog.show();
     }
 
-    /**
-     * starts a new Activity to see the notepad
-     */
     public void startNotepad(){
         Intent intent = new Intent(this, NotepadActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
     }
-
-    /**
-     * starts a new Activity to call an accusation or suspicion
-     */
     public void startSuspicion(){
         Intent intent = new Intent(this, SuspicionActivity.class);
         startActivity(intent);
@@ -582,14 +588,14 @@ public class BoardActivity extends AppCompatActivity {
         switch(touchEvent.getAction()){
             case MotionEvent.ACTION_DOWN:
                 x1 = touchEvent.getX();
-                float y1 = touchEvent.getY();
+                y1 = touchEvent.getY();
                 break;
 
             case MotionEvent.ACTION_UP:
-                float x2 = touchEvent.getX();
-                float y2 = touchEvent.getY();
-                float swipeRight = x2 -x1,
-                        swipeLeft = x1- x2;
+                x2 = touchEvent.getX();
+                y2 = touchEvent.getY();
+                float swipeRight = x2-x1,
+                        swipeLeft = x1-x2;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
