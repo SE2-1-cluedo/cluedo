@@ -1,12 +1,9 @@
 package at.moritzmusel.cluedo.game;
 
-
-import static java.sql.DriverManager.println;
-
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
@@ -14,7 +11,7 @@ import at.moritzmusel.cluedo.entities.Player;
 
 public class Gameplay {
     private static int numDice;
-    private int stepsTaken = 0;
+    private static int stepsTaken = 0;
     private Character currentPlayer;
     private List<Player> players;
     private ArrayList<Integer> clueCards = new ArrayList<>();
@@ -28,13 +25,10 @@ public class Gameplay {
         this.players = players;
     }
 
-    public Gameplay(){}
     /**
      * Called after the Player ends his/her turn
      */
     public Character endTurn() {
-        Player player = findPlayerByCharacterName(currentPlayer);
-        player.setIsAbleToMove(false);
         decideCharacterWhoMovesNext();
         return currentPlayer;
     }
@@ -50,9 +44,7 @@ public class Gameplay {
     //Todo: Fragen wie ich die position übergeben bekomm
     public void updatePlayerPosition(int position) {
         Player player = findPlayerByCharacterName(currentPlayer);
-        //calculate position from room or pos x y dk
         player.setPositionOnBoard(position);
-        //dont allow dice throw again
     }
 
     /**
@@ -167,6 +159,7 @@ public class Gameplay {
     private Player checkWhoIsNextPlaying(Player player){
         Character character = player.getPlayerCharacterName().getNextCharacter();
         while(true){
+            assert character != null;
             character = character.getNextCharacter();
             Player currentPlayer = findPlayerByCharacterName(character);
             if (currentPlayer != null) {
@@ -181,7 +174,7 @@ public class Gameplay {
     public boolean isAllowedToUseSecretPassage() {
         Player player = findPlayerByCharacterName(currentPlayer);
         int position = player.getPositionOnBoard();
-        return position == 2 || position == 7 || position == 9 || position == 5;
+        return position == 1 || position == 7 || position == 3;
     }
 
     /**
@@ -204,6 +197,7 @@ public class Gameplay {
                 currentPlayer = currentPlayer.getNextCharacter();
             } else {
                 currentPlayer = firstPlayer.getPlayerCharacterName();
+                findPlayerByCharacterName(currentPlayer).setIsAbleToMove(true);
                 break;
             }
         }
@@ -220,6 +214,7 @@ public class Gameplay {
             Player player = findPlayerByCharacterName(currentPlayer);
             if (player != null) {
                 currentPlayer = player.getPlayerCharacterName();
+                findPlayerByCharacterName(currentPlayer).setIsAbleToMove(true);
                 break;
             }
         }
@@ -355,6 +350,10 @@ public class Gameplay {
 
     public static void setNumDice(int numDice) {
         Gameplay.numDice = numDice;
+    }
+
+    public void setStepsTaken(int steps){
+        stepsTaken = steps;
     }
 
     public Character getCurrentPlayer() {
