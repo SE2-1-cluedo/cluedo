@@ -1,7 +1,6 @@
 package at.moritzmusel.cluedo;
 
 import static at.moritzmusel.cluedo.entities.Character.DR_ORCHID;
-import static at.moritzmusel.cluedo.entities.Character.MISS_SCARLETT;
 import static at.moritzmusel.cluedo.entities.Character.MRS_PEACOCK;
 import static at.moritzmusel.cluedo.entities.Character.PROFESSOR_PLUM;
 import static at.moritzmusel.cluedo.entities.Character.REVEREND_GREEN;
@@ -32,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Dice;
 import at.moritzmusel.cluedo.game.Gameplay;
@@ -41,7 +39,7 @@ public class BoardActivity extends AppCompatActivity {
 
     private View decorView, diceView;
     private AllTheCards allCards;
-    private float x1, x2, y1, y2;
+    private float x1;
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
     Dice dice;
@@ -69,12 +67,10 @@ public class BoardActivity extends AppCompatActivity {
                 decorView.setSystemUiVisibility(hideSystemBars());
         });
 
-        Player Player1 = new Player(1, MISS_SCARLETT);
         Player Player2 = new Player(2, REVEREND_GREEN);
         Player Player3 = new Player(3, PROFESSOR_PLUM);
         Player Player4 = new Player(4, MRS_PEACOCK);
         Player Player5 = new Player(5, DR_ORCHID);
-        ArrayList<Player> playersOdd = new ArrayList<>(Arrays.asList(Player1, Player2, Player3, Player4, Player5));
         ArrayList<Player> playersEven = new ArrayList<>(Arrays.asList(Player2,Player3, Player4, Player5));
 
         gp1 = new Gameplay(playersEven);
@@ -120,7 +116,7 @@ public class BoardActivity extends AppCompatActivity {
                                             findViewById(allPlayers.get(j).getId()).setVisibility(View.VISIBLE);
                                             String name = getResources().getResourceEntryName(allPlayers.get(j).getId()) + "_";
                                             int room = r.nextInt(9) + 1;
-                                            Button startPlace = findViewById(createDestination(name, room));
+                                            Button startPlace = findViewById(createRoomDestination(name, room));
                                             findViewById(allPlayers.get(j).getId()).setX(startPlace.getX());
                                             findViewById(allPlayers.get(j).getId()).setY(startPlace.getY());
                                             gp1.getPlayers().get(i).setPositionOnBoard(room);
@@ -133,7 +129,7 @@ public class BoardActivity extends AppCompatActivity {
                             helpList.toArray(help);
                             for(int i = 0; i < help.length; i++){
                                 if(i < allWeapons.size()) {
-                                    Button startPosition = findViewById(createDestination("weapon", help[i]));
+                                    Button startPosition = findViewById(createRoomDestination("weapon", help[i]));
                                     findViewById(allWeapons.get(i).getId()).setX(startPosition.getX());
                                     findViewById(allWeapons.get(i).getId()).setY(startPosition.getY());
                                     freeWeaponPlaces.put(help[i],getResources().getResourceEntryName(allWeapons.get(i).getId()));
@@ -165,7 +161,6 @@ public class BoardActivity extends AppCompatActivity {
     public void diceRolled() {
         diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
         gp1.setStepsTaken(0);
-        //switchWeapon("dagger");
         movePlayerWithArrows();
     }
 
@@ -227,41 +222,41 @@ public class BoardActivity extends AppCompatActivity {
             switch (getResources().getResourceEntryName(v.getId())) {
                 case "secret_1":
                     if(gp1.isAllowedToUseSecretPassage()) {
-                        destination = findViewById(createDestination(character, 7));
+                        destination = findViewById(createRoomDestination(character, 7));
                         gp1.setStepsTaken(dice.getNumberRolled()-1);
                         moveAnimation(mover, destination, null, false);
                     }
                     break;
                 case "secret_3":
                     if(gp1.isAllowedToUseSecretPassage()) {
-                        destination = findViewById(createDestination(character, 3));
+                        destination = findViewById(createRoomDestination(character, 3));
                         gp1.setStepsTaken(dice.getNumberRolled()-1);
                         moveAnimation(mover, destination, null, false);
                     }
                     break;
                 case "lounge_btn_right":
-                    destination = findViewById(createDestination(character,2));
+                    destination = findViewById(createRoomDestination(character,2));
                     moveAnimation(mover, destination, null, false);
                     break;
                 case "lounge_btn_down":
                 case "billiard_btn_up":
-                    destination = findViewById(createDestination(character,4));
+                    destination = findViewById(createRoomDestination(character,4));
                     moveAnimation(mover, destination, findViewById(R.id.median_left), true);
                     break;
                 case "dining_btn_up":
-                    destination = findViewById(createDestination(character,1));
+                    destination = findViewById(createRoomDestination(character,1));
                     moveAnimation(mover, destination, findViewById(R.id.median_left), true);
                     break;
                 case "dining_btn_right":
-                    destination = findViewById(createDestination(character,5));
+                    destination = findViewById(createRoomDestination(character,5));
                     moveAnimation(mover, destination, null, false);
                     break;
                 case "dining_btn_down":
-                    destination = findViewById(createDestination(character,7));
+                    destination = findViewById(createRoomDestination(character,7));
                     moveAnimation(mover, destination, findViewById(R.id.median_left), true);
                     break;
                 case "billiard_btn_right":
-                    destination = findViewById(createDestination(character,8));
+                    destination = findViewById(createRoomDestination(character,8));
                     moveAnimation(mover, destination, findViewById(R.id.median_left), true);
                     break;
             }
@@ -269,74 +264,74 @@ public class BoardActivity extends AppCompatActivity {
             switch (getResources().getResourceEntryName(v.getId())) {
                 case "secret_2":
                     if(gp1.isAllowedToUseSecretPassage()) {
-                        destination = findViewById(createDestination(character, 7));
+                        destination = findViewById(createRoomDestination(character, 7));
                         gp1.setStepsTaken(dice.getNumberRolled()-1);
                         moveAnimation(mover, destination, null, false);
                     }
                     break;
                 case "ballroom_btn_left":
-                    destination = findViewById(createDestination(character,2));
+                    destination = findViewById(createRoomDestination(character,2));
                     moveAnimation(mover, destination, null, false);
                     break;
                 case "ballroom_btn_down":
                 case "hall_btn_up":
-                    destination = findViewById(createDestination(character,6));
+                    destination = findViewById(createRoomDestination(character,6));
                     moveAnimation(mover, destination, findViewById(R.id.median_right), true);
                     break;
                 case "library_btn_up":
-                    destination = findViewById(createDestination(character,3));
+                    destination = findViewById(createRoomDestination(character,3));
                     moveAnimation(mover, destination, findViewById(R.id.median_right), true);
                     break;
                 case "library_btn_left":
-                    destination = findViewById(createDestination(character,5));
+                    destination = findViewById(createRoomDestination(character,5));
                     moveAnimation(mover, destination, null, false);
                     break;
                 case "library_btn_down":
-                    destination = findViewById(createDestination(character,9));
+                    destination = findViewById(createRoomDestination(character,9));
                     moveAnimation(mover, destination, findViewById(R.id.median_right), true);
                     break;
                 case "hall_btn_left":
-                    destination = findViewById(createDestination(character,8));
+                    destination = findViewById(createRoomDestination(character,8));
                     moveAnimation(mover, destination, null, false);
                     break;
             }
         } else {
             switch (getResources().getResourceEntryName(v.getId())) {
                 case "conservatory_btn_left":
-                    destination = findViewById(createDestination(character,1));
+                    destination = findViewById(createRoomDestination(character,1));
                     moveAnimation(mover, destination, null, false);
                     break;
                 case "conservatory_btn_down":
                 case "study_btn_up":
-                    destination = findViewById(createDestination(character,5));
+                    destination = findViewById(createRoomDestination(character,5));
                     moveAnimation(mover, destination, findViewById(R.id.median_center), true);
                     break;
                 case "conservatory_btn_right":
-                    destination = findViewById(createDestination(character,3));
+                    destination = findViewById(createRoomDestination(character,3));
                     moveAnimation(mover, destination, null, false);
                     break;
                 case "kitchen_btn_up":
-                    destination = findViewById(createDestination(character,2));
+                    destination = findViewById(createRoomDestination(character,2));
                     moveAnimation(mover, destination, findViewById(R.id.median_center), true);
                     break;
                 case "kitchen_btn_right":
-                    destination = findViewById(createDestination(character,6));
+                    destination = findViewById(createRoomDestination(character,6));
                     moveAnimation(mover, destination, null, false);
                     break;
                 case "kitchen_btn_down":
-                    destination = findViewById(createDestination(character,8));
+                    destination = findViewById(createRoomDestination(character,8));
                     moveAnimation(mover, destination, findViewById(R.id.median_center), true);
                     break;
                 case "kitchen_btn_left":
-                    destination = findViewById(createDestination(character,4));
+                    destination = findViewById(createRoomDestination(character,4));
                     moveAnimation(mover, destination, null, false);
                     break;
                 case "study_btn_left":
-                    destination = findViewById(createDestination(character,7));
+                    destination = findViewById(createRoomDestination(character,7));
                     moveAnimation(mover, destination, null, false);
                     break;
                 case "study_btn_right":
-                    destination = findViewById(createDestination(character,9));
+                    destination = findViewById(createRoomDestination(character,9));
                     moveAnimation(mover, destination, null, false);
                     break;
             }
@@ -381,26 +376,33 @@ public class BoardActivity extends AppCompatActivity {
      * @param room the room he wants to move to
      * @return the id of the destination, which is a combination of character and room
      */
-    private int createDestination(String character, int room){
+    private int createRoomDestination(String character, int room){
         character+=room;
         newPosition = room;
         return getResources().getIdentifier(character, "id", getPackageName());
     }
 
+    private int createWeaponDestination(int room){
+        return getResources().getIdentifier("weapon"+room, "id", getPackageName());
+    }
+
+    /**
+     * Gets called by the suspicion to bring the weapon to the currentRoom
+     * @param str the name of the weapon that's been moved
+     */
     public void switchWeapon(String str) {
         String weapon = "w_"+str;
-        int currentPosition = gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard();
-        if (freeWeaponPlaces.get(currentPosition) == null) {
+        if (freeWeaponPlaces.get(newPosition) == null) {
             for (ImageView IV:allWeapons) {
                 if (getResources().getResourceEntryName(IV.getId()).equals(weapon)) {
-                    IV.setX(findViewById(createDestination("weapon", currentPosition)).getX());
-                    IV.setX(findViewById(createDestination("weapon", currentPosition)).getY());
+                    IV.setX(findViewById(createWeaponDestination(newPosition)).getX());
+                    IV.setY(findViewById(createWeaponDestination(newPosition)).getY());
                     for(int s: freeWeaponPlaces.keySet()) {
                         if (Objects.equals(freeWeaponPlaces.get(s), weapon)) {
                             freeWeaponPlaces.put(s, null);
-                            freeWeaponPlaces.put(currentPosition, weapon);
-                            System.out.println(currentPosition);
-                            System.out.println(s);
+                            freeWeaponPlaces.put(newPosition, weapon);
+                            System.out.println(freeWeaponPlaces.get(s));
+                            System.out.println(freeWeaponPlaces.get(newPosition));
                             break;
                         }
                     }
@@ -408,22 +410,19 @@ public class BoardActivity extends AppCompatActivity {
                 }
             }
         } else {
+            String otherWeapon = freeWeaponPlaces.get(newPosition);
+            ImageView otherWeaponView = findViewById(getResources().getIdentifier(otherWeapon, "id", getPackageName()));
             for (ImageView IV: allWeapons) {
                 if (getResources().getResourceEntryName(IV.getId()).equals(weapon)) {
-                    IV.setX(findViewById(createDestination("weapon", currentPosition)).getX());
-                    IV.setX(findViewById(createDestination("weapon", currentPosition)).getY());
+                    IV.setX(findViewById(createWeaponDestination( newPosition)).getX());
+                    IV.setY(findViewById(createWeaponDestination(newPosition)).getY());
                     for(int s: freeWeaponPlaces.keySet()) {
                         if(Objects.equals(freeWeaponPlaces.get(s), weapon)){
-                            for(ImageView v:allWeapons)
-                                if(getResources().getResourceEntryName(v.getId()).equals(freeWeaponPlaces.get(currentPosition))) {
-                                    v.setX(findViewById(createDestination("weapon", s)).getX());
-                                    v.setY(findViewById(createDestination("weapon", s)).getY());
-                                    System.out.println(getResources().getResourceEntryName(v.getId()));
-                                    break;
-                                }
-                            freeWeaponPlaces.put(s,freeWeaponPlaces.get(currentPosition));
-                            freeWeaponPlaces.put(currentPosition,weapon);
-                            System.out.println(currentPosition);
+                            otherWeaponView.setX(findViewById(createWeaponDestination(s)).getX());
+                            otherWeaponView.setY(findViewById(createWeaponDestination(s)).getY());
+                            freeWeaponPlaces.put(s,otherWeapon);
+                            freeWeaponPlaces.put(newPosition,weapon);
+                            System.out.println(newPosition);
                             System.out.println(s);
                             break;
                         }
@@ -583,14 +582,14 @@ public class BoardActivity extends AppCompatActivity {
         switch(touchEvent.getAction()){
             case MotionEvent.ACTION_DOWN:
                 x1 = touchEvent.getX();
-                y1 = touchEvent.getY();
+                float y1 = touchEvent.getY();
                 break;
 
             case MotionEvent.ACTION_UP:
-                x2 = touchEvent.getX();
-                y2 = touchEvent.getY();
-                float swipeRight = x2-x1,
-                        swipeLeft = x1-x2;
+                float x2 = touchEvent.getX();
+                float y2 = touchEvent.getY();
+                float swipeRight = x2 -x1,
+                        swipeLeft = x1- x2;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
