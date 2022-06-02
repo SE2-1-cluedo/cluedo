@@ -11,6 +11,10 @@ public class Player {
         this.cards = cards;
         this.eliminationCards = eliminationCards;
     }
+    //TODO: LÖSCHEN!!
+    public Player(List<Card> cards) {
+        this.cards = cards;
+    }
     public int getcRoom() {
         return cRoom;
     }
