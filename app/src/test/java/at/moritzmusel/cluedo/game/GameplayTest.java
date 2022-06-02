@@ -59,17 +59,11 @@ public class GameplayTest {
         assertEquals(MISS_SCARLETT, currentPlayer);
     }
 
-    @Test
-    public void endTurnPlayerNotMoving() {
-        gameOdd.decidePlayerWhoMovesFirst();
-        endTurn();
-        Assert.assertFalse(Player1.getIsAbleToMove());
-    }
-
 
     @Test
     public void currentPlayerIsNotAllowedToUseSecretPassage() {
         gameOdd.decidePlayerWhoMovesFirst();
+        gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).setPositionOnBoard(2);
         assertFalse(gameOdd.isAllowedToUseSecretPassage());
     }
 
