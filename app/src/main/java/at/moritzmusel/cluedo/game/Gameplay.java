@@ -159,6 +159,7 @@ public class Gameplay {
     private Player checkWhoIsNextPlaying(Player player){
         Character character = player.getPlayerCharacterName().getNextCharacter();
         while(true){
+            assert character != null;
             character = character.getNextCharacter();
             Player currentPlayer = findPlayerByCharacterName(character);
             if (currentPlayer != null) {
