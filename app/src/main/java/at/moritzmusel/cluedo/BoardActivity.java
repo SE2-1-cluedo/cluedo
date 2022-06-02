@@ -16,6 +16,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 
 import android.view.ViewTreeObserver;
@@ -62,10 +64,8 @@ public class BoardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         decorView = getWindow().getDecorView();
-        decorView.setOnSystemUiVisibilityChangeListener(visibility -> {
-            if (visibility == 0)
-                decorView.setSystemUiVisibility(hideSystemBars());
-        });
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         Player Player2 = new Player(2, REVEREND_GREEN);
         Player Player3 = new Player(3, PROFESSOR_PLUM);
