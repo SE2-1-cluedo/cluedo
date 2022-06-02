@@ -19,10 +19,10 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         btn_plum.setOnClickListener(this);
         final Button btn_peacock = findViewById(R.id.btn_peacock);
         btn_peacock.setOnClickListener(this);
-        final Button btn_scralett = findViewById(R.id.btn_scarlett);
-        btn_scralett.setOnClickListener(this);
-        final Button btn_white = findViewById(R.id.btn_white);
-        btn_white.setOnClickListener(this);
+        final Button btn_scarlett = findViewById(R.id.btn_scarlett);
+        btn_scarlett.setOnClickListener(this);
+        final Button btn_orchid = findViewById(R.id.btn_orchid);
+        btn_orchid.setOnClickListener(this);
         final Button btn_mustard = findViewById(R.id.btn_mustard);
         btn_mustard.setOnClickListener(this);
     }
@@ -42,7 +42,7 @@ public class ChooseActivity extends AppCompatActivity implements View.OnClickLis
         if (view.getId() == R.id.btn_scarlett) {
 
         }
-        if (view.getId() == R.id.btn_white) {
+        if (view.getId() == R.id.btn_orchid) {
 
         }
         if (view.getId() == R.id.btn_mustard) {
