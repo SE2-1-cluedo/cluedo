@@ -32,10 +32,11 @@ public class GameplayParameterizedTests {
     ArrayList<Player> playersEven;
     ArrayList<Player> playersOdd;
 
+    //param 1: pos Player; param 2: goto Field
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {2, 7}, {7, 2}, {5, 9}, {9, 5}
+                {1, 7}, {7, 1}, {3, 7}, {7, 3}
         });
     }
 
@@ -47,7 +48,7 @@ public class GameplayParameterizedTests {
         this.secretInput = secretInput;
         this.secretExpected = secretExpected;
     }
-
+    //7-1; 1-7; 3-7; 7-3
 
     @Before
     public void setUp() {
@@ -64,11 +65,11 @@ public class GameplayParameterizedTests {
     }
 
     @Test
-    public void useSecretPassageKitchenToWorkingRoom() {
+    public void useSecretPassageLoungeToBilliardRoom() {
         game.decidePlayerWhoMovesFirst();
         Player player = game.findPlayerByCharacterName(game.getCurrentPlayer());
         player.setPositionOnBoard(secretInput);
-        game.useSecretPassage();
+        game.useSecretPassage(secretExpected);
         assertEquals(secretExpected, player.getPositionOnBoard());
     }
 
