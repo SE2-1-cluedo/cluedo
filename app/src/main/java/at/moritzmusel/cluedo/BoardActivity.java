@@ -10,9 +10,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.app.ActionBar;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.Intent;
 import android.content.res.Configuration;
 
@@ -23,7 +20,6 @@ import android.widget.ImageButton;
 
 import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -47,7 +43,6 @@ public class BoardActivity extends AppCompatActivity {
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
     Dice dice;
-    private ImageView image;
     private Gameplay gp1;
     private int newPosition;
     ArrayList<Button> allPositions = new ArrayList<>();
@@ -107,11 +102,6 @@ public class BoardActivity extends AppCompatActivity {
 
         }
 
-
-        ImageView diceView = findViewById(R.id.diceView);
-        Dice dice = new Dice(diceView);
-        diceView.setOnClickListener(view -> dice.throwDice());
-
         constraint.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -151,21 +141,19 @@ public class BoardActivity extends AppCompatActivity {
                         constraint.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
                 });
+
         ImageButton cardView = findViewById(R.id.cardView);
         cardView.setVisibility(View.VISIBLE);
         cardView.setOnClickListener(v -> onCardViewClick());
 
-        image = new ImageView(this);
-        image.setImageResource(R.drawable.cardback);
 
+        diceView = findViewById(R.id.diceView);
+        dice = new Dice((ImageView) diceView);
         diceView.setOnClickListener(v -> {
             dice.throwDice();
             diceRolled();
         });
-
-
     }
-
 
     /**
      * Called when dice gets rolled. Removes dice clickListener, resets stepsTaken in Gameplay
@@ -174,6 +162,7 @@ public class BoardActivity extends AppCompatActivity {
     public void diceRolled() {
         diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
         gp1.setStepsTaken(0);
+        switchWeapon("dagger");
         movePlayerWithArrows();
     }
 
@@ -571,11 +560,18 @@ public class BoardActivity extends AppCompatActivity {
             alertDialog.show();
     }
 
+    /**
+     * starts a new Activity to see the notepad
+     */
     public void startNotepad(){
         Intent intent = new Intent(this, NotepadActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
     }
+
+    /**
+     * starts a new Activity to call an accusation or suspicion
+     */
     public void startSuspicion(){
         Intent intent = new Intent(this, SuspicionActivity.class);
         startActivity(intent);

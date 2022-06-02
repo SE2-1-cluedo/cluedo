@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import at.moritzmusel.cluedo.entities.Player;
+
 public class NotepadActivity extends AppCompatActivity implements View.OnClickListener {
 
     CheckboxAdapter checkAdapter;
@@ -129,7 +131,7 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
         colLibraryInput = findViewById(R.id.colLibraryInput);
         colStudyInput = findViewById(R.id.colStudyInput);
 
-
+    }
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_closeNotepad) {
