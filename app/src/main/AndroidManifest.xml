@@ -10,8 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Cluedo">
         <activity
+            android:name=".DebugNetwork"
+            android:exported="false" />
+        <activity
             android:name=".BoardActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

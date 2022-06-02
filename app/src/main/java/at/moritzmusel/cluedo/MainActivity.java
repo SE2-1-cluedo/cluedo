@@ -34,7 +34,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button button = findViewById(R.id.button);
+        startActivity(new Intent(this, DebugNetwork.class));
+        Log.i(TAG_AUTH, "HALLO");
+
+        /*
+        //Button button = findViewById(R.id.button);
         //authentifiziere Nutzer zur einzigartigen zuordnung von spielern
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser m = mAuth.getCurrentUser();
@@ -45,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
         Network.createLobby(mAuth.getCurrentUser());
         Network.joinLobby(m, Network.getCurrentGameID());
         //end
-        button.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, BoardActivity.class)));
+        //button.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, BoardActivity.class)));
+         */
     }
 
     //On start checken ob Nutzer bereits angemeldet ist, falls nicht -> ui change entsprechend
