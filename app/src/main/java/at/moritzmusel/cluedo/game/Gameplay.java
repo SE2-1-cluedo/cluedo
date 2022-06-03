@@ -1,7 +1,14 @@
 package at.moritzmusel.cluedo.game;
 
+import static at.moritzmusel.cluedo.entities.Character.DR_ORCHID;
+import static at.moritzmusel.cluedo.entities.Character.MISS_SCARLETT;
+import static at.moritzmusel.cluedo.entities.Character.MRS_PEACOCK;
+import static at.moritzmusel.cluedo.entities.Character.PROFESSOR_PLUM;
+import static at.moritzmusel.cluedo.entities.Character.REVEREND_GREEN;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,17 +21,26 @@ public class Gameplay {
     private static int numDice;
     private static int stepsTaken = 0;
     private Character currentPlayer;
-    private List<Player> players;
+    private List<Player> players = new ArrayList<>();
     private ArrayList<Integer> clueCards = new ArrayList<>();
     private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
     private Killer killer;
 
-    /**
-     * @param players all the Players in the Session
-     */
-    public Gameplay(List<Player> players) {
-        this.players = players;
+    private static final Gameplay OBJ = new Gameplay();
+
+    private Gameplay() {
+        players.add(new Player(1,MISS_SCARLETT));
+        players.add(new Player(2, REVEREND_GREEN));
+        players.add(new Player(3, PROFESSOR_PLUM));
+        players.add(new Player(4, MRS_PEACOCK));
+        players.add(new Player(5, DR_ORCHID));
+
+        //players = Network.getPlayers();
+    }
+
+    public static Gameplay getInstance(){
+        return OBJ;
     }
 
     /**

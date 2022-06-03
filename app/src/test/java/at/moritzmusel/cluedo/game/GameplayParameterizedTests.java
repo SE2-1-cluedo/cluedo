@@ -22,15 +22,7 @@ import at.moritzmusel.cluedo.entities.Player;
 @RunWith(Parameterized.class)
 public class GameplayParameterizedTests {
 
-    Player Player1;
-    Player Player2;
-    Player Player3;
-    Player Player4;
-    Player Player5;
     Gameplay game;
-    Gameplay game2;
-    ArrayList<Player> playersEven;
-    ArrayList<Player> playersOdd;
 
     //param 1: pos Player; param 2: goto Field
     @Parameterized.Parameters
@@ -52,15 +44,7 @@ public class GameplayParameterizedTests {
 
     @Before
     public void setUp() {
-        Player1 = new Player(1, MISS_SCARLETT);
-        Player2 = new Player(2, REVEREND_GREEN);
-        Player3 = new Player(3, PROFESSOR_PLUM);
-        Player4 = new Player(4, MRS_PEACOCK);
-        Player5 = new Player(5, DR_ORCHID);
-        playersEven = new ArrayList<>(Arrays.asList(Player1, Player2, Player3, Player4, Player5));
-        playersOdd = new ArrayList<>(Arrays.asList(Player2,Player3, Player4, Player5));
-        game = new Gameplay(playersEven);
-        game2 = new Gameplay(playersOdd);
+        game = Gameplay.getInstance();
         Gameplay.setNumDice(3);
     }
 
