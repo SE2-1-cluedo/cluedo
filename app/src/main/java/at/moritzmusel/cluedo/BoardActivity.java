@@ -54,14 +54,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         Dice dice = new Dice(diceView);
         diceView.setOnClickListener(view -> dice.throwDice());
 
-        builder.setPositiveButton("Roll", new DialogInterface.OnClickListener() {
+        /*builder.setPositiveButton("Roll", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
             }
-        });
+        });*/
 
-        builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
