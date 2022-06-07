@@ -3,9 +3,12 @@ package at.moritzmusel.cluedo;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,7 +28,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private ImageView image;
     private View dice_layout;
     private ImageView diceView;
-    private SensorManager sensorManager;
+
+    private SensorManager mSensorManager;
     private Sensor accel;
     private ShakeDetector shakeDetector;
 
@@ -38,7 +42,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         allcards.getGameCards();
 
 
-        //diceView.setOnClickListener(view -> dice.throwDice());
+        diceView = findViewById(R.id.diceView);
+        Dice dice = new Dice(diceView);
+        diceView.setOnClickListener(view -> dice.throwDice());
 
         ImageButton cardView = findViewById(R.id.cardView);
         cardView.setOnClickListener(this);
@@ -46,9 +52,32 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
 
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accel = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        shakeDetector = new ShakeDetector();
+
         callDice();
 
+
+        /*shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+            @Override
+            public void onShake(int count) {
+
+                Toast.makeText(BoardActivity.this, "Shake " , Toast.LENGTH_LONG).show();
+                 dice.throwDice();
+                 diceRolled();
+                 ImageView d = findViewById(R.id.cardView);
+                 d.setImageResource(R.drawable.cardback);
+            }
+        });
+        */
+
+
+
+
+
     }
+
     public void diceRolled() {
         diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
         //gp1.setStepsTaken(0);
@@ -66,24 +95,22 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         diceView = dice_layout.findViewById(R.id.img_dice);
         Dice dice = new Dice(diceView);
 
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE); //initialize Shake Detector
-        assert sensorManager != null;
-        accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        shakeDetector = new ShakeDetector();
-
-        shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
-             @Override
-             public void onShake(int count) {
-                 dice.throwDice();
-                 diceRolled();
-             }
-         });
-
-
         diceView.setOnClickListener(view -> {
             dice.throwDice();
             diceRolled();
         });
+
+        shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+            @Override
+            public void onShake(int count) {
+                if(count < 2){
+                    dice.throwDice();
+                    diceRolled();
+                }
+
+            }
+        });
+        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
 
         /*builder.setPositiveButton("Roll", new DialogInterface.OnClickListener() {
             @Override
@@ -101,25 +128,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-
-        /*alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                setContentView(R.layout.test_board2);
-                ImageView image = (ImageView) alertDialog.findViewById(R.id.diceView);
-                Dice dice = new Dice(image);
-                image.setOnClickListener(view -> dice.throwDice());
-
-                Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.dice1);
-                float imageWidthInPX = (float)image.getWidth();
-
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
-                        Math.round(imageWidthInPX * (float)icon.getHeight() / (float)icon.getWidth()));
-                image.setLayoutParams(layoutParams);
-
-            }
-        });*/
     }
+
     public void onButtonClick(View v) {
         String room = getResources().getResourceEntryName(v.getId());
 
