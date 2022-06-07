@@ -5,14 +5,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import at.moritzmusel.cluedo.game.Dice;
+import at.moritzmusel.cluedo.sensor.ShakeDetector;
 
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
     private AllTheCards allcards;
@@ -20,6 +24,10 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     static final int MIN_SWIPE_DISTANCE = 150;
     private ImageView image;
     private View dice_layout;
+    private ImageView diceView;
+    private SensorManager sensorManager;
+    private Sensor accel;
+    private ShakeDetector shakeDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +49,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         callDice();
 
     }
+    public void diceRolled() {
+        diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
+        //gp1.setStepsTaken(0);
+        //movePlayerWithArrows();
+    }
 
     private void callDice(){
         AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
@@ -50,9 +63,27 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         dice_layout = inflater.inflate(R.layout.custom_dialog, null);
         builder.setView(dice_layout);
 
-        ImageView diceView = dice_layout.findViewById(R.id.img_dice);
+        diceView = dice_layout.findViewById(R.id.img_dice);
         Dice dice = new Dice(diceView);
-        diceView.setOnClickListener(view -> dice.throwDice());
+
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE); //initialize Shake Detector
+        assert sensorManager != null;
+        accel = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        shakeDetector = new ShakeDetector();
+
+        shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+             @Override
+             public void onShake(int count) {
+                 dice.throwDice();
+                 diceRolled();
+             }
+         });
+
+
+        diceView.setOnClickListener(view -> {
+            dice.throwDice();
+            diceRolled();
+        });
 
         /*builder.setPositiveButton("Roll", new DialogInterface.OnClickListener() {
             @Override
