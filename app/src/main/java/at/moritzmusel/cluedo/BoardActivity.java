@@ -50,12 +50,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         dice_layout = inflater.inflate(R.layout.custom_dialog, null);
         builder.setView(dice_layout);
 
+        ImageView diceView = dice_layout.findViewById(R.id.img_dice);
+        Dice dice = new Dice(diceView);
+        diceView.setOnClickListener(view -> dice.throwDice());
+
         builder.setPositiveButton("Roll", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ImageView diceView = dice_layout.findViewById(R.id.img_dice);
-                Dice dice = new Dice(diceView);
-                diceView.setOnClickListener(view -> dice.throwDice());
+
             }
         });
 
