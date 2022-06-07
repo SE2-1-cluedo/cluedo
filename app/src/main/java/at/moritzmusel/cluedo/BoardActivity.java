@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -52,6 +53,7 @@ public class BoardActivity extends AppCompatActivity {
     Integer[] help = {1,2,3,4,5,6,7,8,9};
     List<Integer> helpList = Arrays.asList(help);
     HashMap<Integer,String> freeWeaponPlaces = new HashMap<>();
+    private View playerCardsView;
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -544,18 +546,29 @@ public class BoardActivity extends AppCompatActivity {
      * if button is clicked, the current cards of the player are shown
      */
     public void onCardViewClick() {
-            AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
-            builder.setTitle("My Cards");
+        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+        builder.setTitle("My Cards");
 
-            final String[] items = {allCards.getGameCards().get(0).getDesignation(),allCards.getGameCards().get(10).getDesignation(),allCards.getGameCards().get(18).getDesignation()};
-            //Später vielleicht mit den Bildern
-            //Nur Demo brauche Methode um die eigentlichen Karten zu bekommen
-            builder.setItems(items, (dialog, item) -> {
+        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
 
-            });
-            builder.setNeutralButton("OK", (dialog, which) -> dialog.cancel());
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
+        View playerCardsView = factory.inflate(R.layout.image_show_cards, null);
+        setPlayerCardImages();
+        builder.setView(playerCardsView);
+
+        //final String[] items = {allCards.getGameCards().get(0).getDesignation(),allCards.getGameCards().get(10).getDesignation(),allCards.getGameCards().get(18).getDesignation()};
+        //Später vielleicht mit den Bildern
+        //Nur Demo brauche Methode um die eigentlichen Karten zu bekommen
+        //builder.setItems(items, (dialog, item) -> {
+
+        //});
+        builder.setNeutralButton("OK", (dialog, which) -> dialog.cancel());
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void setPlayerCardImages() {
+
+
     }
 
     /**
