@@ -2,19 +2,15 @@ package at.moritzmusel.cluedo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import at.moritzmusel.cluedo.game.Dice;
 
@@ -23,6 +19,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private float x1, x2, y1, y2;
     static final int MIN_SWIPE_DISTANCE = 150;
     private ImageView image;
+    private View dice_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,20 +38,24 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
 
+        callDice();
+
+    }
+
+    private void callDice(){
         AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
         builder.setTitle("Throw Dice");
 
         LayoutInflater inflater = getLayoutInflater();
-        View dialoglayout = inflater.inflate(R.layout.custom_dialog, null);
-        builder.setView(dialoglayout);
-
+        dice_layout = inflater.inflate(R.layout.custom_dialog, null);
+        builder.setView(dice_layout);
 
         builder.setPositiveButton("Roll", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                /*ImageView diceView = findViewById(R.id.img_dice);
+                ImageView diceView = dice_layout.findViewById(R.id.img_dice);
                 Dice dice = new Dice(diceView);
-                diceView.setOnClickListener(view -> dice.throwDice());*/
+                diceView.setOnClickListener(view -> dice.throwDice());
             }
         });
 
@@ -85,10 +86,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
             }
         });*/
-
-
     }
-
     public void onButtonClick(View v) {
         String room = getResources().getResourceEntryName(v.getId());
 
