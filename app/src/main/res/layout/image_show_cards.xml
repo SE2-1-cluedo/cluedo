@@ -9,18 +9,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_gap"
+        android:layout_gravity="center"
         android:src="@drawable/cardback" />
+
     <ImageView
         android:id="@+id/myCard2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_gap"
+        android:layout_gravity="center"
         android:src="@drawable/cardback" />
+
     <ImageView
         android:id="@+id/myCard3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_gap"
+        android:layout_gravity="center"
         android:src="@drawable/cardback" />
 
 </LinearLayout>

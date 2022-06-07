@@ -13,6 +13,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Intent;
 import android.content.res.Configuration;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -546,13 +548,22 @@ public class BoardActivity extends AppCompatActivity {
      * if button is clicked, the current cards of the player are shown
      */
     public void onCardViewClick() {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
         builder.setTitle("My Cards");
 
-        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
-
-        View playerCardsView = factory.inflate(R.layout.image_show_cards, null);
         setPlayerCardImages();
+
+        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
+        playerCardsView = factory.inflate(R.layout.image_show_cards, null);
+
+        ImageView card1 = (ImageView) playerCardsView.findViewById(R.id.myCard1);
+        card1.setImageResource(R.drawable.rope);
+        ImageView card2 = playerCardsView.findViewById(R.id.myCard2);
+        card2.setImageResource(R.drawable.dagger);
+        ImageView card3 = playerCardsView.findViewById(R.id.myCard3);
+        card3.setImageResource(R.drawable.candlestick);
+
         builder.setView(playerCardsView);
 
         //final String[] items = {allCards.getGameCards().get(0).getDesignation(),allCards.getGameCards().get(10).getDesignation(),allCards.getGameCards().get(18).getDesignation()};
@@ -567,7 +578,6 @@ public class BoardActivity extends AppCompatActivity {
     }
 
     private void setPlayerCardImages() {
-
 
     }
 
