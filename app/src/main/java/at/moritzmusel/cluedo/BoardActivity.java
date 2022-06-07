@@ -41,10 +41,10 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         allcards = new AllTheCards();
         allcards.getGameCards();
 
-
         diceView = findViewById(R.id.diceView);
-        Dice dice = new Dice(diceView);
-        diceView.setOnClickListener(view -> dice.throwDice());
+        diceView.setVisibility(View.GONE);
+        //Dice dice = new Dice(diceView);
+        //diceView.setOnClickListener(view -> dice.throwDice());
 
         ImageButton cardView = findViewById(R.id.cardView);
         cardView.setOnClickListener(this);
@@ -57,24 +57,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         shakeDetector = new ShakeDetector();
 
         callDice();
-
-
-        /*shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
-            @Override
-            public void onShake(int count) {
-
-                Toast.makeText(BoardActivity.this, "Shake " , Toast.LENGTH_LONG).show();
-                 dice.throwDice();
-                 diceRolled();
-                 ImageView d = findViewById(R.id.cardView);
-                 d.setImageResource(R.drawable.cardback);
-            }
-        });
-        */
-
-
-
-
 
     }
 
@@ -92,7 +74,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         dice_layout = inflater.inflate(R.layout.custom_dialog, null);
         builder.setView(dice_layout);
 
-        diceView = dice_layout.findViewById(R.id.img_dice);
+        diceView = dice_layout.findViewById(R.id.diceView);
         Dice dice = new Dice(diceView);
 
         diceView.setOnClickListener(view -> {
@@ -110,6 +92,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
             }
         });
+
         mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
 
         /*builder.setPositiveButton("Roll", new DialogInterface.OnClickListener() {
