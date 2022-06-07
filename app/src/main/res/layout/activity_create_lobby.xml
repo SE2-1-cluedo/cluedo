@@ -29,6 +29,7 @@
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/btn_send_link"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="TextContrastCheck" />
 
@@ -36,12 +37,13 @@
         android:id="@+id/btn_send_link"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/custom_button"
         android:text="@string/send_link"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/btn_lobby_start"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="TextContrastCheck" />
 
@@ -49,12 +51,13 @@
         android:id="@+id/btn_lobby_start"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/custom_button"
         android:text="@string/start"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btn_back"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="TextContrastCheck" />
 
