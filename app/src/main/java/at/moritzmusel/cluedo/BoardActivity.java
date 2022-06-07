@@ -574,15 +574,23 @@ public class BoardActivity extends AppCompatActivity {
         ImageView card2 = playerCardsView.findViewById(R.id.myCard2);
         ImageView card3 = playerCardsView.findViewById(R.id.myCard3);
 
-        //int[] cardids = getPlayerCardIds();
+        int[] card_ids = getPlayerCardIds();
 
-        setPlayerCard(card1,0);
-        setPlayerCard(card2,1);
-        setPlayerCard(card3,2);
+        setPlayerCard(card1, card_ids[0]);
+        setPlayerCard(card2, card_ids[1]);
+        setPlayerCard(card3, card_ids[2]);
 
     }
 
-    //private int[]
+    private int[] getPlayerCardIds(){
+        int[] id;
+        //Hier mit Netzwerk verknüpfen
+        id = new int[]{
+                allCards.getGameCards().get(0).getId(),
+                allCards.getGameCards().get(10).getId(),
+                allCards.getGameCards().get(18).getId()};
+        return id;
+    }
 
     private void setPlayerCard(ImageView card, int id){
         switch(id) {
