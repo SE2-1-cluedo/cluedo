@@ -553,17 +553,6 @@ public class BoardActivity extends AppCompatActivity {
         builder.setTitle("My Cards");
 
         setPlayerCardImages();
-
-        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
-        playerCardsView = factory.inflate(R.layout.image_show_cards, null);
-
-        ImageView card1 = (ImageView) playerCardsView.findViewById(R.id.myCard1);
-        card1.setImageResource(R.drawable.rope);
-        ImageView card2 = playerCardsView.findViewById(R.id.myCard2);
-        card2.setImageResource(R.drawable.dagger);
-        ImageView card3 = playerCardsView.findViewById(R.id.myCard3);
-        card3.setImageResource(R.drawable.candlestick);
-
         builder.setView(playerCardsView);
 
         //final String[] items = {allCards.getGameCards().get(0).getDesignation(),allCards.getGameCards().get(10).getDesignation(),allCards.getGameCards().get(18).getDesignation()};
@@ -578,7 +567,91 @@ public class BoardActivity extends AppCompatActivity {
     }
 
     private void setPlayerCardImages() {
+        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
+        playerCardsView = factory.inflate(R.layout.image_show_cards, null);
 
+        ImageView card1 = playerCardsView.findViewById(R.id.myCard1);
+        ImageView card2 = playerCardsView.findViewById(R.id.myCard2);
+        ImageView card3 = playerCardsView.findViewById(R.id.myCard3);
+
+        //int[] cardids = getPlayerCardIds();
+
+        setPlayerCard(card1,0);
+        setPlayerCard(card2,1);
+        setPlayerCard(card3,2);
+
+    }
+
+    //private int[]
+
+    private void setPlayerCard(ImageView card, int id){
+        switch(id) {
+            case 0:
+                card.setImageResource(R.drawable.scarlett_card);
+                break;
+            case 1:
+                card.setImageResource(R.drawable.plum_card);
+                break;
+            case 2:
+                card.setImageResource(R.drawable.green_card);
+                break;
+            case 3:
+                card.setImageResource(R.drawable.peacock_card);
+                break;
+            case 4:
+                card.setImageResource(R.drawable.mustard_card);
+                break;
+            case 5:
+                card.setImageResource(R.drawable.orchid_card);
+                break;
+            case 6:
+                card.setImageResource(R.drawable.dagger);
+                break;
+            case 7:
+                card.setImageResource(R.drawable.candlestick);
+                break;
+            case 8:
+                card.setImageResource(R.drawable.revolver);
+                break;
+            case 9:
+                card.setImageResource(R.drawable.rope);
+                break;
+            case 10:
+                card.setImageResource(R.drawable.pipe);
+                break;
+            case 11:
+                card.setImageResource(R.drawable.wrench);
+                break;
+            case 12:
+                card.setImageResource(R.drawable.hall_card);
+                break;
+            case 13:
+                card.setImageResource(R.drawable.lounge_card);
+                break;
+            case 14:
+                card.setImageResource(R.drawable.dining_card);
+                break;
+            case 15:
+                card.setImageResource(R.drawable.kitchen_card);
+                break;
+            case 16:
+                card.setImageResource(R.drawable.ballroom_card);
+                break;
+            case 17:
+                card.setImageResource(R.drawable.conservatory_card);
+                break;
+            case 18:
+                card.setImageResource(R.drawable.billiard_card);
+                break;
+            case 19:
+                card.setImageResource(R.drawable.library_card);
+                break;
+            case 20:
+                card.setImageResource(R.drawable.study_card);
+                break;
+            default:
+                card.setImageResource(R.drawable.cardback);
+        }
     }
 
     /**
