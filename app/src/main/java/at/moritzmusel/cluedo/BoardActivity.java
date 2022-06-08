@@ -31,6 +31,7 @@ import java.util.Objects;
 import at.moritzmusel.cluedo.game.Communicator;
 import at.moritzmusel.cluedo.game.Dice;
 import at.moritzmusel.cluedo.game.Gameplay;
+import at.moritzmusel.cluedo.entities.Character;
 
 public class BoardActivity extends AppCompatActivity {
 
@@ -167,6 +168,7 @@ public class BoardActivity extends AppCompatActivity {
 
             builder.setPositiveButton("Yes, proceed", (dialog, which) -> {
                 switchWeapon(weapon.toLowerCase());
+                moveSuspectedPlayer(character);
                 //moveCharacter
                 if(hasSuspected)
                     System.out.println("Suspected");
@@ -196,7 +198,6 @@ public class BoardActivity extends AppCompatActivity {
     public void diceRolled() {
         diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
         gp1.setStepsTaken(0);
-        switchWeapon("dagger");
         movePlayerWithArrows();
     }
 
@@ -423,11 +424,26 @@ public class BoardActivity extends AppCompatActivity {
         return getResources().getIdentifier("weapon"+room, "id", getPackageName());
     }
 
+    private void moveSuspectedPlayer(String player){
+        StringBuilder myName = new StringBuilder(player.toUpperCase());
+        myName.setCharAt(player.indexOf(" "), '_');
+
+        player = player.split("[ ]")[1].toLowerCase();
+        ImageView calledPlayer = findViewById(getResources().getIdentifier(player,"id",getPackageName()));
+        player += "_";
+
+        if(gp1.findPlayerByCharacterName(Character.valueOf(myName.toString())).getPositionOnBoard() != newPosition){
+            calledPlayer.setX(findViewById(createRoomDestination(player,newPosition)).getX());
+            calledPlayer.setY(findViewById(createRoomDestination(player,newPosition)).getY());
+            gp1.findPlayerByCharacterName(Character.valueOf(myName.toString())).setPositionOnBoard(newPosition);
+        }
+    }
+
     /**
      * Gets called by the suspicion to bring the weapon to the currentRoom
      * @param str the name of the weapon that's been moved
      */
-    public void switchWeapon(String str) {
+    private void switchWeapon(String str) {
         String weapon = "w_"+str;
         if (freeWeaponPlaces.get(newPosition) == null) {
             for (ImageView IV:allWeapons) {
