@@ -3,6 +3,7 @@ package at.moritzmusel.cluedo;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+
 
 import at.moritzmusel.cluedo.game.Dice;
 import at.moritzmusel.cluedo.sensor.ShakeDetector;
@@ -66,9 +69,57 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         //movePlayerWithArrows();
     }
 
+    /*private void callDice2(){
+        Dialog builder = new Dialog(this);
+        builder.setContentView(R.layout.layout_custom_dialog);
+
+        builder.getWindow().setBackgroundDrawableResource(R.drawable.custom_button);
+
+        ImageView btnClose = builder.findViewById(R.id.btn_close);
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                builder.dismiss();
+            }
+        });
+
+
+        diceView = dice_layout.findViewById(R.id.diceView);
+        Dice dice = new Dice(diceView);
+
+        diceView.setOnClickListener(view -> {
+            dice.throwDice();
+            diceRolled();
+        });
+
+        shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+            @Override
+            public void onShake(int count) {
+                if(count < 2){
+                    dice.throwDice();
+                    diceRolled();
+                }
+
+            }
+        });
+
+        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
+
+        /*builder.setPositiveButton("Roll", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.show();
+    }*/
+
     private void callDice(){
         AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
         builder.setTitle("Throw Dice");
+
 
         LayoutInflater inflater = getLayoutInflater();
         dice_layout = inflater.inflate(R.layout.custom_dialog, null);
