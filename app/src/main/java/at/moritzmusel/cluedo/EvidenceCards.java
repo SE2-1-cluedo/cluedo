@@ -67,6 +67,7 @@ public class EvidenceCards {
     public String getCardName(){
         return getCard().getDesignation();
     }
+
     public String getPlayer(){
         String player = "Nobody";
         //Hier if mit Netzwerk einfügen um zu überprüfen, wer die Karte in der Hand hält.
