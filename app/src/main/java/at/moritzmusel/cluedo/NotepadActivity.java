@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 
 
@@ -13,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import at.moritzmusel.cluedo.entities.Player;
 
 public class NotepadActivity extends AppCompatActivity implements View.OnClickListener {
 

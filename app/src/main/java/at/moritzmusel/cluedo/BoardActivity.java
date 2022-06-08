@@ -15,7 +15,6 @@ import android.content.res.Configuration;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,8 +45,8 @@ import at.moritzmusel.cluedo.game.Gameplay;
 public class BoardActivity extends AppCompatActivity {
 
     private View decorView, diceView;
-    private AllTheCards allCards;
-    private float x1;
+    private AllTheCards allcards;
+    private float x1, x2, y1, y2;
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
     Dice dice;
@@ -61,20 +60,13 @@ public class BoardActivity extends AppCompatActivity {
     List<Integer> helpList = Arrays.asList(help);
     HashMap<Integer,String> freeWeaponPlaces = new HashMap<>();
     private View playerCardsView;
+    private EvidenceCards evidenceCards;
+    private ImageView image;
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
-
-public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
-    private AllTheCards allcards;
-    private EvidenceCards evidenceCards;
-    private float x1, x2, y1, y2;
-    static final int MIN_SWIPE_DISTANCE = 150;
-    private ImageView image;
-    Dice dice;
-    ImageView diceView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +85,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         gp1 = new Gameplay(playersEven);
         gp1.decidePlayerWhoMovesFirst();
-
-        allCards = new AllTheCards();
 
         setContentView(R.layout.test_board2);
         ConstraintLayout constraint = findViewById(R.id.constraintLayout);
@@ -166,17 +156,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             dice.throwDice();
             diceRolled();
         });
+        rolledMagnifyingGlass(dice);
+
         allcards = new AllTheCards();
         allcards.getGameCards();
 
         evidenceCards = new EvidenceCards();
-
-        diceView = findViewById(R.id.diceView);
-        dice = new Dice(diceView);
-        diceView.setOnClickListener(this);
-
-        ImageButton cardView = findViewById(R.id.cardView);
-        cardView.setOnClickListener(this);
 
         image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
@@ -185,6 +170,27 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         ImageButton cardView = findViewById(R.id.cardView);
         cardView.setVisibility(View.VISIBLE);
         cardView.setOnClickListener(v -> onCardViewClick());
+    }
+
+    private void rolledMagnifyingGlass(Dice dice) {
+        if(dice.getNumberRolled() == 4){
+            AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+            builder.setTitle("What is going on?");
+            builder.setMessage("You rolled the magnifying glass." + "\n"
+                    + "A evidence card has been drawn." + "\n"
+                    + "It is revealed that the Card: " + evidenceCards.getDrawnCard().getDesignation() + "\n"
+                    + "is owned by: " + evidenceCards.getPlayer());
+
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
     }
 
     /**
@@ -615,9 +621,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         int[] id;
         //Hier mit Netzwerk verknüpfen
         id = new int[]{
-                allCards.getGameCards().get(0).getId(),
-                allCards.getGameCards().get(10).getId(),
-                allCards.getGameCards().get(18).getId()};
+                allcards.getGameCards().get(0).getId(),
+                allcards.getGameCards().get(10).getId(),
+                allcards.getGameCards().get(18).getId()};
         return id;
     }
 
@@ -691,71 +697,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    /**
-     * starts a new Activity to see the notepad
-     */
-    public void startNotepad(){
-        Intent intent = new Intent(this, NotepadActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
-    }
-
-    /**
-     * starts a new Activity to call an accusation or suspicion
-     */
-    public void startSuspicion(){
-        Intent intent = new Intent(this, SuspicionActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
-    }
-
-    //EventListener für Swipe-Event
-    @Override
-    public boolean onTouchEvent (MotionEvent touchEvent){
-        switch(touchEvent.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                x1 = touchEvent.getX();
-                float y1 = touchEvent.getY();
-                break;
-
-            case MotionEvent.ACTION_UP:
-                float x2 = touchEvent.getX();
-                float y2 = touchEvent.getY();
-                float swipeRight = x2 -x1,
-                        swipeLeft = x1- x2;
-
-                if(swipeRight > MIN_SWIPE_DISTANCE){
-                    startNotepad();
-                } else if(swipeLeft > MIN_SWIPE_DISTANCE){
-                    startSuspicion();
-                }
-                break;
-        }
-        return false;
-        diceView = findViewById(R.id.diceView);
-        dice = new Dice(diceView);
-        diceView.setOnClickListener(view -> dice.throwDice());
-
-        if(dice.getNumberRolled() == 4){
-            AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
-            builder.setTitle("What is going on?");
-            builder.setMessage("You rolled the magnifying glass. A evidence card has been drawn." + "\n"
-                    + "It is revealed that the Card: " + evidenceCards.getCardName()
-                    + " is owned by: " + evidenceCards.getPlayer());
-
-            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.create();
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        }
-    }
-
-    @Override
+    /*@Override
     public void onClick(View view) {
         if(view.getId() == R.id.cardView){
             AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
@@ -803,7 +745,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             }
         }
 
-    }
+    }*/
 
     public void startNotepad(){
         Intent intent = new Intent(this, NotepadActivity.class);
