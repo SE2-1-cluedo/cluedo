@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.game.Communicator;
+import at.moritzmusel.cluedo.game.Gameplay;
 
 public class SuspicionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -39,15 +41,16 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
     private Spinner person;
     private Spinner weapon;
     float x1, x2;
+    Gameplay gp1;
+    Communicator ca;
     static final int MIN_SWIPE_DISTANCE = 150;
-    private Player player;
 
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suspicion);
-
+        gp1 = Gameplay.getInstance();
 
         //Dropdown Person
         adapterPerson = ArrayAdapter.createFromResource(this, R.array.person_array, android.R.layout.simple_spinner_item);
@@ -71,29 +74,27 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
         //Textfeld aktueller Raum
         currentRoom = findViewById(R.id.currentRoom);
-        //int room = player.getPositionOnBoard();
-        int room = 4;
+        int room = gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard()-1;
         currentRoom.setText(roomsArray[room]);
 
+        ca = Communicator.getInstance();
 
         //Button Bestätigung des Verdachts / Anklage
         accusation = findViewById(R.id.submit_Accusation);
-        accusation.setOnClickListener((new View.OnClickListener() {
-            //TODO Button accusation Funktionalität
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(SuspicionActivity.this, BoardActivity.class);
-                startActivity(i);
-            }
+        //TODO Button accusation Funktionalität
+        accusation.setOnClickListener((view -> {
+            ca.setCharacter(selectedPerson);
+            ca.setWeapon(selectedWeapon);
+            ca.setHasAccused(true);
+            finish();
         }));
         suspicion = findViewById(R.id.submit_Suspicion);
-        suspicion.setOnClickListener(new View.OnClickListener() {
-            //TODO Button suspicion Funktionaität
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(SuspicionActivity.this, BoardActivity.class);
-                startActivity(i);
-            }
+        //TODO Button suspicion Funktionaität
+        suspicion.setOnClickListener(view -> {
+            ca.setCharacter(selectedPerson);
+            ca.setWeapon(selectedWeapon);
+            ca.setHasSuspected(true);
+            finish();
         });
 
         //Textfelder Spielerauswahl

@@ -6,19 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/border_left"
-        android:layout_width="18dp"
-        android:layout_height="19dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/board_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.336"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.501"
-        tools:ignore="TouchTargetSizeCheck" />
-
     <ImageView
         android:id="@+id/board_background"
         android:layout_width="0dp"
@@ -508,7 +495,7 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/board_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.019"
+        app:layout_constraintHorizontal_bias="0.02"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.613"
@@ -534,7 +521,7 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/board_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.378"
+        app:layout_constraintHorizontal_bias="0.38"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.256"
@@ -547,7 +534,7 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/board_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.365"
+        app:layout_constraintHorizontal_bias="0.38"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.621"
@@ -560,7 +547,7 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/board_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.365"
+        app:layout_constraintHorizontal_bias="0.38"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.97"
@@ -573,7 +560,7 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/board_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.71"
+        app:layout_constraintHorizontal_bias="0.72"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.256"
@@ -586,7 +573,7 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/board_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.726"
+        app:layout_constraintHorizontal_bias="0.74"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.613"
@@ -723,7 +710,7 @@
         tools:ignore="TouchTargetSizeCheck" />
 
     <Button
-        android:id="@+id/scarlet_1"
+        android:id="@+id/scarlett_1"
         android:layout_width="40dp"
         android:layout_height="19dp"
         android:visibility="invisible"
@@ -736,7 +723,7 @@
         tools:ignore="TouchTargetSizeCheck" />
 
     <Button
-        android:id="@+id/scarlet_4"
+        android:id="@+id/scarlett_4"
         android:layout_width="40dp"
         android:layout_height="19dp"
         android:visibility="invisible"
@@ -749,7 +736,7 @@
         tools:ignore="TouchTargetSizeCheck" />
 
     <Button
-        android:id="@+id/scarlet_7"
+        android:id="@+id/scarlett_7"
         android:layout_width="40dp"
         android:layout_height="19dp"
         android:visibility="invisible"
@@ -762,20 +749,20 @@
         tools:ignore="TouchTargetSizeCheck" />
 
     <Button
-        android:id="@+id/scarlet_2"
+        android:id="@+id/scarlett_2"
         android:layout_width="40dp"
         android:layout_height="19dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/board_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.546"
+        app:layout_constraintHorizontal_bias="0.567"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.027"
         tools:ignore="TouchTargetSizeCheck" />
 
     <Button
-        android:id="@+id/scarlet_5"
+        android:id="@+id/scarlett_5"
         android:layout_width="40dp"
         android:layout_height="19dp"
         android:visibility="invisible"
@@ -788,7 +775,7 @@
         tools:ignore="TouchTargetSizeCheck" />
 
     <Button
-        android:id="@+id/scarlet_8"
+        android:id="@+id/scarlett_8"
         android:layout_width="40dp"
         android:layout_height="19dp"
         android:visibility="invisible"
@@ -801,7 +788,7 @@
         tools:ignore="TouchTargetSizeCheck" />
 
     <Button
-        android:id="@+id/scarlet_3"
+        android:id="@+id/scarlett_3"
         android:layout_width="40dp"
         android:layout_height="19dp"
         android:visibility="invisible"
@@ -814,7 +801,7 @@
         tools:ignore="TouchTargetSizeCheck" />
 
     <Button
-        android:id="@+id/scarlet_6"
+        android:id="@+id/scarlett_6"
         android:layout_width="40dp"
         android:layout_height="19dp"
         android:visibility="invisible"
@@ -827,7 +814,7 @@
         tools:ignore="TouchTargetSizeCheck" />
 
     <Button
-        android:id="@+id/scarlet_9"
+        android:id="@+id/scarlett_9"
         android:layout_width="40dp"
         android:layout_height="19dp"
         android:visibility="invisible"
@@ -1188,19 +1175,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.727"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <Button
-        android:id="@+id/border_right"
-        android:layout_width="18dp"
-        android:layout_height="19dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/board_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.672"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.501"
         tools:ignore="TouchTargetSizeCheck" />
 
     <Button

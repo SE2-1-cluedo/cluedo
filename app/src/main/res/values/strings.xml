@@ -47,7 +47,7 @@
 
     <string-array name="weapons_array">
         <item>Dagger</item>
-        <item>Pistole</item>
+        <item>Revolver</item>
         <item>Rope</item>
         <item>Pipe</item>
         <item>Candlestick</item>
@@ -57,14 +57,14 @@
 
     <string-array name="rooms_array">
         <item>Lounge</item>
+        <item>Conservatory</item>
+        <item>Ballroom</item>
         <item>Dining Room</item>
+        <item>Kitchen</item>
+        <item>Library</item>
         <item>Billiard Room</item>
         <item>Study</item>
         <item>Hall</item>
-        <item>Library</item>
-        <item>Ballroom</item>
-        <item>Conservatory</item>
-        <item>Kitchen</item>
     </string-array>
 
     <string-array name="all">
