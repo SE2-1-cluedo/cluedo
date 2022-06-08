@@ -15,13 +15,18 @@ import android.content.res.Configuration;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -61,6 +66,15 @@ public class BoardActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
+
+public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
+    private AllTheCards allcards;
+    private EvidenceCards evidenceCards;
+    private float x1, x2, y1, y2;
+    static final int MIN_SWIPE_DISTANCE = 150;
+    private ImageView image;
+    Dice dice;
+    ImageView diceView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +166,21 @@ public class BoardActivity extends AppCompatActivity {
             dice.throwDice();
             diceRolled();
         });
+        allcards = new AllTheCards();
+        allcards.getGameCards();
+
+        evidenceCards = new EvidenceCards();
+
+        diceView = findViewById(R.id.diceView);
+        dice = new Dice(diceView);
+        diceView.setOnClickListener(this);
+
+        ImageButton cardView = findViewById(R.id.cardView);
+        cardView.setOnClickListener(this);
+
+        image = new ImageView(this);
+        image.setImageResource(R.drawable.cardback);
+
 
         ImageButton cardView = findViewById(R.id.cardView);
         cardView.setVisibility(View.VISIBLE);
@@ -694,6 +723,113 @@ public class BoardActivity extends AppCompatActivity {
                 float y2 = touchEvent.getY();
                 float swipeRight = x2 -x1,
                         swipeLeft = x1- x2;
+
+                if(swipeRight > MIN_SWIPE_DISTANCE){
+                    startNotepad();
+                } else if(swipeLeft > MIN_SWIPE_DISTANCE){
+                    startSuspicion();
+                }
+                break;
+        }
+        return false;
+        diceView = findViewById(R.id.diceView);
+        dice = new Dice(diceView);
+        diceView.setOnClickListener(view -> dice.throwDice());
+
+        if(dice.getNumberRolled() == 4){
+            AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+            builder.setTitle("What is going on?");
+            builder.setMessage("You rolled the magnifying glass. A evidence card has been drawn." + "\n"
+                    + "It is revealed that the Card: " + evidenceCards.getCardName()
+                    + " is owned by: " + evidenceCards.getPlayer());
+
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.cardView){
+            AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+            builder.setTitle("My Cards");
+
+            final String[] items = {allcards.getGameCards().get(0).getDesignation(),allcards.getGameCards().get(7).getDesignation(),allcards.getGameCards().get(20).getDesignation()};
+            //Später vielleicht mit den Bildern
+            //Nur Demo brauche Methode um die eigentlichen Karten zu bekommen
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+
+                }
+            });
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+        if(view.getId() == R.id.diceView){
+            diceView = findViewById(R.id.diceView);
+            dice = new Dice(diceView);
+            dice.throwDice();
+            if(dice.getNumberRolled() == 4){
+                AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+                builder.setTitle("What is going on?");
+                builder.setMessage("You rolled the magnifying glass." + "\n"
+                        + "A evidence card has been drawn." + "\n"
+                        + "It is revealed that the Card: " + evidenceCards.getDrawnCard().getDesignation() + "\n"
+                        + "is owned by: " + evidenceCards.getPlayer());
+
+                builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create();
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        }
+
+    }
+
+    public void startNotepad(){
+        Intent intent = new Intent(this, NotepadActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
+    }
+    public void startSuspicion(){
+        Intent intent = new Intent(this, SuspicionActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
+    }
+
+    //EventListener für Swipe-Event
+    @Override
+    public boolean onTouchEvent (MotionEvent touchEvent){
+        switch(touchEvent.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                x1 = touchEvent.getX();
+                y1 = touchEvent.getY();
+                break;
+
+            case MotionEvent.ACTION_UP:
+                x2 = touchEvent.getX();
+                y2 = touchEvent.getY();
+                float swipeRight = x2-x1,
+                        swipeLeft = x1-x2;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
