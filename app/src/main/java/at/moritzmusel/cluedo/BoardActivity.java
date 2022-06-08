@@ -155,8 +155,9 @@ public class BoardActivity extends AppCompatActivity {
         diceView.setOnClickListener(v -> {
             dice.throwDice();
             diceRolled();
+
         });
-        rolledMagnifyingGlass(dice);
+
 
         allcards = new AllTheCards();
         allcards.getGameCards();
@@ -199,6 +200,7 @@ public class BoardActivity extends AppCompatActivity {
      */
     public void diceRolled() {
         diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
+        rolledMagnifyingGlass(dice);
         gp1.setStepsTaken(0);
         movePlayerWithArrows();
     }
