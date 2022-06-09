@@ -779,6 +779,8 @@ public class BoardActivity extends AppCompatActivity {
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
                     startSuspicion();
+                }else{
+                    onCardViewClick();
                 }
                 break;
         }
