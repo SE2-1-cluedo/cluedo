@@ -1,20 +1,28 @@
 package at.moritzmusel.cluedo.network.pojo;
 
+import android.content.Context;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import at.moritzmusel.cluedo.network.data.QuestionCards;
 
 public class GameState {
     private List<Player> playerState;
     private List<CardState> cardState;
+    private List<Card> questionCardStack;
     private Question askQuestion;
     private Killer killer;
     private String playerTurn;
 
-    public GameState(List<Player> playerState, List<CardState> cardState, Question askQuestion, Killer killer, String playerTurn) {
+    public GameState(List<Player> playerState, List<CardState> cardState, Question askQuestion, Killer killer, String playerTurn, Context ctx) {
         this.playerState = playerState;
         this.cardState = cardState;
         this.askQuestion = askQuestion;
         this.killer = killer;
         this.playerTurn = playerTurn;
+        //cardState = new ArrayList<>(29);
+        initQuestionCardsStack(ctx);
     }
 
     public List<CardState> getCardState() {
@@ -55,5 +63,10 @@ public class GameState {
 
     public void setPlayerTurn(String playerTurn) {
         this.playerTurn = playerTurn;
+    }
+
+    private void initQuestionCardsStack(Context ctx){
+        QuestionCards qc = new QuestionCards(ctx);
+        this.questionCardStack = qc.getQuestionCards();
     }
 }

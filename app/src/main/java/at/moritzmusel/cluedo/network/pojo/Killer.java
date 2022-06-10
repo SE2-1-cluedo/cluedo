@@ -21,13 +21,9 @@ public class Killer {
         return cards;
     }
 
-    public String getCardsAsString() {
-        return validCards ? (cards.get(0) + ", " + cards.get(1) + ", " + cards.get(2)) : null;
-    }
-
     @NonNull
     @Override
     public String toString() {
-        return validCards ? ("Killer{person=" + cards.get(0) + ", weapon=" + cards.get(1) + ", room=" + cards.get(2) + "}") : "";
+        return validCards ? cards.get(0).toString() + ", " + cards.get(1).toString() + ", " + cards.get(2).toString() : "";
     }
 }

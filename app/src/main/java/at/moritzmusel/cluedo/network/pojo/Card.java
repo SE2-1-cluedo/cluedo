@@ -13,6 +13,10 @@ public class Card {
     public Card(int cardID) {
         this.cardID = cardID;
     }
+    public Card(int cardID, String description){
+        this.cardID = cardID;
+        this.description = description;
+    }
 
     public String getDescription() {
         return description;
@@ -33,9 +37,10 @@ public class Card {
     @NonNull
     @Override
     public String toString() {
-        return "Card{" +
+        /*return "Card{" +
                 "cardID=" + cardID +
                 ", description='" + description + '\'' +
-                '}';
+                '}';*/
+        return String.valueOf(getCardID());
     }
 }

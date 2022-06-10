@@ -1,9 +1,15 @@
 package at.moritzmusel.cluedo.network;
 
+import android.content.Context;
+import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -12,8 +18,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -31,9 +45,11 @@ public class Network {
     private static String currentGameID;
     private static GameState gameState;
     private static FirebaseUser currentUser;
+    private static Context ctx;
 
     //Wird aufgerufen wenn eine Lobby erstellt wird
     //DONE
+    //TODO: Fix wrong date being asserted into db (Offset of 10h 15min)
     public static String createLobby(FirebaseUser user) {
         if (user == null) {
             Log.e(TAG, "Dont forget to authenticate and pass your Firebase user before calling `createLobby()`!");
@@ -44,19 +60,33 @@ public class Network {
             return null;
         }
         setCurrentUser(user);
-        java.sql.Timestamp current = new java.sql.Timestamp(System.currentTimeMillis());
+        Date current = Calendar.getInstance().getTime();
         String gameID = intToChars(current.hashCode());
         setCurrentGameID(gameID);
         DatabaseReference game = database.child("games").child(gameID);
+        SimpleDateFormat formated = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        formated.setTimeZone(TimeZone.getTimeZone("GMT"));
+        game.child("timestamp").setValue(formated.format(current));
         //add Turn Flag path
         DatabaseReference turnFlag = game.child("turn-flag");
         turnFlag.child("question").setValue("");
         turnFlag.child("player-turn").setValue("");
-        turnFlag.child("killer").setValue("");
         //add players path
         game.child("players").setValue("");
         game.child("turn-order").setValue("");
-        joinLobby(user, gameID);
+        game.child("killer").setValue("");
+        games.child(gameID).addValueEventListener(new ValueEventListener() {
+            AtomicBoolean bool = new AtomicBoolean(false);
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists() && !bool.get()){
+                    joinLobby(user, gameID);
+                    bool.set(true);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
         return gameID;
     }
 
@@ -64,9 +94,9 @@ public class Network {
     //Parameter 3 "Player" enthält die bereits
     public static boolean joinLobby(FirebaseUser user, String gameID) {
         //check if FB user and game exists
-        Log.i(TAG, "getCurrentGameID() " + getCurrentGameID() + ", user " + user.getUid() + ", gameExists() " + checkIfGameExists(gameID));
-        if (user != null && (getCurrentGameID() == null || getCurrentGameID().equals(gameID)) && checkIfGameExists(gameID)) {
-            Log.i(TAG, "joinLobby()");
+        //Log.i(TAG, "getCurrentGameID() " + getCurrentGameID() + ", user " + user.getUid() + ", gameExists() " + checkIfGameExists(gameID));
+        //TODO: Why the fuk funktioniert checkIfGameExists() nicht wenn man lobby joined??!?!
+        if (user != null && (getCurrentGameID() == null || getCurrentGameID().equals(gameID)) /*&& checkIfGameExists()*/) {
             setCurrentGameID(gameID);
             setCurrentUser(user);
             DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
@@ -74,14 +104,16 @@ public class Network {
             p.child("cards-eliminated").setValue("");
             p.child("position").setValue("");
             p.child("character").setValue("");
+            //TODO: SET GAMESTATE
             return true;
         } else {
-            throw new IllegalStateException("Make sure you not already in a game when joining!");
+            throw new IllegalStateException("Make sure you are not already in a game when joining!");
         }
     }
 
     public static boolean leaveLobby(FirebaseUser user, String gameID) {
         //check if user is in a game and if FB user and game exists
+        //Log.i(TAG + " leaveLobby() ", "getCurrentGameID() " + getCurrentGameID() + ", user " + user.getUid() + ", gameExists() " + checkIfGameExists(gameID));
         if (getCurrentGameID() != null && user != null && checkIfGameExists(gameID)) {
             setCurrentGameID(null);
             setGameState(null);
@@ -94,18 +126,27 @@ public class Network {
 
     public static void startGame(String gameID, List<Player> list, Killer killer) {
         DatabaseReference game = games.child(gameID);
-        game.child("killer").setValue(killer.getCardsAsString());
+        StringBuilder sbTurnOrder = new StringBuilder();
+        game.child("killer").setValue(killer.toString());
+
         //Entferne die 3 Karten aus dem Pool->anschließend die restlichen karten im Kreis verteilen (18Karten)
-        game.child("cards").addListenerForSingleValueEvent(new ValueEventListener() {
+        //ERROR: Hier werden daten überschrieben
+        game.child("players").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int i = 0;
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    givePlayerCards(child.getKey(), list.get(i), gameID);
+                for (DataSnapshot player : snapshot.getChildren()) {
+                    givePlayerCards(player.getKey(), list.get(i), gameID);
+                    sbTurnOrder.append(player.getValue());
                     i++;
                 }
+                game.child("players").updateChildren(new HashMap<>()).addOnCompleteListener(new OnCompleteListener<Void>(){
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        //TODO: Update local gamestate
+                    }
+                });
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, error.getMessage());
@@ -117,13 +158,17 @@ public class Network {
             cardStates.add(new CardState(i + 1));
         }
         //TODO: playerTurn
-        initGameState(new GameState(list, cardStates, new Question(null, null), killer, ""));
+        initGameState(new GameState(list, cardStates, new Question(null, null), killer, "", getCtx()));
         getGameState().setCardState(null);
         getGameState().setPlayerState(null);
+
+        //set turnOrder
+        game.child("turn-order").setValue(sbTurnOrder.toString());
     }
 
     //Gib Spieler Karten
     public static void givePlayerCards(String userID, Player player, String gameID) {
+        Log.i(TAG, userID + " " + player.getCardsAsString());
         games.child(gameID).child("players").child(userID).child("cards").setValue(player.getCardsAsString());
     }
 
@@ -184,7 +229,7 @@ public class Network {
         Network.currentGameID = currentGameID;
     }
 
-    public static void initGameState(GameState gameState) {
+    public static void initGameState(GameState gameState)   {
         if (getCurrentGameID() != null && Network.gameState == null)
             Network.gameState = gameState;
     }
@@ -207,26 +252,21 @@ public class Network {
 
     private static boolean checkIfGameExists(String gameID) {
         AtomicBoolean gameExists = new AtomicBoolean(false);
-        /*
-        games.child(gameID).get().addOnCompleteListener(task -> {
-            Log.i(TAG, "reached");
-            if (!task.isSuccessful()) Log.e("firebase", "Error getting data", task.getException());
-            else {
-                gameExists.set(task.getResult().exists());
-            }
-        });
-        return gameExists.get();
-        */
         games.child(gameID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.i(TAG, String.valueOf(snapshot.getChildrenCount()));
+                Log.i("FML", "FMLL");
+                if(snapshot.exists() && !gameExists.get() && false){
+                    Log.i(TAG + " checkIfGameExists() ", gameExists.get() + " " +String.valueOf(snapshot));
+                    gameExists.set(true);
+                }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, String.valueOf(error));
             }
         });
+        Log.i(TAG, String.valueOf(gameExists.get()));
         return gameExists.get();
     }
 
@@ -240,5 +280,32 @@ public class Network {
                 }
             });
         }
+    }
+
+    public static void setCtx(Context ctx) {
+        Network.ctx = ctx;
+    }
+
+    public static Context getCtx() {
+        return ctx;
+    }
+
+    public static void testMETHOD(){
+        games.child("CNTKENG").child("players").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.i(TAG + " line 272", String.valueOf(snapshot.getChildrenCount()));
+                int i = 0;
+                /*
+                for (DataSnapshot player : snapshot.getChildren()) {
+                    givePlayerCards(player.getKey(), list.get(i), gameID);
+                    sbTurnOrder.append(player.getValue());
+                    i++;
+                }
+                 */
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 }

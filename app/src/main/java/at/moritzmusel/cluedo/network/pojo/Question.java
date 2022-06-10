@@ -7,7 +7,7 @@ public class Question {
     private int[] cards;
 
     public Question(String askPerson, int[] cards) {
-        if (cards.length != 3)
+        if (cards != null && cards.length !=3)
             throw new IllegalArgumentException("Make sure the question cards array is of size 3!");
         else {
             this.askPerson = askPerson;
