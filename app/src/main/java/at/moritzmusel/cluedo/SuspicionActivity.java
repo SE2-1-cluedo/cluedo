@@ -51,7 +51,7 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
         //Dropdown Person
         adapterPerson = ArrayAdapter.createFromResource(this, R.array.person_array, android.R.layout.simple_spinner_item);
-        person =findViewById(R.id.spinner_person);
+        person = (Spinner) findViewById(R.id.spinner_person);
         person.setOnItemSelectedListener(this);
         adapterPerson.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         person.setAdapter(adapterPerson);

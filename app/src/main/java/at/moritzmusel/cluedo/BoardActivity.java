@@ -13,13 +13,16 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Intent;
 import android.content.res.Configuration;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageButton;
 
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -38,8 +41,8 @@ import at.moritzmusel.cluedo.game.Gameplay;
 public class BoardActivity extends AppCompatActivity {
 
     private View decorView, diceView;
-    private AllTheCards allCards;
-    private float x1,x2, y1, y2;;
+    private AllTheCards allcards;
+    private float x1, x2, y1, y2;
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
     Dice dice;
@@ -52,11 +55,15 @@ public class BoardActivity extends AppCompatActivity {
     Integer[] help = {1,2,3,4,5,6,7,8,9};
     List<Integer> helpList = Arrays.asList(help);
     HashMap<Integer,String> freeWeaponPlaces = new HashMap<>();
+    private View playerCardsView;
+    private EvidenceCards evidenceCards;
+    private ImageView image;
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +82,6 @@ public class BoardActivity extends AppCompatActivity {
 
         gp1 = new Gameplay(playersEven);
         gp1.decidePlayerWhoMovesFirst();
-
-        allCards = new AllTheCards();
 
         setContentView(R.layout.test_board2);
         ConstraintLayout constraint = findViewById(R.id.constraintLayout);
@@ -142,10 +147,6 @@ public class BoardActivity extends AppCompatActivity {
                     }
                 });
 
-        ImageButton cardView = findViewById(R.id.cardView);
-        cardView.setVisibility(View.VISIBLE);
-        cardView.setOnClickListener(v -> onCardViewClick());
-
 
         diceView = findViewById(R.id.diceView);
         dice = new Dice((ImageView) diceView);
@@ -153,6 +154,41 @@ public class BoardActivity extends AppCompatActivity {
             dice.throwDice();
             diceRolled();
         });
+
+
+        allcards = new AllTheCards();
+        allcards.getGameCards();
+
+        evidenceCards = new EvidenceCards();
+
+        image = new ImageView(this);
+        image.setImageResource(R.drawable.cardback);
+
+
+        ImageButton cardView = findViewById(R.id.cardView);
+        cardView.setVisibility(View.VISIBLE);
+        cardView.setOnClickListener(v -> onCardViewClick());
+    }
+
+    private void rolledMagnifyingGlass(Dice dice) {
+        if(dice.getNumberRolled() == 4){
+            AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+            builder.setTitle("What is going on?");
+            builder.setMessage("You rolled the magnifying glass." + "\n"
+                    + "A evidence card has been drawn." + "\n"
+                    + "It is revealed that the Card: " + evidenceCards.getDrawnCard().getDesignation() + "\n"
+                    + "is owned by: " + evidenceCards.getPlayer());
+
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
     }
 
     /**
@@ -161,6 +197,7 @@ public class BoardActivity extends AppCompatActivity {
      */
     public void diceRolled() {
         diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
+        rolledMagnifyingGlass(dice);
         gp1.setStepsTaken(0);
         switchWeapon("dagger");
         movePlayerWithArrows();
@@ -546,32 +583,175 @@ public class BoardActivity extends AppCompatActivity {
      * if button is clicked, the current cards of the player are shown
      */
     public void onCardViewClick() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+        builder.setTitle("My Cards");
+
+        setPlayerCardImages();
+        builder.setView(playerCardsView);
+
+        //final String[] items = {allCards.getGameCards().get(0).getDesignation(),allCards.getGameCards().get(10).getDesignation(),allCards.getGameCards().get(18).getDesignation()};
+        //Später vielleicht mit den Bildern
+        //Nur Demo brauche Methode um die eigentlichen Karten zu bekommen
+        //builder.setItems(items, (dialog, item) -> {
+
+        //});
+        builder.setNeutralButton("OK", (dialog, which) -> dialog.cancel());
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void setPlayerCardImages() {
+        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
+        playerCardsView = factory.inflate(R.layout.image_show_cards, null);
+
+        ImageView card1 = playerCardsView.findViewById(R.id.myCard1);
+        ImageView card2 = playerCardsView.findViewById(R.id.myCard2);
+        ImageView card3 = playerCardsView.findViewById(R.id.myCard3);
+
+        int[] card_ids = getPlayerCardIds();
+
+        setPlayerCard(card1, card_ids[0]);
+        setPlayerCard(card2, card_ids[1]);
+        setPlayerCard(card3, card_ids[2]);
+
+    }
+
+    private int[] getPlayerCardIds(){
+        int[] id;
+        //Hier mit Netzwerk verknüpfen
+        id = new int[]{
+                allcards.getGameCards().get(0).getId(),
+                allcards.getGameCards().get(10).getId(),
+                allcards.getGameCards().get(18).getId()};
+        return id;
+    }
+
+    private void setPlayerCard(ImageView card, int id){
+        switch(id) {
+            case 0:
+                card.setImageResource(R.drawable.scarlett_card);
+                break;
+            case 1:
+                card.setImageResource(R.drawable.plum_card);
+                break;
+            case 2:
+                card.setImageResource(R.drawable.green_card);
+                break;
+            case 3:
+                card.setImageResource(R.drawable.peacock_card);
+                break;
+            case 4:
+                card.setImageResource(R.drawable.mustard_card);
+                break;
+            case 5:
+                card.setImageResource(R.drawable.orchid_card);
+                break;
+            case 6:
+                card.setImageResource(R.drawable.dagger);
+                break;
+            case 7:
+                card.setImageResource(R.drawable.candlestick);
+                break;
+            case 8:
+                card.setImageResource(R.drawable.revolver);
+                break;
+            case 9:
+                card.setImageResource(R.drawable.rope);
+                break;
+            case 10:
+                card.setImageResource(R.drawable.pipe);
+                break;
+            case 11:
+                card.setImageResource(R.drawable.wrench);
+                break;
+            case 12:
+                card.setImageResource(R.drawable.hall_card);
+                break;
+            case 13:
+                card.setImageResource(R.drawable.lounge_card);
+                break;
+            case 14:
+                card.setImageResource(R.drawable.dining_card);
+                break;
+            case 15:
+                card.setImageResource(R.drawable.kitchen_card);
+                break;
+            case 16:
+                card.setImageResource(R.drawable.ballroom_card);
+                break;
+            case 17:
+                card.setImageResource(R.drawable.conservatory_card);
+                break;
+            case 18:
+                card.setImageResource(R.drawable.billiard_card);
+                break;
+            case 19:
+                card.setImageResource(R.drawable.library_card);
+                break;
+            case 20:
+                card.setImageResource(R.drawable.study_card);
+                break;
+            default:
+                card.setImageResource(R.drawable.cardback);
+        }
+    }
+
+    /*@Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.cardView){
             AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
             builder.setTitle("My Cards");
 
-            final String[] items = {allCards.getGameCards().get(0).getDesignation(),allCards.getGameCards().get(10).getDesignation(),allCards.getGameCards().get(18).getDesignation()};
+            final String[] items = {allcards.getGameCards().get(0).getDesignation(),allcards.getGameCards().get(7).getDesignation(),allcards.getGameCards().get(20).getDesignation()};
             //Später vielleicht mit den Bildern
             //Nur Demo brauche Methode um die eigentlichen Karten zu bekommen
-            builder.setItems(items, (dialog, item) -> {
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
 
+                }
             });
-            builder.setNeutralButton("OK", (dialog, which) -> dialog.cancel());
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create();
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
-    }
+        }
+        if(view.getId() == R.id.diceView){
+            diceView = findViewById(R.id.diceView);
+            dice = new Dice(diceView);
+            dice.throwDice();
+            if(dice.getNumberRolled() == 4){
+                AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+                builder.setTitle("What is going on?");
+                builder.setMessage("You rolled the magnifying glass." + "\n"
+                        + "A evidence card has been drawn." + "\n"
+                        + "It is revealed that the Card: " + evidenceCards.getDrawnCard().getDesignation() + "\n"
+                        + "is owned by: " + evidenceCards.getPlayer());
 
-    /**
-     * starts a new Activity to see the notepad
-     */
+                builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create();
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        }
+
+    }*/
+
     public void startNotepad(){
         Intent intent = new Intent(this, NotepadActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
     }
-
-    /**
-     * starts a new Activity to call an accusation or suspicion
-     */
     public void startSuspicion(){
         Intent intent = new Intent(this, SuspicionActivity.class);
         startActivity(intent);
@@ -597,6 +777,8 @@ public class BoardActivity extends AppCompatActivity {
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
                     startSuspicion();
+                }else{
+                    onCardViewClick();
                 }
                 break;
         }

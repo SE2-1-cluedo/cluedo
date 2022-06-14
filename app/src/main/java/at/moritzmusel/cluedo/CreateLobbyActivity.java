@@ -2,9 +2,9 @@ package at.moritzmusel.cluedo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -114,7 +114,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     public void addPlayer(View view) {
         playerItems.add("Player "+playerCounter++);
         adapter.notifyDataSetChanged();
-
     }
 
     public void checkCreateOrJoin(boolean decision){
