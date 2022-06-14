@@ -31,21 +31,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <ImageView
-        android:id="@+id/diceView"
-        android:layout_width="91dp"
-        android:layout_height="69dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/dice3d"
-        tools:ignore="SpeakableTextPresentCheck" />
-
     <ImageButton
         android:id="@+id/ballroom_btn_left"
         android:layout_width="97dp"

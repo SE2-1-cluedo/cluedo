@@ -13,13 +13,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Intent;
 import android.content.res.Configuration;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -45,12 +41,12 @@ import at.moritzmusel.cluedo.game.Dice;
 import at.moritzmusel.cluedo.sensor.ShakeDetector;
 import at.moritzmusel.cluedo.game.Gameplay;
 
-public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
+public class BoardActivity extends AppCompatActivity{
     private AllTheCards allcards;
     private float x1, x2, y1, y2;
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
-    Dice dice;
+    private Dice dice;
     private Gameplay gp1;
     private int newPosition;
     ArrayList<Button> allPositions = new ArrayList<>();
@@ -64,8 +60,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private EvidenceCards evidenceCards;
     private ImageView image;
     private View dice_layout;
-    private ImageView diceView;
-    private View decorView;
+    //private ImageView diceView;
+    private View decorView, diceView;
 
     private SensorManager mSensorManager;
     private Sensor accel;
@@ -160,25 +156,21 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 });
 
 
-        diceView = findViewById(R.id.diceView);
+        /*diceView = findViewById(R.id.dialogDice);
         dice = new Dice((ImageView) diceView);
         diceView.setOnClickListener(v -> {
             dice.throwDice();
             diceRolled();
-        });
+        });*/
 
 
         allcards = new AllTheCards();
         allcards.getGameCards();
 
         evidenceCards = new EvidenceCards();
-        diceView = findViewById(R.id.diceView);
-        diceView.setVisibility(View.GONE);
-        //Dice dice = new Dice(diceView);
-        //diceView.setOnClickListener(view -> dice.throwDice());
 
-        ImageButton cardView = findViewById(R.id.cardView);
-        cardView.setOnClickListener(this);
+        //ImageButton cardView = findViewById(R.id.cardView);
+        //cardView.setOnClickListener(this);
 
         image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
@@ -215,13 +207,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BoardActivity.this);
         builder.setTitle("Throw Dice");
 
-
         LayoutInflater inflater = getLayoutInflater();
         dice_layout = inflater.inflate(R.layout.custom_dialog, null);
         builder.setView(dice_layout);
 
-        diceView = dice_layout.findViewById(R.id.diceView);
-        Dice dice = new Dice(diceView);
+        diceView = dice_layout.findViewById(R.id.dialogDice);
+        dice = new Dice((ImageView) diceView);
 
         diceView.setOnClickListener(view -> {
             dice.throwDice();
@@ -241,13 +232,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
 
-        /*builder.setPositiveButton("Roll", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });*/
-
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -264,11 +248,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
      * and calls the move methode
      */
     public void diceRolled() {
-        //diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
         diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
         rolledMagnifyingGlass(dice);
         gp1.setStepsTaken(0);
-        switchWeapon("dagger");
         movePlayerWithArrows();
     }
 
@@ -277,6 +259,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus)
             decorView.setSystemUiVisibility(hideSystemBars());
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        super.onPointerCaptureChanged(hasCapture);
     }
 
     private int hideSystemBars() {
@@ -638,18 +625,15 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 }
 
             } else {
-                diceView.setOnClickListener(v -> {
-                    dice.throwDice();
-                    diceRolled();
-                });
-                System.out.println("Has moved enough");
+
                 deactivateSecrets();
                 notifyCurrentPlayer();
+                callDice();
             }
         }
 
     /**
-     * if button is clicked, the current cards of the player are shown
+     * if button is clicked or the screen is swiped horizontally, the current cards of the player are shown
      */
     public void onCardViewClick() {
 
@@ -803,4 +787,5 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         }
         return false;
     }
+
 }
