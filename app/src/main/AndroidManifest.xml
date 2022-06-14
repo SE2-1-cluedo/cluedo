@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="at.moritzmusel.cluedo">
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -14,6 +15,7 @@
             android:parentActivityName=".JoinLobbyActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
+
         <activity
             android:name=".JoinLobbyActivity"
             android:parentActivityName=".LobbyDecisionActivity"
@@ -31,7 +33,8 @@
             android:exported="false" />
         <activity
             android:name=".CommandsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".BoardActivity"
             android:screenOrientation="landscape"
@@ -46,7 +49,7 @@
             android:exported="false" />
         <activity
             android:name=".NotepadActivity"
-            android:screenOrientation="landscape"
+
             android:exported="false" />
         <activity
             android:name=".MainActivity"

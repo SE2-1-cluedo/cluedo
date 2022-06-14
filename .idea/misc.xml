@@ -7,10 +7,12 @@
         <entry key="..\:/UNI/Cluedo SE2/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1395" />
         <entry key="..\:/UNI/Cluedo SE2/app/src/main/res/layout/activity_board.xml" value="0.2" />
         <entry key="..\:/UNI/Cluedo SE2/app/src/main/res/layout/activity_main.xml" value="0.17831813576494426" />
-        <entry key="..\:/UNI/cluedo/app/src/main/res/layout/test_board2.xml" value="0.30978260869565216" />
+        <entry key="..\:/UNI/cluedo/app/src/main/res/layout/activity_board.xml" value="0.3125" />
+        <entry key="..\:/UNI/cluedo/app/src/main/res/layout/test_board2.xml" value="0.25" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/drawable/custom_button.xml" value="0.2605" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_board.xml" value="0.29030797101449274" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_board2.xml" value="0.35572916666666665" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_choose_character.xml" value="0.1483539974348012" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_lobby_decision.xml" value="0.29030797101449274" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_ballroom.xml" value="0.29030797101449274" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_billiard.xml" value="0.29030797101449274" />
@@ -21,8 +23,9 @@
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_library.xml" value="0.29030797101449274" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_lounge.xml" value="0.29030797101449274" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_room_study.xml" value="0.29030797101449274" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/activity_suspicion.xml" value="0.18725951261222745" />
         <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/test_board.xml" value="0.1" />
-        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/test_board2.xml" value="0.5531004989308624" />
+        <entry key="..\:/Users/kbeni/Documents/GitHub/cluedo/app/src/main/res/layout/test_board2.xml" value="0.4466666666666667" />
         <entry key="..\:/Users/morit/AndroidStudioProjects/Cluedo/app/src/main/res/layout/activity_main.xml" value="0.2421875" />
         <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout-land/activity_notepad.xml" value="0.2" />
         <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout-sw600dp/activity_notepad.xml" value="0.20559610705596107" />
@@ -30,13 +33,6 @@
         <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_choose_character.xml" value="0.2975630611372381" />
         <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_lobby_decision.xml" value="0.15220179563916203" />
         <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_notepad.xml" value="0.22" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_notepad_update.xml" value="0.25" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/list_row.xml" value="0.25" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/list_rowCHeckbox.xml" value="0.15220179563916203" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_notepad_update.xml" value="0.25" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/activity_suspicion.xml" value="0.15220179563916203" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/list_row.xml" value="0.25" />
-        <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/list_rowCHeckbox.xml" value="0.15220179563916203" />
         <entry key="..\:/Users/renat/AndroidStudioProjects/cluedo/app/src/main/res/layout/test_board2.xml" value="0.14450619923044036" />
         <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/drawable/custom_button.xml" value="0.1" />
         <entry key="..\:/Users/sandr/AndroidStudioProjects/SE2-cluedo/app/src/main/res/layout/activity_board.xml" value="0.31068840579710144" />

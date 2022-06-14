@@ -16,10 +16,10 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 
 import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -39,7 +39,7 @@ public class BoardActivity extends AppCompatActivity {
 
     private View decorView, diceView;
     private AllTheCards allCards;
-    private float x1;
+    private float x1,x2, y1, y2;;
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
     Dice dice;
@@ -142,16 +142,17 @@ public class BoardActivity extends AppCompatActivity {
                     }
                 });
 
+        ImageButton cardView = findViewById(R.id.cardView);
+        cardView.setVisibility(View.VISIBLE);
+        cardView.setOnClickListener(v -> onCardViewClick());
+
+
         diceView = findViewById(R.id.diceView);
         dice = new Dice((ImageView) diceView);
         diceView.setOnClickListener(v -> {
             dice.throwDice();
             diceRolled();
         });
-
-        ImageButton cardView = findViewById(R.id.cardView);
-        cardView.setVisibility(View.VISIBLE);
-        cardView.setOnClickListener(v -> onCardViewClick());
     }
 
     /**
@@ -161,6 +162,7 @@ public class BoardActivity extends AppCompatActivity {
     public void diceRolled() {
         diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
         gp1.setStepsTaken(0);
+        switchWeapon("dagger");
         movePlayerWithArrows();
     }
 
@@ -582,14 +584,14 @@ public class BoardActivity extends AppCompatActivity {
         switch(touchEvent.getAction()){
             case MotionEvent.ACTION_DOWN:
                 x1 = touchEvent.getX();
-                float y1 = touchEvent.getY();
+                y1 = touchEvent.getY();
                 break;
 
             case MotionEvent.ACTION_UP:
-                float x2 = touchEvent.getX();
-                float y2 = touchEvent.getY();
-                float swipeRight = x2 -x1,
-                        swipeLeft = x1- x2;
+                x2 = touchEvent.getX();
+                y2 = touchEvent.getY();
+                float swipeRight = x2-x1,
+                        swipeLeft = x1-x2;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();

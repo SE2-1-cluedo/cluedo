@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,6 +38,8 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
     private ArrayAdapter<CharSequence> adapterWeapon;
     private Spinner person;
     private Spinner weapon;
+    float x1, x2;
+    static final int MIN_SWIPE_DISTANCE = 150;
     private Player player;
 
     @SuppressLint("ResourceType")
@@ -68,7 +71,8 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
         //Textfeld aktueller Raum
         currentRoom = findViewById(R.id.currentRoom);
-        int room = player.getPositionOnBoard();
+        //int room = player.getPositionOnBoard();
+        int room = 4;
         currentRoom.setText(roomsArray[room]);
 
 
@@ -147,6 +151,27 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
         }
 
 
+    }
+
+    @Override
+    public boolean onTouchEvent (MotionEvent touchEvent){
+        switch (touchEvent.getAction()) {
+
+            case MotionEvent.ACTION_DOWN:
+                x1 = touchEvent.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = touchEvent.getX();
+
+                float swipeRight = x2 - x1;
+
+                if (swipeRight > MIN_SWIPE_DISTANCE) {
+                    finish();
+                    overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
+                }
+                break;
+        }
+        return false;
     }
 
     @Override

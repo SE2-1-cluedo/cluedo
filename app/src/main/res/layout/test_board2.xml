@@ -1361,10 +1361,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
+
     <ImageButton
         android:id="@+id/cardView"
-        android:layout_width="57dp"
-        android:layout_height="71dp"
+        android:layout_width="65dp"
+        android:layout_height="77dp"
         android:background="@android:color/transparent"
         android:scaleType="fitXY"
         android:visibility="invisible"
