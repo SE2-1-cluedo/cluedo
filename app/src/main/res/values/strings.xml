@@ -14,7 +14,7 @@
         \n\t4) There they have to enter the GameID.
         \n\t5) After all the player are assembled the Host can start the Game.
         \n\t6) Everybody chooses then their character.
-        \n\t7) Finally the game begins to find the murderer.
+        \n\t7) Now the game begins to find the murderer.
 
     </string>
     <string name="commands_explanation">Here you can find all explanations for the tools you need to play the game.\n
@@ -24,12 +24,19 @@
         \n\t2) Shake your phone.
         \n\nNow you are able to move your character through the 9 rooms to find clues. The max. number of the steps per roll is 3 or you roll
         the magnifying glass which will give the information which player a certain card has.
-        \n\n<b>The Swiping Motions:</b>\n
-        \nTo make it easier to overview everything you can use three swiping motions to see your cards, notepad and accusation.
+        \n\n<b>Move:</b>
+        \nAfter the dice throw you can use the yellow arrows to move your character.
+        \n\n<b>The Swiping Motions:</b>
+        \nTo make it easier to overview everything you can use three swiping motions to see your cards, notepad and accusation.\n
         \n<b>Swipe Right:</b> There you can see your notepad. Swipe left to get back to the board.
         \n<b>Swipe Left:</b> To make your suspicion and accusation. Swipe right to get back to the board.
         \n<b>Swipe Up or down:</b> Open your three cards.
-
+        \n\n<b>Notepad:</b>
+        \nIn the Notepad you can use Checkboxes to remember your clues for the murderer and accusation.
+        \n\n<b>Suspicion/Accusation:</b>
+        \nAfter the left swipe you are in the accusation menu. Here you can select the weapon, the culprit and the room which is automatically your current room.
+        Then you can press the <b>Suspicion</b> or the <b>Accusation</b> Button. If you make an successfully accusation you win the game otherwise you will lose and
+        cannot continue the game.
     </string>
 
 
