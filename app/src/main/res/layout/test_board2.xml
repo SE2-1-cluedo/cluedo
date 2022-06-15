@@ -1469,7 +1469,7 @@
         tools:ignore="SpeakableTextPresentCheck, TouchTargetSizeCheck" />
 
     <ImageView
-        android:id="@+id/w_candle"
+        android:id="@+id/w_candlestick"
         android:layout_width="39dp"
         android:layout_height="39dp"
         app:layout_constraintBottom_toBottomOf="@+id/board_background"
