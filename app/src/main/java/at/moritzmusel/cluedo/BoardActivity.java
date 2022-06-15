@@ -1,15 +1,11 @@
 package at.moritzmusel.cluedo;
 
-import static at.moritzmusel.cluedo.entities.Character.DR_ORCHID;
-import static at.moritzmusel.cluedo.entities.Character.MRS_PEACOCK;
-import static at.moritzmusel.cluedo.entities.Character.PROFESSOR_PLUM;
-import static at.moritzmusel.cluedo.entities.Character.REVEREND_GREEN;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 
@@ -21,11 +17,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageButton;
 
 import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.security.SecureRandom;
@@ -36,14 +35,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.game.Communicator;
 import at.moritzmusel.cluedo.game.Dice;
 import at.moritzmusel.cluedo.sensor.ShakeDetector;
 import at.moritzmusel.cluedo.game.Gameplay;
+import at.moritzmusel.cluedo.entities.Character;
 
-public class BoardActivity extends AppCompatActivity{
-    private AllTheCards allcards;
-    private float x1, x2, y1, y2;
+public class BoardActivity extends AppCompatActivity {
+
+    private View decorView, diceView, playerCardsView;
+    private AllTheCards allCards;
+    private float x1;
+    private String character,weapon;
+    private boolean hasSuspected, hasAccused;
+    private Communicator ca;
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
     private Dice dice;
@@ -56,12 +61,9 @@ public class BoardActivity extends AppCompatActivity{
     Integer[] help = {1,2,3,4,5,6,7,8,9};
     List<Integer> helpList = Arrays.asList(help);
     HashMap<Integer,String> freeWeaponPlaces = new HashMap<>();
-    private View playerCardsView;
     private EvidenceCards evidenceCards;
     private ImageView image;
     private View dice_layout;
-    //private ImageView diceView;
-    private View decorView, diceView;
 
     private SensorManager mSensorManager;
     private Sensor accel;
@@ -72,23 +74,14 @@ public class BoardActivity extends AppCompatActivity{
         super.onConfigurationChanged(newConfig);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         decorView = getWindow().getDecorView();
-        decorView.setOnSystemUiVisibilityChangeListener(visibility -> {
-            if (visibility == 0)
-                decorView.setSystemUiVisibility(hideSystemBars());
-        });
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        Player Player2 = new Player(2, REVEREND_GREEN);
-        Player Player3 = new Player(3, PROFESSOR_PLUM);
-        Player Player4 = new Player(4, MRS_PEACOCK);
-        Player Player5 = new Player(5, DR_ORCHID);
-        ArrayList<Player> playersEven = new ArrayList<>(Arrays.asList(Player2,Player3, Player4, Player5));
-
-        gp1 = new Gameplay(playersEven);
+        gp1 = Gameplay.getInstance();
         gp1.decidePlayerWhoMovesFirst();
 
         setContentView(R.layout.test_board2);
@@ -120,12 +113,10 @@ public class BoardActivity extends AppCompatActivity{
                     @Override
                     public void onGlobalLayout() {
                         // Layout has happened here.
-                            System.out.println("Everything rendered");
                             SecureRandom r = new SecureRandom();
                             for (int i = 0; i < gp1.getPlayers().size(); i++) {
                                 for (int j = 0; j < allPlayers.size(); j++) {
                                     if (getResources().getResourceEntryName(allPlayers.get(j).getId()).equals(gp1.getPlayers().get(i).getPlayerCharacterName().name().split("[_]")[1].toLowerCase())) {
-                                        if (findViewById(allPlayers.get(i).getId()).getVisibility() == View.INVISIBLE) {
                                             findViewById(allPlayers.get(j).getId()).setVisibility(View.VISIBLE);
                                             String name = getResources().getResourceEntryName(allPlayers.get(j).getId()) + "_";
                                             int room = r.nextInt(9) + 1;
@@ -133,8 +124,6 @@ public class BoardActivity extends AppCompatActivity{
                                             findViewById(allPlayers.get(j).getId()).setX(startPlace.getX());
                                             findViewById(allPlayers.get(j).getId()).setY(startPlace.getY());
                                             gp1.getPlayers().get(i).setPositionOnBoard(room);
-                                            System.out.println(getResources().getResourceEntryName(startPlace.getId()));
-                                        }
                                     }
                                 }
                             }
@@ -163,9 +152,16 @@ public class BoardActivity extends AppCompatActivity{
             diceRolled();
         });*/
 
+        ca = Communicator.getInstance();
+        ca.register(() -> {
+            character = ca.getCharacter();
+            weapon = ca.getWeapon();
+            hasSuspected = ca.getHasSuspected();
+            hasAccused = ca.getHasAccused();
+        });
 
-        allcards = new AllTheCards();
-        allcards.getGameCards();
+        allCards = new AllTheCards();
+        allCards.getGameCards();
 
         evidenceCards = new EvidenceCards();
 
@@ -229,18 +225,144 @@ public class BoardActivity extends AppCompatActivity{
 
             }
         });
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        if(hasSuspected || hasAccused) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(false);
+            if(hasAccused)
+                builder.setMessage("This is your one and only accusation, are you sure about it?");
+            else
+            builder.setMessage("You suspected: ");
+
+            setPlayerCardImages();
+            builder.setView(playerCardsView);
+
+            builder.setPositiveButton("Yes, proceed", (dialog, which) -> {
+                switchWeapon(weapon.toLowerCase());
+                moveSuspectedPlayer(character);
+                //moveCharacter
+                if(hasSuspected)
+                    System.out.println("Suspected");
+                    //do something to ask the next player about your suspicion
+                else if (hasAccused)
+                    System.out.println("Accused");
+                    //check with murder cards either player wins or is out
+                ca.setHasSuspected(false);
+                ca.setHasAccused(false);
+                dialog.cancel();
+            });
+            builder.setNegativeButton("No, I want to change", (dialog, which) -> {
+                ca.setHasSuspected(false);
+                ca.setHasAccused(false);
+                Intent intent = new Intent(BoardActivity.this, SuspicionActivity.class);
+                startActivity(intent);
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+    }
+
+
+    /**
+     * sets the Images used in the builders by calling the image_show_cards.xml
+     */
+    @SuppressLint("InflateParams")
+    private void setPlayerCardImages() {
+        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
+        playerCardsView = factory.inflate(R.layout.image_show_cards, null);
+        LinearLayout linear = playerCardsView.findViewById(R.id.linearLayout);
+        int[] card_ids;
+
+        if(hasSuspected || hasAccused)
+            card_ids = new int[]{allCards.findIdWithName(character),allCards.findIdWithName(weapon),newPosition+11};
+        else
+            //here we need the cards from the hand (given by network)
+            card_ids = new int[]{0,10,18};
+
+        for(int i = 0; i < linear.getChildCount(); i++) {
+            setPlayerCard((ImageView) linear.getChildAt(i),card_ids[i]);
+        }
+    }
+
+    /**
+     * Sets the picture connected to the id on the imageView card
+     * @param card the imageView we want to set the picture on
+     * @param id for finding the picture
+     */
+    private void setPlayerCard(ImageView card, int id){
+        switch(id) {
+            case 0:
+                card.setImageResource(R.drawable.scarlett);
+                break;
+            case 1:
+                card.setImageResource(R.drawable.plum);
+                break;
+            case 2:
+                card.setImageResource(R.drawable.green);
+                break;
+            case 3:
+                card.setImageResource(R.drawable.peacock);
+                break;
+            case 4:
+                card.setImageResource(R.drawable.mustard);
+                break;
+            case 5:
+                card.setImageResource(R.drawable.orchid);
+                break;
+            case 6:
+                card.setImageResource(R.drawable.dagger);
+                break;
+            case 7:
+                card.setImageResource(R.drawable.candlestick);
+                break;
+            case 8:
+                card.setImageResource(R.drawable.revolver);
+                break;
+            case 9:
+                card.setImageResource(R.drawable.rope);
+                break;
+            case 10:
+                card.setImageResource(R.drawable.pipe);
+                break;
+            case 11:
+                card.setImageResource(R.drawable.wrench);
+                break;
+            case 12:
+                card.setImageResource(R.drawable.lounge);
+                break;
+            case 13:
+                card.setImageResource(R.drawable.conservatory);
+                break;
+            case 14:
+                card.setImageResource(R.drawable.ballroom);
+                break;
+            case 15:
+                card.setImageResource(R.drawable.dining);
+                break;
+            case 16:
+                card.setImageResource(R.drawable.kitchen);
+                break;
+            case 17:
+                card.setImageResource(R.drawable.library);
+                break;
+            case 18:
+                card.setImageResource(R.drawable.billiard);
+                break;
+            case 19:
+                card.setImageResource(R.drawable.study);
+                break;
+            case 20:
+                card.setImageResource(R.drawable.hall);
+                break;
+            default:
+                card.setImageResource(R.drawable.cardback);
+        }
 
         mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        android.app.AlertDialog alertDialog = builder.create();
-        alertDialog.show();
     }
 
     /**
@@ -313,15 +435,16 @@ public class BoardActivity extends AppCompatActivity{
         View mover = getMover();
         String character = getResources().getResourceEntryName(mover.getId())+"_";
 
-        if (mover.getX() < findViewById(R.id.border_left).getX()) {
-            switch (getResources().getResourceEntryName(v.getId())) {
+        switch (getResources().getResourceEntryName(v.getId())) {
                 case "secret_1":
-                    if(gp1.isAllowedToUseSecretPassage()) {
+                case "secret_2":
+                if(gp1.isAllowedToUseSecretPassage()) {
                         destination = findViewById(createRoomDestination(character, 7));
                         gp1.setStepsTaken(dice.getNumberRolled()-1);
                         moveAnimation(mover, destination, null, false);
                     }
                     break;
+
                 case "secret_3":
                     if(gp1.isAllowedToUseSecretPassage()) {
                         destination = findViewById(createRoomDestination(character, 3));
@@ -329,108 +452,107 @@ public class BoardActivity extends AppCompatActivity{
                         moveAnimation(mover, destination, null, false);
                     }
                     break;
+
                 case "lounge_btn_right":
-                    destination = findViewById(createRoomDestination(character,2));
+                case "ballroom_btn_left":
+                destination = findViewById(createRoomDestination(character,2));
                     moveAnimation(mover, destination, null, false);
                     break;
+
                 case "lounge_btn_down":
                 case "billiard_btn_up":
                     destination = findViewById(createRoomDestination(character,4));
                     moveAnimation(mover, destination, findViewById(R.id.median_left), true);
                     break;
+
                 case "dining_btn_up":
                     destination = findViewById(createRoomDestination(character,1));
                     moveAnimation(mover, destination, findViewById(R.id.median_left), true);
                     break;
+
                 case "dining_btn_right":
-                    destination = findViewById(createRoomDestination(character,5));
+                case "library_btn_left":
+                destination = findViewById(createRoomDestination(character,5));
                     moveAnimation(mover, destination, null, false);
                     break;
+
                 case "dining_btn_down":
                     destination = findViewById(createRoomDestination(character,7));
                     moveAnimation(mover, destination, findViewById(R.id.median_left), true);
                     break;
+
                 case "billiard_btn_right":
                     destination = findViewById(createRoomDestination(character,8));
                     moveAnimation(mover, destination, findViewById(R.id.median_left), true);
                     break;
-            }
-        } else if (mover.getX() > findViewById(R.id.border_right).getX()) {
-            switch (getResources().getResourceEntryName(v.getId())) {
-                case "secret_2":
-                    if(gp1.isAllowedToUseSecretPassage()) {
-                        destination = findViewById(createRoomDestination(character, 7));
-                        gp1.setStepsTaken(dice.getNumberRolled()-1);
-                        moveAnimation(mover, destination, null, false);
-                    }
-                    break;
-                case "ballroom_btn_left":
-                    destination = findViewById(createRoomDestination(character,2));
-                    moveAnimation(mover, destination, null, false);
-                    break;
-                case "ballroom_btn_down":
+
+            case "ballroom_btn_down":
                 case "hall_btn_up":
                     destination = findViewById(createRoomDestination(character,6));
                     moveAnimation(mover, destination, findViewById(R.id.median_right), true);
                     break;
+
                 case "library_btn_up":
                     destination = findViewById(createRoomDestination(character,3));
                     moveAnimation(mover, destination, findViewById(R.id.median_right), true);
                     break;
-                case "library_btn_left":
-                    destination = findViewById(createRoomDestination(character,5));
-                    moveAnimation(mover, destination, null, false);
-                    break;
-                case "library_btn_down":
+
+            case "library_btn_down":
                     destination = findViewById(createRoomDestination(character,9));
                     moveAnimation(mover, destination, findViewById(R.id.median_right), true);
                     break;
+
                 case "hall_btn_left":
                     destination = findViewById(createRoomDestination(character,8));
                     moveAnimation(mover, destination, null, false);
                     break;
-            }
-        } else {
-            switch (getResources().getResourceEntryName(v.getId())) {
+
                 case "conservatory_btn_left":
                     destination = findViewById(createRoomDestination(character,1));
                     moveAnimation(mover, destination, null, false);
                     break;
+
                 case "conservatory_btn_down":
                 case "study_btn_up":
                     destination = findViewById(createRoomDestination(character,5));
                     moveAnimation(mover, destination, findViewById(R.id.median_center), true);
                     break;
+
                 case "conservatory_btn_right":
                     destination = findViewById(createRoomDestination(character,3));
                     moveAnimation(mover, destination, null, false);
                     break;
+
                 case "kitchen_btn_up":
                     destination = findViewById(createRoomDestination(character,2));
                     moveAnimation(mover, destination, findViewById(R.id.median_center), true);
                     break;
+
                 case "kitchen_btn_right":
                     destination = findViewById(createRoomDestination(character,6));
                     moveAnimation(mover, destination, null, false);
                     break;
+
                 case "kitchen_btn_down":
                     destination = findViewById(createRoomDestination(character,8));
                     moveAnimation(mover, destination, findViewById(R.id.median_center), true);
                     break;
+
                 case "kitchen_btn_left":
                     destination = findViewById(createRoomDestination(character,4));
                     moveAnimation(mover, destination, null, false);
                     break;
+
                 case "study_btn_left":
                     destination = findViewById(createRoomDestination(character,7));
                     moveAnimation(mover, destination, null, false);
                     break;
+
                 case "study_btn_right":
                     destination = findViewById(createRoomDestination(character,9));
                     moveAnimation(mover, destination, null, false);
                     break;
             }
-        }
     }
 
     /**
@@ -481,11 +603,26 @@ public class BoardActivity extends AppCompatActivity{
         return getResources().getIdentifier("weapon"+room, "id", getPackageName());
     }
 
+    private void moveSuspectedPlayer(String player){
+        StringBuilder myName = new StringBuilder(player.toUpperCase());
+        myName.setCharAt(player.indexOf(" "), '_');
+
+        player = player.split("[ ]")[1].toLowerCase();
+        ImageView calledPlayer = findViewById(getResources().getIdentifier(player,"id",getPackageName()));
+        player += "_";
+
+        if(gp1.findPlayerByCharacterName(Character.valueOf(myName.toString())).getPositionOnBoard() != newPosition){
+            calledPlayer.setX(findViewById(createRoomDestination(player,newPosition)).getX());
+            calledPlayer.setY(findViewById(createRoomDestination(player,newPosition)).getY());
+            gp1.findPlayerByCharacterName(Character.valueOf(myName.toString())).setPositionOnBoard(newPosition);
+        }
+    }
+
     /**
      * Gets called by the suspicion to bring the weapon to the currentRoom
      * @param str the name of the weapon that's been moved
      */
-    public void switchWeapon(String str) {
+    private void switchWeapon(String str) {
         String weapon = "w_"+str;
         if (freeWeaponPlaces.get(newPosition) == null) {
             for (ImageView IV:allWeapons) {
@@ -496,8 +633,6 @@ public class BoardActivity extends AppCompatActivity{
                         if (Objects.equals(freeWeaponPlaces.get(s), weapon)) {
                             freeWeaponPlaces.put(s, null);
                             freeWeaponPlaces.put(newPosition, weapon);
-                            System.out.println(freeWeaponPlaces.get(s));
-                            System.out.println(freeWeaponPlaces.get(newPosition));
                             break;
                         }
                     }
@@ -517,8 +652,6 @@ public class BoardActivity extends AppCompatActivity{
                             otherWeaponView.setY(findViewById(createWeaponDestination(s)).getY());
                             freeWeaponPlaces.put(s,otherWeapon);
                             freeWeaponPlaces.put(newPosition,weapon);
-                            System.out.println(newPosition);
-                            System.out.println(s);
                             break;
                         }
                     }
@@ -654,107 +787,15 @@ public class BoardActivity extends AppCompatActivity{
         alertDialog.show();
     }
 
-    private void setPlayerCardImages() {
-        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
-        playerCardsView = factory.inflate(R.layout.image_show_cards, null);
-
-        ImageView card1 = playerCardsView.findViewById(R.id.myCard1);
-        ImageView card2 = playerCardsView.findViewById(R.id.myCard2);
-        ImageView card3 = playerCardsView.findViewById(R.id.myCard3);
-
-        int[] card_ids = getPlayerCardIds();
-
-        setPlayerCard(card1, card_ids[0]);
-        setPlayerCard(card2, card_ids[1]);
-        setPlayerCard(card3, card_ids[2]);
-
-    }
-
-    private int[] getPlayerCardIds(){
-        int[] id;
-        //Hier mit Netzwerk verknüpfen
-        id = new int[]{
-                allcards.getGameCards().get(0).getId(),
-                allcards.getGameCards().get(10).getId(),
-                allcards.getGameCards().get(18).getId()};
-        return id;
-    }
-
-    private void setPlayerCard(ImageView card, int id){
-        switch(id) {
-            case 0:
-                card.setImageResource(R.drawable.scarlett_card);
-                break;
-            case 1:
-                card.setImageResource(R.drawable.plum_card);
-                break;
-            case 2:
-                card.setImageResource(R.drawable.green_card);
-                break;
-            case 3:
-                card.setImageResource(R.drawable.peacock_card);
-                break;
-            case 4:
-                card.setImageResource(R.drawable.mustard_card);
-                break;
-            case 5:
-                card.setImageResource(R.drawable.orchid_card);
-                break;
-            case 6:
-                card.setImageResource(R.drawable.dagger);
-                break;
-            case 7:
-                card.setImageResource(R.drawable.candlestick);
-                break;
-            case 8:
-                card.setImageResource(R.drawable.revolver);
-                break;
-            case 9:
-                card.setImageResource(R.drawable.rope);
-                break;
-            case 10:
-                card.setImageResource(R.drawable.pipe);
-                break;
-            case 11:
-                card.setImageResource(R.drawable.wrench);
-                break;
-            case 12:
-                card.setImageResource(R.drawable.hall_card);
-                break;
-            case 13:
-                card.setImageResource(R.drawable.lounge_card);
-                break;
-            case 14:
-                card.setImageResource(R.drawable.dining_card);
-                break;
-            case 15:
-                card.setImageResource(R.drawable.kitchen_card);
-                break;
-            case 16:
-                card.setImageResource(R.drawable.ballroom_card);
-                break;
-            case 17:
-                card.setImageResource(R.drawable.conservatory_card);
-                break;
-            case 18:
-                card.setImageResource(R.drawable.billiard_card);
-                break;
-            case 19:
-                card.setImageResource(R.drawable.library_card);
-                break;
-            case 20:
-                card.setImageResource(R.drawable.study_card);
-                break;
-            default:
-                card.setImageResource(R.drawable.cardback);
-        }
-    }
-
     public void startNotepad(){
         Intent intent = new Intent(this, NotepadActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
     }
+
+    /**
+     * starts a new Activity to call an accusation or suspicion
+     */
     public void startSuspicion(){
         Intent intent = new Intent(this, SuspicionActivity.class);
         startActivity(intent);
@@ -767,14 +808,14 @@ public class BoardActivity extends AppCompatActivity{
         switch(touchEvent.getAction()){
             case MotionEvent.ACTION_DOWN:
                 x1 = touchEvent.getX();
-                y1 = touchEvent.getY();
+                float y1 = touchEvent.getY();
                 break;
 
             case MotionEvent.ACTION_UP:
-                x2 = touchEvent.getX();
-                y2 = touchEvent.getY();
-                float swipeRight = x2-x1,
-                        swipeLeft = x1-x2;
+                float x2 = touchEvent.getX();
+                float y2 = touchEvent.getY();
+                float swipeRight = x2 -x1,
+                        swipeLeft = x1- x2;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
@@ -787,5 +828,4 @@ public class BoardActivity extends AppCompatActivity{
         }
         return false;
     }
-
 }
