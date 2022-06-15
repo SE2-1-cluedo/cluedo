@@ -5,7 +5,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import java.security.SecureRandom;
-import java.util.Random;
 
 import at.moritzmusel.cluedo.R;
 

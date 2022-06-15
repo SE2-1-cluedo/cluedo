@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class AllTheCards {
 
-    private LinkedList<Card> gameCards = new LinkedList<>();
+    private final LinkedList<Card> gameCards = new LinkedList<>();
 
     public Card missScarlett = new Card(0, "Miss Scarlett", CardType.PERSON);
     public Card profPlum = new Card(1, "Professor Plum", CardType.PERSON);

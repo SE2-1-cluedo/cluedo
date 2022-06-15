@@ -62,8 +62,6 @@ public class BoardActivity extends AppCompatActivity {
     List<Integer> helpList = Arrays.asList(help);
     HashMap<Integer,String> freeWeaponPlaces = new HashMap<>();
     private EvidenceCards evidenceCards;
-    private ImageView image;
-    private View dice_layout;
 
     private SensorManager mSensorManager;
     private Sensor accel;
@@ -161,14 +159,13 @@ public class BoardActivity extends AppCompatActivity {
         });
 
         allCards = new AllTheCards();
-        allCards.getGameCards();
 
         evidenceCards = new EvidenceCards();
 
         //ImageButton cardView = findViewById(R.id.cardView);
         //cardView.setOnClickListener(this);
 
-        image = new ImageView(this);
+        ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -187,24 +184,20 @@ public class BoardActivity extends AppCompatActivity {
                     + "It is revealed that the Card: " + evidenceCards.getDrawnCard().getDesignation() + "\n"
                     + "is owned by: " + evidenceCards.getPlayer());
 
-            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
+            builder.setNeutralButton("OK", (dialog, which) -> dialog.dismiss());
             builder.create();
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
     }
 
+    @SuppressLint("InflateParams")
     private void callDice(){
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BoardActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
         builder.setTitle("Throw Dice");
-
+        
         LayoutInflater inflater = getLayoutInflater();
-        dice_layout = inflater.inflate(R.layout.custom_dialog, null);
+        View dice_layout = inflater.inflate(R.layout.custom_dialog, null);
         builder.setView(dice_layout);
 
         diceView = dice_layout.findViewById(R.id.dialogDice);
@@ -215,16 +208,16 @@ public class BoardActivity extends AppCompatActivity {
             diceRolled();
         });
 
-        shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
-            @Override
-            public void onShake(int count) {
-                if(count < 2){
-                    dice.throwDice();
-                    diceRolled();
-                }
-
+        shakeDetector.setOnShakeListener(count -> {
+            if(count < 2){
+                dice.throwDice();
+                diceRolled();
             }
         });
+        
+        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override
@@ -296,22 +289,22 @@ public class BoardActivity extends AppCompatActivity {
     private void setPlayerCard(ImageView card, int id){
         switch(id) {
             case 0:
-                card.setImageResource(R.drawable.scarlett);
+                card.setImageResource(R.drawable.scarlett_card);
                 break;
             case 1:
-                card.setImageResource(R.drawable.plum);
+                card.setImageResource(R.drawable.plum_card);
                 break;
             case 2:
-                card.setImageResource(R.drawable.green);
+                card.setImageResource(R.drawable.green_card);
                 break;
             case 3:
-                card.setImageResource(R.drawable.peacock);
+                card.setImageResource(R.drawable.peacock_card);
                 break;
             case 4:
-                card.setImageResource(R.drawable.mustard);
+                card.setImageResource(R.drawable.mustard_card);
                 break;
             case 5:
-                card.setImageResource(R.drawable.orchid);
+                card.setImageResource(R.drawable.orchid_card);
                 break;
             case 6:
                 card.setImageResource(R.drawable.dagger);
@@ -332,37 +325,35 @@ public class BoardActivity extends AppCompatActivity {
                 card.setImageResource(R.drawable.wrench);
                 break;
             case 12:
-                card.setImageResource(R.drawable.lounge);
+                card.setImageResource(R.drawable.lounge_card);
                 break;
             case 13:
-                card.setImageResource(R.drawable.conservatory);
+                card.setImageResource(R.drawable.conservatory_card);
                 break;
             case 14:
-                card.setImageResource(R.drawable.ballroom);
+                card.setImageResource(R.drawable.ballroom_card);
                 break;
             case 15:
-                card.setImageResource(R.drawable.dining);
+                card.setImageResource(R.drawable.dining_card);
                 break;
             case 16:
-                card.setImageResource(R.drawable.kitchen);
+                card.setImageResource(R.drawable.kitchen_card);
                 break;
             case 17:
-                card.setImageResource(R.drawable.library);
+                card.setImageResource(R.drawable.library_card);
                 break;
             case 18:
-                card.setImageResource(R.drawable.billiard);
+                card.setImageResource(R.drawable.billiard_card);
                 break;
             case 19:
-                card.setImageResource(R.drawable.study);
+                card.setImageResource(R.drawable.study_card);
                 break;
             case 20:
-                card.setImageResource(R.drawable.hall);
+                card.setImageResource(R.drawable.hall_card);
                 break;
             default:
                 card.setImageResource(R.drawable.cardback);
         }
-
-        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
     }
 
     /**
