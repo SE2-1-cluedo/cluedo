@@ -149,6 +149,9 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * With a swipe to the left you get back to the main board.
+     */
     @Override
     public boolean onTouchEvent (MotionEvent touchEvent){
         switch (touchEvent.getAction()) {

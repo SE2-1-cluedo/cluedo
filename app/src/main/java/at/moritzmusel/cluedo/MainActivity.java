@@ -105,7 +105,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
            signInAnonymously();
         }
     }
-  
+
+    /**
+     * Opens the next menu for the lobby.
+     * Opens link to a youtube video.
+     * You close the app after the button is clicked.
+     * Opens the commands which have information for the players.
+     */
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_startgame){
