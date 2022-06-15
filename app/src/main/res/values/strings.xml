@@ -7,13 +7,29 @@
     <string name="gamerules">Gamerules</string>
     <string name="command">Commands</string>
     <!-- Für die Erklärung des MainScreens -->
-    <string name="game_explanation">
-        1) Choose a Host
-        2) Add the playsers
+    <string name="game_explanation">At the beginning the player has to press the <b>"Start Game"-Button</b>. Then you have to follow the following steps:\n
+        \n\t1) The first player (Host) has to create a Lobby with the <b>"Create Lobby"-Button</b>.
+        \n\t2) The Host shares the GameID via the <b>Send Link-Button</b>.
+        \n\t3) The other players then have to join via the "Join Lobby" Button
+        \n\t4) There they have to enter the GameID.
+        \n\t5) After all the player are assembled the Host can start the Game.
+        \n\t6) Everybody chooses then their character.
+        \n\t7) Finally the game begins to find the murderer.
+
     </string>
-    <string name="commands_explanation">
-        You can roll a dice to move to rooms. In the menu you can find a notepad to help you identify the culprit.
-        Also you can see your own cards, position and the map on the standard screen.
+    <string name="commands_explanation">Here you can find all explanations for the tools you need to play the game.\n
+        \n<b>The Dice:</b>
+        \nAt the beginning of every round a window will pop up asking you to roll the dice. To accomplish that you have two options:\n
+        \n\t1) Click the dice.
+        \n\t2) Shake your phone.
+        \n\nNow you are able to move your character through the 9 rooms to find clues. The max. number of the steps per roll is 3 or you roll
+        the magnifying glass which will give the information which player a certain card has.
+        \n\n<b>The Swiping Motions:</b>\n
+        \nTo make it easier to overview everything you can use three swiping motions to see your cards, notepad and accusation.
+        \n<b>Swipe Right:</b> There you can see your notepad. Swipe left to get back to the board.
+        \n<b>Swipe Left:</b> To make your suspicion and accusation. Swipe right to get back to the board.
+        \n<b>Swipe Up or down:</b> Open your three cards.
+
     </string>
 
 
