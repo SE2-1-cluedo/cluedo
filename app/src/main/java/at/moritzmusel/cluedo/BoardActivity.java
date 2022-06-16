@@ -214,9 +214,8 @@ public class BoardActivity extends AppCompatActivity{
      * Creates an alert with a dice action, which is shakeable and clickable.
      */
     private void callDice(){
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BoardActivity.this);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BoardActivity.this,R.style.AlertDialogStyle);
         builder.setTitle("Throw Dice");
-        AtomicBoolean rolled = new AtomicBoolean(false);
 
         LayoutInflater inflater = getLayoutInflater();
         dice_layout = inflater.inflate(R.layout.custom_dialog, null);
@@ -237,20 +236,19 @@ public class BoardActivity extends AppCompatActivity{
                     dice.throwDice();
                     diceRolled();
                 }
-
             }
         });
 
         mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
 
         builder.setCancelable(false);
+
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-
 
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
