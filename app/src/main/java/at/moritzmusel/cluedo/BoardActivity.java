@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Dice;
@@ -182,6 +183,11 @@ public class BoardActivity extends AppCompatActivity{
         callDice();
     }
 
+    /**
+     * Creates an AlertDialog which informs the player that a card is owned by somebody or the murderer
+     * uses the methods of the EvidenceCards-Class
+     * @param dice needs dice object
+     */
     private void rolledMagnifyingGlass(Dice dice) {
         if(dice.getNumberRolled() == 4){
             AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
@@ -210,6 +216,7 @@ public class BoardActivity extends AppCompatActivity{
     private void callDice(){
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BoardActivity.this);
         builder.setTitle("Throw Dice");
+        AtomicBoolean rolled = new AtomicBoolean(false);
 
         LayoutInflater inflater = getLayoutInflater();
         dice_layout = inflater.inflate(R.layout.custom_dialog, null);
@@ -236,12 +243,14 @@ public class BoardActivity extends AppCompatActivity{
 
         mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
 
+        builder.setCancelable(false);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
+
 
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();

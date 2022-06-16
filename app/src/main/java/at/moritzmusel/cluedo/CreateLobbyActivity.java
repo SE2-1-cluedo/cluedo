@@ -128,6 +128,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     public void addPlayer(View view) {
         playerItems.add("Player "+playerCounter++);
         adapter.notifyDataSetChanged();
+        vibrate(1);
     }
 
     /**
