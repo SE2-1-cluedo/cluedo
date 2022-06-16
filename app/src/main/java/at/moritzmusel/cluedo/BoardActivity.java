@@ -203,6 +203,10 @@ public class BoardActivity extends AppCompatActivity{
         }
     }
 
+
+    /**
+     * Creates an alert with a dice action, which is shakeable and clickable.
+     */
     private void callDice(){
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BoardActivity.this);
         builder.setTitle("Throw Dice");
@@ -244,7 +248,7 @@ public class BoardActivity extends AppCompatActivity{
     }
 
     /**
-     * Called when dice gets rolled. Removes dice clickListener, resets stepsTaken in Gameplay
+     * Called when dice gets rolled. Removes dice clickListener, resets stepsTaken in Gameplay, creates a alert for the magnifying glass method
      * and calls the move methode
      */
     public void diceRolled() {
@@ -654,6 +658,11 @@ public class BoardActivity extends AppCompatActivity{
         alertDialog.show();
     }
 
+    /**
+     * sets the layout for the card alert
+     * initialises the ImageViews of the cards and sets
+     * the right image for the views.
+     */
     private void setPlayerCardImages() {
         LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
         playerCardsView = factory.inflate(R.layout.image_show_cards, null);
@@ -670,6 +679,10 @@ public class BoardActivity extends AppCompatActivity{
 
     }
 
+    /**
+     * Connects with the network to get the cardids for the images
+     * @return Array with three ids for the images
+     */
     private int[] getPlayerCardIds(){
         int[] id;
         //Hier mit Netzwerk verknüpfen
@@ -680,6 +693,11 @@ public class BoardActivity extends AppCompatActivity{
         return id;
     }
 
+    /**
+     * sets the image for the ImageView according to the id
+     * @param card ImageView to set the image
+     * @param id to get the right image
+     */
     private void setPlayerCard(ImageView card, int id){
         switch(id) {
             case 0:
@@ -750,18 +768,26 @@ public class BoardActivity extends AppCompatActivity{
         }
     }
 
+    /**
+     * starts the Notepad Activity for the swipe motion
+     */
     public void startNotepad(){
         Intent intent = new Intent(this, NotepadActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
     }
+    /**
+     * starts the Suspicion Activity for the swipe motion
+     */
     public void startSuspicion(){
         Intent intent = new Intent(this, SuspicionActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
-    //EventListener für Swipe-Event
+    /**
+     * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert
+     */
     @Override
     public boolean onTouchEvent (MotionEvent touchEvent){
         switch(touchEvent.getAction()){

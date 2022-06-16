@@ -30,6 +30,9 @@ public class AllTheCards {
     public Card library = new Card(19, "Library", CardType.ROOM);
     public Card study = new Card(20, "Study", CardType.ROOM);
 
+    /**
+     * adds all the cards for the game in a list
+     */
     public AllTheCards(){
         //GameFigures
         gamecards.add(missScarlett);
@@ -58,6 +61,11 @@ public class AllTheCards {
         gamecards.add(library);
         gamecards.add(study);
     }
+
+    /**
+     * Getter for the cards
+     * @return list with cards
+     */
     public LinkedList<Card> getGameCards(){
         return gamecards;
     }

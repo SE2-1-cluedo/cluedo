@@ -29,6 +29,12 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private Button back;
     private boolean decision;
 
+    /**
+     * Creates and initialises all buttons and lists
+     * Also changes the design according to the decision boolean
+     * true nothing has to change
+     * false to the join lobby where they have to wait for the host
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,12 +61,12 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         playerlist = findViewById(R.id.playerlist);
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, playerItems);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
         playerlist.setAdapter(adapter);
         //addPlayer(playerlist);
 
         if(decision) {
-
+            //if the player entered through the creation button
         }else{
            start.setClickable(false);
            //start.setBackgroundColor(getColor(R.color.gray));
@@ -97,6 +103,10 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    /**
+     * gets the game id for the current game
+     * @return String with id
+     */
     public String getGameID() {
         if(decision){
             //Schnittstelle mit dem Netzwerk um die id zu bekommen.
@@ -111,11 +121,19 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    /**
+     * Adds the player string to the list
+     * @param view the view with list
+     */
     public void addPlayer(View view) {
         playerItems.add("Player "+playerCounter++);
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Used to check if the decision boolean worked
+     */
+    /*
     public void checkCreateOrJoin(boolean decision){
         new AlertDialog.Builder(CreateLobbyActivity.this)
                 .setTitle("Did it work?")
@@ -128,8 +146,12 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                     }
                 }).show();
         vibrate(300);
-    }
+    }*/
 
+    /**
+     * lets the phone vibrate for the time of the duration
+     * @param duration seconds you want it to vibrate
+     */
     public void vibrate(int duration){
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(duration);

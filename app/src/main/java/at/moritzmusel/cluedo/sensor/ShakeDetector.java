@@ -5,6 +5,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+/**
+ * Class for the shake interaction.
+ */
 public class ShakeDetector implements SensorEventListener {
     private static final float SHAKE_THRESHOLD_GRAVITY = 2.5F;
     private static final int SHAKE_SLOP_TIME_MS = 500;
@@ -20,13 +23,15 @@ public class ShakeDetector implements SensorEventListener {
 
     public interface OnShakeListener {
         void onShake(int count);
-
     }
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
 
+    /**
+     * method for the shake event
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
 

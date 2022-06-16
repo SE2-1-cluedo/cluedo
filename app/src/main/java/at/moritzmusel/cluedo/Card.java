@@ -10,6 +10,12 @@ public class Card{
 
     }
 
+    /**
+     * Card with id, designation and type
+     * @param id identifies every single card
+     * @param designation the name of the card
+     * @param type of the card
+     */
     public Card(int id, String designation, CardType type) {
         this.id = id;
         this.designation = designation;
