@@ -60,10 +60,6 @@ public class GameState {
         return killer;
     }
 
-    public void setKiller(Killer killer) {
-        this.killer = killer;
-    }
-
     public String getPlayerTurn() {
         return playerTurn;
     }

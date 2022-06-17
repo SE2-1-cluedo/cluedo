@@ -15,7 +15,7 @@ public class Player {
     private int character = -1;
     //weapons: 7-12
 
-    public Player(List<Card> cards) {
+    public Player(String playerID, List<Card> cards) {
         this.cards = cards;
         this.eliminationCards = new  ArrayList<>();
     }
