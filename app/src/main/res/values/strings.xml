@@ -5,5 +5,7 @@
     <string name="create_lobby">Create Lobby</string>
     <string name="textview">TextView</string>
     <string name="button">Create Lobby</string>
+    <string name="button2">Start Game</string>
+    <string name="button3">Leave Lobby</string>
     <string name="debug">TextView</string>
 </resources>

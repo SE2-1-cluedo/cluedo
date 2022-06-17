@@ -47,12 +47,18 @@ public class DebugNetwork extends AppCompatActivity {
         killer.add(new Card(7));
         killer.add(new Card(16));
 
-        final Button btn = findViewById(R.id.create);
-        btn.setOnClickListener(click -> {
+        Button btn1 = findViewById(R.id.create),btn2=findViewById(R.id.start), btn3 = findViewById(R.id.leave);
+        btn1.setOnClickListener(click -> {
             Network.setCtx(this);
-            Network.createLobby(user);
+            Network.test();
+        });
+        btn2.setOnClickListener(click -> {
+            Network.setCtx(this);
             Network.startGame(Network.getCurrentGameID(), list, new Killer(killer));
-            //Network.leaveLobby(user, Network.getCurrentGameID());
+        });
+        btn3.setOnClickListener(click -> {
+            Network.setCtx(this);
+            Network.leaveLobby(user, Network.getCurrentGameID());
         });
         /*
         TextView view = findViewById(R.id.debug);
