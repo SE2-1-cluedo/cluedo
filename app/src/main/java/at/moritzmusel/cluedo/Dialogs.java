@@ -1,5 +1,6 @@
 package at.moritzmusel.cluedo;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -29,7 +30,7 @@ public class Dialogs {
     private Dice dice;
     private ShakeDetector shakeDetector;
     private EvidenceCards evidenceCards;
-    Dialog win_dialog;
+    Dialog dialog;
 
     public Dialogs() {
     }
@@ -39,28 +40,62 @@ public class Dialogs {
     }
 
     public void callWinDialog(Activity ac, String winner){
-        win_dialog = new Dialog(ac);
-        win_dialog.setContentView(R.layout.win_dialog);
-        win_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog = new Dialog(ac);
+        dialog.setContentView(R.layout.win_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        ImageView img_close = win_dialog.findViewById(R.id.img_close);
-        Button btn_winner = win_dialog.findViewById(R.id.btn_winner);
+        ImageView img_close = dialog.findViewById(R.id.img_close);
+        Button btn_winner = dialog.findViewById(R.id.btn_winner);
 
-        TextView txt_winner = win_dialog.findViewById(R.id.txt_winner);
-        txt_winner.setText(winner);
+        TextView txt_winner = dialog.findViewById(R.id.txt_win);
+        txt_winner.setText("The Winner is: " + winner);
         img_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                win_dialog.dismiss();
+                dialog.dismiss();
             }
         });
         btn_winner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                win_dialog.dismiss();
+                dialog.dismiss();
             }
         });
-        win_dialog.show();
+        dialog.show();
+    }
+
+    public void callLoseDialog(Activity ac){
+        dialog = new Dialog(ac);
+        dialog.setContentView(R.layout.win_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        ImageView img_close = dialog.findViewById(R.id.img_close);
+        Button btn_loser = dialog.findViewById(R.id.btn_winner);
+        btn_loser.setBackground(ac.getDrawable(R.drawable.custom_button2));
+
+        ImageView image = dialog.findViewById(R.id.img_win);
+        image.setImageResource(R.drawable.red_lose);
+
+        TextView txt_loser = dialog.findViewById(R.id.txt_win);
+        txt_loser.setText("You made a" + "\n" + "false Accusation");
+
+        TextView txt_lost = dialog.findViewById(R.id.txt_winner);
+        txt_lost.setText("You Lost!");
+        txt_lost.setTextColor(ac.getResources().getColor(R.color.red));
+
+        img_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btn_loser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     /**

@@ -10,6 +10,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="@dimen/default_gap"
         app:cardCornerRadius="20dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,6 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Winner"
+                android:textAlignment="center"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -29,8 +31,8 @@
 
             <ImageView
                 android:id="@+id/img_win"
-                android:layout_width="309dp"
-                android:layout_height="260dp"
+                android:layout_width="256dp"
+                android:layout_height="218dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_winner"
@@ -40,6 +42,7 @@
                 android:id="@+id/txt_winner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
                 android:text="You Win!"
                 android:textColor="@color/colorPrimary"
                 android:textSize="34sp"
@@ -52,9 +55,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
                 android:background="@drawable/custom_button"
                 android:text="@android:string/ok"
                 android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_win" />
