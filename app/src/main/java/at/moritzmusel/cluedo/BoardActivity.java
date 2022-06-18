@@ -17,7 +17,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,15 +35,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Dice;
+import at.moritzmusel.cluedo.sensor.OnSwipeTouchListener;
 import at.moritzmusel.cluedo.sensor.ShakeDetector;
 import at.moritzmusel.cluedo.game.Gameplay;
 
 public class BoardActivity extends AppCompatActivity{
     private AllTheCards allcards;
+    private OnSwipeTouchListener swipeTouchListener;
     private float x1, x2, y1, y2;
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
@@ -210,6 +213,7 @@ public class BoardActivity extends AppCompatActivity{
     }
 
 
+
     /**
      * Creates an alert with a dice action, which is shakeable and clickable.
      */
@@ -224,10 +228,20 @@ public class BoardActivity extends AppCompatActivity{
         diceView = dice_layout.findViewById(R.id.dialogDice);
         dice = new Dice((ImageView) diceView);
 
-        diceView.setOnClickListener(view -> {
-            dice.throwDice();
-            diceRolled();
-        });
+        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
+
+        builder.setCancelable(false);
+
+        /*builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });*/
+
+        android.app.AlertDialog alertDialog = builder.create();
+
+        alertDialog.show();
 
         shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
             @Override
@@ -235,23 +249,19 @@ public class BoardActivity extends AppCompatActivity{
                 if(count < 2){
                     dice.throwDice();
                     diceRolled();
+                    final Timer timer2 = new Timer();
+                    timer2.schedule(new TimerTask() {
+                        public void run() {
+                            alertDialog.dismiss();
+                            timer2.cancel(); //this will cancel the timer of the system
+                        }
+                    }, 2000);
                 }
             }
         });
 
-        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
 
-        builder.setCancelable(false);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        android.app.AlertDialog alertDialog = builder.create();
-        alertDialog.show();
     }
 
     /**
@@ -259,7 +269,7 @@ public class BoardActivity extends AppCompatActivity{
      * and calls the move methode
      */
     public void diceRolled() {
-        diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
+        //diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
         rolledMagnifyingGlass();
         gp1.setStepsTaken(0);
         movePlayerWithArrows();
@@ -648,18 +658,12 @@ public class BoardActivity extends AppCompatActivity{
      */
     public void onCardViewClick() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this,R.style.AlertDialogStyle);
         builder.setTitle("My Cards");
 
         setPlayerCardImages();
         builder.setView(playerCardsView);
 
-        //final String[] items = {allCards.getGameCards().get(0).getDesignation(),allCards.getGameCards().get(10).getDesignation(),allCards.getGameCards().get(18).getDesignation()};
-        //Später vielleicht mit den Bildern
-        //Nur Demo brauche Methode um die eigentlichen Karten zu bekommen
-        //builder.setItems(items, (dialog, item) -> {
-
-        //});
         builder.setNeutralButton("OK", (dialog, which) -> dialog.cancel());
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -718,7 +722,6 @@ public class BoardActivity extends AppCompatActivity{
         id = new int[]{
                 allcards.getGameCards().get(0).getId(),
                 allcards.getGameCards().get(7).getId(),
-                allcards.getGameCards().get(8).getId(),
                 allcards.getGameCards().get(8).getId(),
                 allcards.getGameCards().get(20).getId(),
                 allcards.getGameCards().get(10).getId(),
@@ -818,18 +821,50 @@ public class BoardActivity extends AppCompatActivity{
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
+    /**
+     * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert
+     */
+    @Override
+    public boolean onTouchEvent (MotionEvent touchEvent){
+
+        switch(touchEvent.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                x1 = touchEvent.getX();
+                y1 = touchEvent.getY();
+                break;
+
+            case MotionEvent.ACTION_UP:
+                x2 = touchEvent.getX();
+                y2 = touchEvent.getY();
+                float swipeRight = x2-x1, swipeLeft = x1-x2;
+
+                if(swipeRight > MIN_SWIPE_DISTANCE){
+                    startNotepad();
+                } else if(swipeLeft > MIN_SWIPE_DISTANCE){
+                    startSuspicion();
+                }else{
+                    onCardViewClick();
+                }
+                break;
+        }
+        return false;
+    }
+
+
+    /*
     private int clickCount;
     private long start_time;
     static final int MAX_DURATION = 500;
     /**
      * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert
-     */
+     *//*
     @Override
     public boolean onTouchEvent (MotionEvent touchEvent){
         switch(touchEvent.getAction()){
             case MotionEvent.ACTION_DOWN:
                 x1 = touchEvent.getX();
                 y1 = touchEvent.getY();
+                start_time = System.currentTimeMillis();
                 clickCount++;
                 break;
 
@@ -849,6 +884,7 @@ public class BoardActivity extends AppCompatActivity{
                     if(duration <= MAX_DURATION){
                         onCardViewClick();
                         clickCount = 0;
+                        start_time = 0;
                         duration = 0;
                     }else{
                         clickCount = 1;
@@ -858,6 +894,6 @@ public class BoardActivity extends AppCompatActivity{
                 break;
         }
         return false;
-    }
+    }*/
 
 }
