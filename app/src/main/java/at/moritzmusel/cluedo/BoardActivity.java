@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -676,24 +677,50 @@ public class BoardActivity extends AppCompatActivity{
         ImageView card1 = playerCardsView.findViewById(R.id.myCard1);
         ImageView card2 = playerCardsView.findViewById(R.id.myCard2);
         ImageView card3 = playerCardsView.findViewById(R.id.myCard3);
+        ImageView card4 = playerCardsView.findViewById(R.id.myCard4);
+        ImageView card5 = playerCardsView.findViewById(R.id.myCard5);
+        ImageView card6 = playerCardsView.findViewById(R.id.myCard6);
+
+        ArrayList<ImageView> card_list = new ArrayList<>();
+        card_list.add(card1);
+        card_list.add(card2);
+        card_list.add(card3);
+        card_list.add(card4);
+        card_list.add(card5);
+        card_list.add(card6);
 
         int[] card_ids = getPlayerCardIds();
 
-        setPlayerCard(card1, card_ids[0]);
-        setPlayerCard(card2, card_ids[1]);
-        setPlayerCard(card3, card_ids[2]);
+        if(card_ids.length <= 6){
+            for(int i = 0; i < card_ids.length;i++){
+                setPlayerCard(card_list.get(i), card_ids[i]);
+            }
+            for(int i = card_ids.length; i < card_list.size();i++){
+                card_list.get(i).setVisibility(View.GONE);
+            }
+        }
+        else{
+            for(int i = 0; i < 6;i++){
+                setPlayerCard(card_list.get(i), card_ids[i]);
+            }
+        }
+
 
     }
 
     /**
      * Connects with the network to get the cardids for the images
-     * @return Array with three ids for the images
+     * @return Array with three to six ids for the images
      */
     private int[] getPlayerCardIds(){
         int[] id;
         //Hier mit Netzwerk verknüpfen
         id = new int[]{
                 allcards.getGameCards().get(0).getId(),
+                allcards.getGameCards().get(7).getId(),
+                allcards.getGameCards().get(8).getId(),
+                allcards.getGameCards().get(8).getId(),
+                allcards.getGameCards().get(20).getId(),
                 allcards.getGameCards().get(10).getId(),
                 allcards.getGameCards().get(18).getId()};
         return id;
