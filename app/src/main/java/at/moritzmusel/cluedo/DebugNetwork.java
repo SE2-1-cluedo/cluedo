@@ -1,9 +1,9 @@
 package at.moritzmusel.cluedo;
 
+import static at.moritzmusel.cluedo.network.Network.getCurrentGameID;
+
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,18 +11,20 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import at.moritzmusel.cluedo.entities.Character;
+import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
-import at.moritzmusel.cluedo.network.data.QuestionCards;
 import at.moritzmusel.cluedo.network.pojo.Card;
+import at.moritzmusel.cluedo.network.pojo.GameState;
 import at.moritzmusel.cluedo.network.pojo.Killer;
-import at.moritzmusel.cluedo.network.pojo.Player;
 
 public class DebugNetwork extends AppCompatActivity {
 
     private static final String TAG_DEBUG = "DEBUG Activity ~";
+    private Network net;
+    public GameState gm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,25 +37,49 @@ public class DebugNetwork extends AppCompatActivity {
         //init cards
         List<Player> list = new ArrayList<>();
         //player
-        List<Card> card1 = new ArrayList<>();
-        card1.add(new Card(2));
-        card1.add(new Card(5));
-        card1.add(new Card(3));
-        card1.add(new Card(12));
-        list.add(new Player(card1));
+        ArrayList<Integer> card1 = new ArrayList<>();
+        ArrayList<Integer> card2 = new ArrayList<>();
+        card1.add(2);
+        card1.add(5);
+        card1.add(3);
+        card1.add(12);
+
+
+        card2.add(1);
+        card2.add(8);
+        card2.add(13);
+        card2.add(19);
+
         //killer
-        List<Card> killer = new ArrayList<>();
-        killer.add(new Card(1));
-        killer.add(new Card(7));
-        killer.add(new Card(16));
+        List<Card> killerCards = new ArrayList<>();
+        killerCards.add(new Card(1));
+        killerCards.add(new Card(7));
+        killerCards.add(new Card(16));
+        Killer killer = new Killer(killerCards);
 
         final Button btn = findViewById(R.id.create);
         btn.setOnClickListener(click -> {
             Network.setCtx(this);
             Network.createLobby(user);
-            Network.startGame(Network.getCurrentGameID(), list, new Killer(killer));
+            list.add(new Player(user.getUid(), Character.MISS_SCARLETT));
+            list.get(0).setPlayerOwnedCards(card1);
+           // list.add(new Player("shuekilogb3eht58sze2n19ht36z",card2));
+            //gm = new GameState(list,null,null,killer,null,this);
             //Network.leaveLobby(user, Network.getCurrentGameID());
         });
+
+        final Button btn3 = findViewById(R.id.test2);
+        btn3.setOnClickListener(click -> {
+            list.add(new Player("shuekilogb3eht58sze2n19ht36z",Character.REVEREND_GREEN));
+            list.get(1).setPlayerOwnedCards(card2);
+           Network.joinLobby("shuekilogb3eht58sze2n19ht36z",getCurrentGameID());
+        });
+
+        final Button btn2 = findViewById(R.id.test);
+        btn2.setOnClickListener(click -> {
+            Network.startGame(getCurrentGameID(),list,killer);
+        });
+
         /*
         TextView view = findViewById(R.id.debug);
         new Thread(new Runnable() {

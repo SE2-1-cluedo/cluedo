@@ -1,15 +1,10 @@
 package at.moritzmusel.cluedo.network;
 
 import android.content.Context;
-import android.os.Build;
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -19,23 +14,24 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.network.pojo.CardState;
 import at.moritzmusel.cluedo.network.pojo.GameState;
 import at.moritzmusel.cluedo.network.pojo.Killer;
-import at.moritzmusel.cluedo.network.pojo.Player;
 import at.moritzmusel.cluedo.network.pojo.Question;
+import at.moritzmusel.cluedo.entities.Player;
 
 public class Network {
     private static final String TAG = "Networking ";
@@ -63,24 +59,30 @@ public class Network {
         Date current = Calendar.getInstance().getTime();
         String gameID = intToChars(current.hashCode());
         setCurrentGameID(gameID);
-        DatabaseReference game = database.child("games").child(gameID);
+        DatabaseReference game = games.child(gameID);
         SimpleDateFormat formated = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         formated.setTimeZone(TimeZone.getTimeZone("GMT"));
         game.child("timestamp").setValue(formated.format(current));
         //add Turn Flag path
+
         DatabaseReference turnFlag = game.child("turn-flag");
         turnFlag.child("question").setValue("");
         turnFlag.child("player-turn").setValue("");
         //add players path
-        game.child("players").setValue("");
+        game.child("weapon-positions").setValue("");
         game.child("turn-order").setValue("");
         game.child("killer").setValue("");
-        games.child(gameID).addValueEventListener(new ValueEventListener() {
+        DatabaseReference p = game.child("players").child(user.getUid());
+        p.child("cards").setValue("");
+        p.child("cards-eliminated").setValue("");
+        p.child("position").setValue("");
+        p.child("character").setValue("");
+        games.child("JHCIEMJ").addValueEventListener(new ValueEventListener() {
             AtomicBoolean bool = new AtomicBoolean(false);
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists() && !bool.get()){
-                    joinLobby(user, gameID);
+                    joinLobby(user.getUid(), gameID);
                     bool.set(true);
                 }
             }
@@ -90,16 +92,72 @@ public class Network {
         return gameID;
     }
 
+    private static void gamestate_databaseListener(){
+        games.child(getCurrentGameID()).addValueEventListener(new ValueEventListener(){
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //get PlayerTurn
+              getGameState().setPlayerTurn((String)snapshot.child("turn-flag").child("player-turn").getValue(),false);
+
+              //get Question
+              String[] question = ((String) Objects.requireNonNull(snapshot.child("turn-flag").child("question").getValue())).split(" ");
+              if(question.length == 4) {
+                  int[] numbers = new int[]{Integer.parseInt(question[1]), Integer.parseInt(question[2]), Integer.parseInt(question[3])};
+                  getGameState().setAskQuestion(new Question(question[0],numbers),false);
+              }
+
+              //get weapons
+              String[] weapons = ((String) Objects.requireNonNull(snapshot.child("weapon-positions").getValue())).split(" ");
+                int[] weaponPositions = Stream.of(weapons)
+                        .mapToInt(Integer::parseInt).toArray();
+              getGameState().setWeaponPositions(weaponPositions,false);
+
+              //get Players
+                ArrayList<Player> playerList = new ArrayList<>();
+                for (DataSnapshot snap: snapshot.child("players").getChildren()){
+                    Player p = new Player(snap.getKey(), Character.valueOf((String) snap.child("character").getValue()));
+                    //set position
+                    p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(snap.child("position").getValue())));
+                    //set owned Cards
+                    String[] ownedCards = ((String) (Objects.requireNonNull(snap.child("cards").getValue()))).split(" ");
+                    p.setPlayerOwnedCards((ArrayList<Integer>)Arrays.stream(Stream.of(ownedCards)
+                            .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
+                    //set known Cards
+                    String[] knownCards = ((String) Objects.requireNonNull(snap.child("cards-eliminated").getValue())).split(" ");
+                    if(!Objects.equals(knownCards[0],""))
+                    p.setCardsKnownThroughQuestions((ArrayList<Integer>)Arrays.stream(Stream.of(knownCards)
+                            .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
+
+                    playerList.add(p);
+                }
+                getGameState().setPlayerState(playerList,false);
+
+                System.out.println("Ohh something changed");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
+    public static DatabaseReference getCurrentGame(){
+        return games.child(getCurrentGameID());
+    }
+
     //Wird aufgerufen nachdem eine Lobby erstellt wurde. Es wird der Nutzer, welcher die Lobby erstellt hat hinzugefügt
     //Parameter 3 "Player" enthält die bereits
-    public static boolean joinLobby(FirebaseUser user, String gameID) {
+    public static boolean joinLobby(String user, String gameID) {
         //check if FB user and game exists
         //Log.i(TAG, "getCurrentGameID() " + getCurrentGameID() + ", user " + user.getUid() + ", gameExists() " + checkIfGameExists(gameID));
         //TODO: Why the fuk funktioniert checkIfGameExists() nicht wenn man lobby joined??!?!
         if (user != null && (getCurrentGameID() == null || getCurrentGameID().equals(gameID)) /*&& checkIfGameExists()*/) {
             setCurrentGameID(gameID);
-            setCurrentUser(user);
-            DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
+            //etCurrentUser(user);
+            DatabaseReference p = games.child(gameID).child("players").child(user);
             p.child("cards").setValue("");
             p.child("cards-eliminated").setValue("");
             p.child("position").setValue("");
@@ -131,45 +189,30 @@ public class Network {
 
         //Entferne die 3 Karten aus dem Pool->anschließend die restlichen karten im Kreis verteilen (18Karten)
         //ERROR: Hier werden daten überschrieben
-        game.child("players").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int i = 0;
-                for (DataSnapshot player : snapshot.getChildren()) {
-                    givePlayerCards(player.getKey(), list.get(i), gameID);
-                    sbTurnOrder.append(player.getValue());
-                    i++;
-                }
-                game.child("players").updateChildren(new HashMap<>()).addOnCompleteListener(new OnCompleteListener<Void>(){
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        //TODO: Update local gamestate
-                    }
-                });
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, error.getMessage());
-            }
-        });
         //TODO: INIT @GameState class
-        List<CardState> cardStates = new ArrayList<>(21);
-        for (int i = 0; i < 21; i++) {
+        List<CardState> cardStates = new ArrayList<>(39);
+        for (int i = 0; i < 39; i++) {
             cardStates.add(new CardState(i + 1));
         }
-        //TODO: playerTurn
-        initGameState(new GameState(list, cardStates, new Question(null, null), killer, "", getCtx()));
-        getGameState().setCardState(null);
-        getGameState().setPlayerState(null);
-
         //set turnOrder
-        game.child("turn-order").setValue(sbTurnOrder.toString());
-    }
+        for(Player p: list)
+            sbTurnOrder.append(p.getPlayerId()).append(" ");
 
-    //Gib Spieler Karten
-    public static void givePlayerCards(String userID, Player player, String gameID) {
-        Log.i(TAG, userID + " " + player.getCardsAsString());
-        games.child(gameID).child("players").child(userID).child("cards").setValue(player.getCardsAsString());
+        game.child("turn-order").setValue(sbTurnOrder.toString().trim());
+
+        game.get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful())
+                Log.e("firebase", "Error getting data", task.getException());
+            else {
+                String[] turnOrder = String.valueOf(task.getResult().child("turn-order").getValue()).split(" ");
+                gameState = new GameState(list, null, new Question(null, null), killer,ctx,turnOrder);
+                gameState.setPlayerState(list,true);
+                gameState.setPlayerTurn(turnOrder[0],true);
+                gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
+                setGameState(gameState);
+                gamestate_databaseListener();
+            }
+        });
     }
 
     //Für Karten zum Ausscheiden hinzu
