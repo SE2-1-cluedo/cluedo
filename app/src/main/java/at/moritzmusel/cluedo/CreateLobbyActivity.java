@@ -31,7 +31,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private Button start;
     private Button back;
     private boolean decision;
-    private Character c = Character.DR_ORCHID;
+    private Character c;
     private TextView character_name;
     private ImageView character_picture;
 
@@ -69,12 +69,11 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
         playerlist.setAdapter(adapter);
 
-        addPlayer(playerlist);
-
+        c = Character.DR_ORCHID;
         character_name = findViewById(R.id.txt_character_name);
         character_picture = findViewById(R.id.img_character);
 
-        setCharacter();
+        addPlayer(playerlist);
 
         if(decision) {
             //if the player entered through the creation button
@@ -88,13 +87,19 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    /**
+     * Sets the character for the player in the lobby
+     */
     private void setCharacter() {
         character_name.setText(c.name());
-        setImage(c);
-        c.getNextCharacter();
+        setImage();
+        c = c.getNextCharacter();
     }
 
-    private void setImage(Character c) {
+    /**
+     * Sets the image in the lobby according to the character
+     */
+    private void setImage() {
         switch(c) {
             case DR_ORCHID:
                 character_picture.setImageResource(R.drawable.orchid);
@@ -128,8 +133,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             Intent shareIntent = Intent.createChooser(sendIntent, null);
             startActivity(shareIntent);
 
-            //addPlayer(view);
-
         }
         if(view.getId() == R.id.btn_lobby_start){
             //select the character screen
@@ -137,9 +140,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             startActivity(i);
         }
         if(view.getId() == R.id.btn_back){
-            addPlayer(view);
-            setCharacter();
-            //finish();
+            finish();
         }
     }
 
@@ -161,14 +162,20 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    public void network(){
+        //Adds the player according to the database
+        //Also checks the number of player and only allows up to six and at least three.
+    }
+
     /**
      * Adds the player string to the list
      * @param view the view with list
      */
     public void addPlayer(View view) {
-        playerItems.add(c.name() + " "+playerCounter++);
+        setCharacter();
+        playerItems.add(playerCounter++ + " " + c.name());
         adapter.notifyDataSetChanged();
-        vibrate(1);
+        vibrate(500);
     }
 
     /**
