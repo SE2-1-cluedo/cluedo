@@ -791,6 +791,10 @@ public class BoardActivity extends AppCompatActivity{
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
+    private int clickCount;
+    private long start_time;
+    private long duration;
+    static final int MAX_DURATION = 500;
     /**
      * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert
      */
@@ -800,20 +804,30 @@ public class BoardActivity extends AppCompatActivity{
             case MotionEvent.ACTION_DOWN:
                 x1 = touchEvent.getX();
                 y1 = touchEvent.getY();
+                clickCount++;
                 break;
 
             case MotionEvent.ACTION_UP:
                 x2 = touchEvent.getX();
                 y2 = touchEvent.getY();
-                float swipeRight = x2-x1,
-                        swipeLeft = x1-x2;
+                float swipeRight = x2-x1, swipeLeft = x1-x2;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
                     startSuspicion();
-                }else{
-                    onCardViewClick();
+                }else if(clickCount == 1){
+                    start_time = System.currentTimeMillis();
+                }else if(clickCount == 2){
+                    long duration = System.currentTimeMillis() - start_time;
+                    if(duration <= MAX_DURATION){
+                        onCardViewClick();
+                        clickCount = 0;
+                        duration = 0;
+                    }else{
+                        clickCount = 1;
+                        start_time = System.currentTimeMillis();
+                    }
                 }
                 break;
         }
