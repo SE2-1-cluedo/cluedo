@@ -186,9 +186,8 @@ public class BoardActivity extends AppCompatActivity{
     /**
      * Creates an AlertDialog which informs the player that a card is owned by somebody or the murderer
      * uses the methods of the EvidenceCards-Class
-     * @param dice needs dice object
      */
-    private void rolledMagnifyingGlass(Dice dice) {
+    private void rolledMagnifyingGlass() {
         if(dice.getNumberRolled() == 4){
             AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
             builder.setTitle("What is going on?");
@@ -231,7 +230,7 @@ public class BoardActivity extends AppCompatActivity{
 
         shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
             @Override
-            public void onShake(int count) {
+            public void onShake(int count){
                 if(count < 2){
                     dice.throwDice();
                     diceRolled();
@@ -260,7 +259,7 @@ public class BoardActivity extends AppCompatActivity{
      */
     public void diceRolled() {
         diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
-        rolledMagnifyingGlass(dice);
+        rolledMagnifyingGlass();
         gp1.setStepsTaken(0);
         movePlayerWithArrows();
     }

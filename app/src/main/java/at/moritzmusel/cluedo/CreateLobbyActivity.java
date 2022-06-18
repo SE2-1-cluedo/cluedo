@@ -12,10 +12,13 @@ import android.os.Vibrator;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import at.moritzmusel.cluedo.entities.Character;
 
 public class CreateLobbyActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -28,6 +31,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private Button start;
     private Button back;
     private boolean decision;
+    private Character c = Character.DR_ORCHID;
+    private TextView character_name;
+    private ImageView character_picture;
 
     /**
      * Creates and initialises all buttons and lists
@@ -59,11 +65,16 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         join_id.setText(getGameID());
 
         playerlist = findViewById(R.id.playerlist);
-
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
         playerlist.setAdapter(adapter);
-        //addPlayer(playerlist);
+
+        addPlayer(playerlist);
+
+        character_name = findViewById(R.id.txt_character_name);
+        character_picture = findViewById(R.id.img_character);
+
+        setCharacter();
 
         if(decision) {
             //if the player entered through the creation button
@@ -74,6 +85,35 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
            start.setText(R.string.waiting);
            send_link.setVisibility(View.INVISIBLE);
            lobby_title.setText(R.string.lobby);
+        }
+    }
+
+    private void setCharacter() {
+        character_name.setText(c.name());
+        setImage(c);
+        c.getNextCharacter();
+    }
+
+    private void setImage(Character c) {
+        switch(c) {
+            case DR_ORCHID:
+                character_picture.setImageResource(R.drawable.orchid);
+                break;
+            case COLONEL_MUSTARD:
+                character_picture.setImageResource(R.drawable.mustard);
+                break;
+            case MISS_SCARLETT:
+                character_picture.setImageResource(R.drawable.scarlett);
+                break;
+            case PROFESSOR_PLUM:
+                character_picture.setImageResource(R.drawable.plum);
+                break;
+            case MRS_PEACOCK:
+                character_picture.setImageResource(R.drawable.peacock);
+                break;
+            case REVEREND_GREEN:
+                character_picture.setImageResource(R.drawable.green);
+                break;
         }
     }
 
@@ -97,9 +137,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             startActivity(i);
         }
         if(view.getId() == R.id.btn_back){
-            //Intent i = new Intent(CreateLobbyActivity.this, LobbyDecisionActivity.class);
-            //startActivity(i);
-            finish();
+            addPlayer(view);
+            setCharacter();
+            //finish();
         }
     }
 
@@ -126,7 +166,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      * @param view the view with list
      */
     public void addPlayer(View view) {
-        playerItems.add("Player "+playerCounter++);
+        playerItems.add(c.name() + " "+playerCounter++);
         adapter.notifyDataSetChanged();
         vibrate(1);
     }
