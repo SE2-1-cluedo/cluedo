@@ -4,34 +4,95 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:gravity="center"
+    android:orientation="vertical"
     android:scaleType="fitStart">
 
-    <ImageView
-        android:id="@+id/myCard1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/default_gap"
-        android:src="@drawable/cardback" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/Selection_suspicious">
 
-    <ImageView
-        android:id="@+id/myCard2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/default_gap"
-        android:orientation="vertical"
-        android:scaleType="centerInside"
-        android:src="@drawable/cardback" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/myCard3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/default_gap"
-        android:orientation="vertical"
-        android:scaleType="centerInside"
-        android:src="@drawable/cardback" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/myCard1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/default_gap"
+                    android:src="@drawable/cardback" />
+
+                <ImageView
+                    android:id="@+id/myCard2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/default_gap"
+                    android:orientation="vertical"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/cardback" />
+
+                <ImageView
+                    android:id="@+id/myCard3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/default_gap"
+                    android:orientation="vertical"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/cardback" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/myCard4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/default_gap"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/cardback" />
+
+                <ImageView
+                    android:id="@+id/myCard5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/default_gap"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/cardback" />
+
+                <ImageView
+                    android:id="@+id/myCard6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/default_gap"
+                    android:layout_weight="1"
+                    android:src="@drawable/cardback" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

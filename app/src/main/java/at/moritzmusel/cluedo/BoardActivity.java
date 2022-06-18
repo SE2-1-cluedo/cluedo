@@ -793,7 +793,6 @@ public class BoardActivity extends AppCompatActivity{
 
     private int clickCount;
     private long start_time;
-    private long duration;
     static final int MAX_DURATION = 500;
     /**
      * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert

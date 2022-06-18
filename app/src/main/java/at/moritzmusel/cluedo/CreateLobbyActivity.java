@@ -172,10 +172,10 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      * @param view the view with list
      */
     public void addPlayer(View view) {
-        setCharacter();
         playerItems.add(playerCounter++ + " " + c.name());
         adapter.notifyDataSetChanged();
         vibrate(500);
+        setCharacter();
     }
 
     /**
