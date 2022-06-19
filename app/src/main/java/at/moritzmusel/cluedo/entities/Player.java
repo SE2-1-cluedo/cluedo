@@ -5,11 +5,13 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.moritzmusel.cluedo.network.pojo.GameState;
+
 public class Player {
     private final String playerId;
-    private int positionOnBoard = 1;
+    private int positionOnBoard;
     private boolean isAbleToMove = false;
-    private final Character playerCharacterName;
+    private Character playerCharacterName;
     private ArrayList<Integer> playerOwnedCards = new ArrayList<>();
     private ArrayList<Integer> cardsKnownThroughQuestions = new ArrayList<>();
 
@@ -19,9 +21,8 @@ public class Player {
      * @param playerCharacterName
      * Chosen by the player
      */
-    public Player(String playerId, Character playerCharacterName) {
+    public Player(String playerId) {
         this.playerId = playerId;
-        this.playerCharacterName = playerCharacterName;
     }
 
 
@@ -71,6 +72,10 @@ public class Player {
 
     public Character getPlayerCharacterName() {
         return playerCharacterName;
+    }
+
+    public void setPlayerCharacterName(Character playerCharacterName) {
+        this.playerCharacterName = playerCharacterName;
     }
 
     public List<Integer> getPlayerOwnedCards() {

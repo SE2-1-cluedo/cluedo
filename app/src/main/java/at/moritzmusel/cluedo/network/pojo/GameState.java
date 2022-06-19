@@ -3,21 +3,18 @@ package at.moritzmusel.cluedo.network.pojo;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import at.moritzmusel.cluedo.AllTheCards;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
 import at.moritzmusel.cluedo.network.data.QuestionCards;
@@ -27,21 +24,22 @@ public class GameState {
     private List<Integer> cardState;
     private List<Card> questionCardStack;
     private Question askQuestion;
-    private final Killer killer;
+    private int[] killer;
     private String playerTurn;
-    private final String[] turnOrder;
+    private String[] turnOrder;
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponPositions = new int[]{5,1,9,3,6,8};
     DatabaseReference dbRef;
 
-    public GameState(List<Player> playerState, List<Integer> cardState, Question askQuestion, Killer killer, Context ctx, String[] turnOrder) {
-        this.playerState = playerState;
-        this.cardState = cardState;
-        this.askQuestion = askQuestion;
-        this.killer = killer;
-        this.turnOrder = turnOrder;
-        initQuestionCardsStack(ctx);
+    private static final GameState OBJ = new GameState();
+
+    private GameState(){
+        initQuestionCardsStack(Network.getCtx());
         dbRef = Network.getCurrentGame();
+    }
+
+    public static GameState getInstance() {
+        return OBJ;
     }
 
     public List<Integer> getCardState() {
@@ -92,10 +90,33 @@ public class GameState {
             for (Player p : playerState){
                 dbRef.child("players").child(p.getPlayerId()).child("cards").setValue(p.getOwnedCardsAsString());
                 dbRef.child("players").child(p.getPlayerId()).child("cards-eliminated").setValue(p.getKnownCardsAsString());
-                dbRef.child("players").child(p.getPlayerId()).child("character").setValue(p.getPlayerCharacterName().name());
                 dbRef.child("players").child(p.getPlayerId()).child("position").setValue(Integer.toString(p.getPositionOnBoard()));
             }
         }
+    }
+
+    public void assignCards(){
+        ArrayList<Integer> cards = generateRandomCards();
+        List<Integer> killerCards = Arrays.stream(getKiller()).boxed().collect(Collectors.toList());
+
+        int j = 0;
+        for(int i = 0; i < cards.size();i++){
+            if(!killerCards.contains(cards.get(i))) {
+                if (getPlayerState().size() == j)
+                    j = 0;
+
+                getPlayerState().get(j).addOwnedCard(cards.get(i));
+                j++;
+            }
+        }
+        setPlayerState(getPlayerState(),true);
+    }
+
+    private ArrayList<Integer> generateRandomCards(){
+        AllTheCards allCards = new AllTheCards();
+        ArrayList<Integer> cards = (ArrayList<Integer>) IntStream.range(0, allCards.getGameCards().size()).boxed().collect(Collectors.toList());
+         Collections.shuffle(cards);
+        return cards;
     }
 
     public Question getAskQuestion() {
@@ -115,8 +136,20 @@ public class GameState {
         }
     }
 
-    public Killer getKiller() {
+    public void setKiller(int[] killer){
+        this.killer = killer;
+    }
+
+    public int[] getKiller() {
         return killer;
+    }
+
+    public String getKillerAsString() {
+        StringBuilder sb = new StringBuilder();
+        for(int i: getKiller())
+            sb.append(i).append(" ");
+
+        return sb.toString().trim();
     }
 
     public String getPlayerTurn() {
@@ -151,6 +184,10 @@ public class GameState {
 
             dbRef.child("weapon-positions").setValue(sB.toString().trim());
         }
+    }
+
+    public void setTurnOrder(String[] turnOrder){
+        this.turnOrder = turnOrder;
     }
 
     private String[] getTurnOrder(){

@@ -1,6 +1,7 @@
 package at.moritzmusel.cluedo;
 
 import static at.moritzmusel.cluedo.network.Network.getCurrentGameID;
+import static at.moritzmusel.cluedo.network.Network.testMETHOD;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -50,19 +51,12 @@ public class DebugNetwork extends AppCompatActivity {
         card2.add(13);
         card2.add(19);
 
-        //killer
-        List<Card> killerCards = new ArrayList<>();
-        killerCards.add(new Card(1));
-        killerCards.add(new Card(7));
-        killerCards.add(new Card(16));
-        Killer killer = new Killer(killerCards);
 
         final Button btn = findViewById(R.id.create);
         btn.setOnClickListener(click -> {
             Network.setCtx(this);
             Network.createLobby(user);
-            list.add(new Player(user.getUid(), Character.MISS_SCARLETT));
-            list.get(0).setPlayerOwnedCards(card1);
+            list.add(new Player(user.getUid()));
            // list.add(new Player("shuekilogb3eht58sze2n19ht36z",card2));
             //gm = new GameState(list,null,null,killer,null,this);
             //Network.leaveLobby(user, Network.getCurrentGameID());
@@ -70,14 +64,13 @@ public class DebugNetwork extends AppCompatActivity {
 
         final Button btn3 = findViewById(R.id.test2);
         btn3.setOnClickListener(click -> {
-            list.add(new Player("shuekilogb3eht58sze2n19ht36z",Character.REVEREND_GREEN));
-            list.get(1).setPlayerOwnedCards(card2);
+            list.add(new Player("shuekilogb3eht58sze2n19ht36z"));
            Network.joinLobby("shuekilogb3eht58sze2n19ht36z",getCurrentGameID());
         });
 
         final Button btn2 = findViewById(R.id.test);
         btn2.setOnClickListener(click -> {
-            Network.startGame(getCurrentGameID(),list,killer);
+            Network.startGame(getCurrentGameID(),list);
         });
 
         /*

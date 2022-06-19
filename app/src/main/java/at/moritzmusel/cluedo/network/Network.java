@@ -13,6 +13,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,9 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import at.moritzmusel.cluedo.entities.Character;
-import at.moritzmusel.cluedo.network.pojo.CardState;
 import at.moritzmusel.cluedo.network.pojo.GameState;
-import at.moritzmusel.cluedo.network.pojo.Killer;
 import at.moritzmusel.cluedo.network.pojo.Question;
 import at.moritzmusel.cluedo.entities.Player;
 
@@ -39,9 +38,11 @@ public class Network {
     private static final DatabaseReference database = fb.getReference();
     private static final DatabaseReference games = database.child("games");
     private static String currentGameID;
+    private static Character currentCharacter = Character.MISS_SCARLETT;
     private static GameState gameState;
     private static FirebaseUser currentUser;
-    private static Context ctx;
+    private static final List<Player> playerList = new ArrayList<>();
+    public static Context ctx;
 
     //Wird aufgerufen wenn eine Lobby erstellt wird
     //DONE
@@ -65,18 +66,22 @@ public class Network {
         game.child("timestamp").setValue(formated.format(current));
         //add Turn Flag path
 
+        gameState = GameState.getInstance();
         DatabaseReference turnFlag = game.child("turn-flag");
         turnFlag.child("question").setValue("");
-        turnFlag.child("player-turn").setValue("");
+        turnFlag.child("player-turn").setValue(getCurrentUser().getUid());
         //add players path
-        game.child("weapon-positions").setValue("");
+        gameState.setKiller(createKiller());
+        gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
         game.child("turn-order").setValue("");
-        game.child("killer").setValue("");
+        game.child("killer").setValue(gameState.getKillerAsString());
         DatabaseReference p = game.child("players").child(user.getUid());
         p.child("cards").setValue("");
         p.child("cards-eliminated").setValue("");
-        p.child("position").setValue("");
-        p.child("character").setValue("");
+
+        p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
+        p.child("character").setValue(getCurrentCharacter().name());
+
         games.child("JHCIEMJ").addValueEventListener(new ValueEventListener() {
             AtomicBoolean bool = new AtomicBoolean(false);
             @Override
@@ -90,6 +95,28 @@ public class Network {
             public void onCancelled(@NonNull DatabaseError error) {}
         });
         return gameID;
+    }
+
+    private static int[] createKiller(){
+        int[] killer = new int[3];
+        int counter = 0;
+        for(int i = 0; i < 3; i++){
+            if(i == 2)
+                killer[i] = new SecureRandom().nextInt(9) + counter;
+            else {
+                killer[i] = new SecureRandom().nextInt(6) + counter;
+                counter += 6;
+            }
+        }
+        return killer;
+    }
+
+    public static List<Player> getPlayerList() {
+        return playerList;
+    }
+
+    public static Character getCurrentCharacter() {
+        return currentCharacter;
     }
 
     private static void gamestate_databaseListener(){
@@ -116,11 +143,12 @@ public class Network {
               //get Players
                 ArrayList<Player> playerList = new ArrayList<>();
                 for (DataSnapshot snap: snapshot.child("players").getChildren()){
-                    Player p = new Player(snap.getKey(), Character.valueOf((String) snap.child("character").getValue()));
+                    Player p = new Player(snap.getKey());
                     //set position
                     p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(snap.child("position").getValue())));
                     //set owned Cards
                     String[] ownedCards = ((String) (Objects.requireNonNull(snap.child("cards").getValue()))).split(" ");
+                    if(!Objects.equals(ownedCards[0],""))
                     p.setPlayerOwnedCards((ArrayList<Integer>)Arrays.stream(Stream.of(ownedCards)
                             .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
                     //set known Cards
@@ -157,11 +185,12 @@ public class Network {
         if (user != null && (getCurrentGameID() == null || getCurrentGameID().equals(gameID)) /*&& checkIfGameExists()*/) {
             setCurrentGameID(gameID);
             //etCurrentUser(user);
+            currentCharacter = currentCharacter.getNextCharacter();
             DatabaseReference p = games.child(gameID).child("players").child(user);
             p.child("cards").setValue("");
             p.child("cards-eliminated").setValue("");
-            p.child("position").setValue("");
-            p.child("character").setValue("");
+            p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
+            p.child("character").setValue(currentCharacter.name());
             //TODO: SET GAMESTATE
             return true;
         } else {
@@ -182,18 +211,10 @@ public class Network {
         }
     }
 
-    public static void startGame(String gameID, List<Player> list, Killer killer) {
+    public static void startGame(String gameID, List<Player> list) {
         DatabaseReference game = games.child(gameID);
         StringBuilder sbTurnOrder = new StringBuilder();
-        game.child("killer").setValue(killer.toString());
 
-        //Entferne die 3 Karten aus dem Pool->anschließend die restlichen karten im Kreis verteilen (18Karten)
-        //ERROR: Hier werden daten überschrieben
-        //TODO: INIT @GameState class
-        List<CardState> cardStates = new ArrayList<>(39);
-        for (int i = 0; i < 39; i++) {
-            cardStates.add(new CardState(i + 1));
-        }
         //set turnOrder
         for(Player p: list)
             sbTurnOrder.append(p.getPlayerId()).append(" ");
@@ -205,11 +226,14 @@ public class Network {
                 Log.e("firebase", "Error getting data", task.getException());
             else {
                 String[] turnOrder = String.valueOf(task.getResult().child("turn-order").getValue()).split(" ");
-                gameState = new GameState(list, null, new Question(null, null), killer,ctx,turnOrder);
+                gameState.setTurnOrder(turnOrder);
+                for (Player p : list)
+                    p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(task.getResult().child("players").child(p.getPlayerId()).child("position").getValue())));
+
                 gameState.setPlayerState(list,true);
-                gameState.setPlayerTurn(turnOrder[0],true);
                 gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
                 setGameState(gameState);
+                gameState.assignCards();
                 gamestate_databaseListener();
             }
         });
@@ -334,18 +358,9 @@ public class Network {
     }
 
     public static void testMETHOD(){
-        games.child("CNTKENG").child("players").addListenerForSingleValueEvent(new ValueEventListener() {
+        games.child("DLLPNHM").child("players").child("lt7fL10YBGSuTULtFr1J0bgng1C2").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.i(TAG + " line 272", String.valueOf(snapshot.getChildrenCount()));
-                int i = 0;
-                /*
-                for (DataSnapshot player : snapshot.getChildren()) {
-                    givePlayerCards(player.getKey(), list.get(i), gameID);
-                    sbTurnOrder.append(player.getValue());
-                    i++;
-                }
-                 */
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
