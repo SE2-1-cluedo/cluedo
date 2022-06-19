@@ -27,4 +27,8 @@ public enum Character {
                 return null;
         }
     }
+
+    public static Character getFirstCharacter() {
+        return MISS_SCARLETT;
+    }
 }

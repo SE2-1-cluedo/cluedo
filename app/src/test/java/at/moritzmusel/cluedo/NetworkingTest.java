@@ -26,20 +26,19 @@ public class NetworkingTest {
 
     @Test
     public void a_lobby_creation(){
-        //network.createLobby(user);
+        Network.createLobby(user);
         assertEquals(1, 1);
     }
 
     @Test
-    public void b_add_player_cards(){
+    public void b_add_player_cards() {
         //network.givePlayerCards("user", new int[]{1, 2, 3}, "gameid");
-        //assertEquals(/*Network call to values here*/1, new int[]{1, 2, 3});
-        assertEquals(true, true);
+        assertEquals(/*Network call to values here*/1, 1);
     }
+
     @Test
-    public void c_add_player_elimination_cards(){
-        //network.addPlayerEliminationCard(user, 2, "gameid");
-        //assertEquals(/*Network call to values here*/1, 2);
-        assertEquals(true, true);
+    public void c_add_player_elimination_cards() {
+        Network.updatePlayerEliminationCard(user, 2, "gameid");
+        assertEquals(/*Network call to values here*/1, 2);
     }
 }

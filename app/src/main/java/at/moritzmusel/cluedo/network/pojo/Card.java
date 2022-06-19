@@ -1,11 +1,21 @@
 package at.moritzmusel.cluedo.network.pojo;
 
+import androidx.annotation.NonNull;
+
 public class Card {
-    private int cardID;
+    //rooms: 13-21
+    //characters: 1-6
+    //weapons: 7-12
+
+    protected int cardID;
     private String description;
 
     public Card(int cardID) {
         this.cardID = cardID;
+    }
+    public Card(int cardID, String description){
+        this.cardID = cardID;
+        this.description = description;
     }
 
     public String getDescription() {
@@ -24,11 +34,13 @@ public class Card {
         this.cardID = cardID;
     }
 
+    @NonNull
     @Override
     public String toString() {
-        return "Card{" +
+        /*return "Card{" +
                 "cardID=" + cardID +
                 ", description='" + description + '\'' +
-                '}';
+                '}';*/
+        return String.valueOf(getCardID());
     }
 }

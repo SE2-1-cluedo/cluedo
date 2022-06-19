@@ -1,33 +1,63 @@
 package at.moritzmusel.cluedo.entities;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import at.moritzmusel.cluedo.network.pojo.GameState;
+
 public class Player {
-    private final int playerId;
-    private int positionOnBoard = 1;
+    private final String playerId;
+    private int positionOnBoard;
     private boolean isAbleToMove = false;
-    private final Character playerCharacterName;
-    private final ArrayList<Integer> playerOwnedCards = new ArrayList<>();
-    private final ArrayList<Integer> cardsKnownThroughQuestions = new ArrayList<>();
+    private Character playerCharacterName;
+    private ArrayList<Integer> playerOwnedCards = new ArrayList<>();
+    private ArrayList<Integer> cardsKnownThroughQuestions = new ArrayList<>();
 
     /**
      * @param playerId
      * Player ID assigned by the Server
-     * @param playerCharacterName
-     * Choosen by the player
+     * Chosen by the player
      */
-    public Player(int playerId, Character playerCharacterName) {
+    public Player(String playerId) {
         this.playerId = playerId;
-        this.playerCharacterName = playerCharacterName;
     }
 
 
+    //----------------------------------Methods----------------------------//
+
+    public void addOwnedCard(int card) {
+        playerOwnedCards.add(card);
+    }
+
+    public void addKnownCard(int card){cardsKnownThroughQuestions.add(card);}
+
+    public String getOwnedCardsAsString() {
+        StringBuilder res = new StringBuilder();
+        for (int c : playerOwnedCards) res.append(c).append(" ");
+        return res.length() < 2 ? "" : res.toString().trim();
+    }
+
+    public String getKnownCardsAsString() {
+        StringBuilder res = new StringBuilder();
+        for (int c : cardsKnownThroughQuestions) res.append(c).append(" ");
+        return res.length() < 2 ? "" : res.toString().trim();
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Player{" +
+                "cards=" + getOwnedCardsAsString() +
+                ", eliminationCards=" + getKnownCardsAsString() +
+                '}';
+    }
 
 
     //----------------------------------Getter and Setter----------------------------//
 
-    public int getPlayerId() {
+    public String getPlayerId() {
         return playerId;
     }
 
@@ -43,24 +73,31 @@ public class Player {
         return playerCharacterName;
     }
 
+    public void setPlayerCharacterName(Character playerCharacterName) {
+        this.playerCharacterName = playerCharacterName;
+    }
+
     public List<Integer> getPlayerOwnedCards() {
         return playerOwnedCards;
     }
 
-    public void setPlayerCard(int playerCard) {
-        playerOwnedCards.add(playerCard);
+    public void setPlayerOwnedCards(ArrayList<Integer> playerOwnedCards) {
+        this.playerOwnedCards = playerOwnedCards;
     }
-    public void addCardsKnownThroughQuestions(int card){cardsKnownThroughQuestions.add(card);}
 
     public boolean getIsAbleToMove() {
         return isAbleToMove;
     }
 
-    public void setIsAbleToMove(boolean ableToMove) {
+    public void setAbleToMove(boolean ableToMove) {
         isAbleToMove = ableToMove;
     }
 
     public ArrayList<Integer> getCardsKnownThroughQuestions() {
         return cardsKnownThroughQuestions;
+    }
+
+    public void setCardsKnownThroughQuestions(ArrayList<Integer> cardsKnownThroughQuestions) {
+        this.cardsKnownThroughQuestions = cardsKnownThroughQuestions;
     }
 }

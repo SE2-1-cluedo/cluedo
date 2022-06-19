@@ -2,13 +2,9 @@ package at.moritzmusel.cluedo;
 
 public class Card{
 
-    private int id;
-    private String designation;
-    private CardType type;
-
-    private Card() {
-
-    }
+    private final int id;
+    private final String designation;
+    private final CardType type;
 
     public Card(int id, String designation, CardType type) {
         this.id = id;
