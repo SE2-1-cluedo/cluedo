@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.network.pojo.Card;
 import at.moritzmusel.cluedo.network.pojo.CardState;
 import at.moritzmusel.cluedo.network.pojo.GameState;

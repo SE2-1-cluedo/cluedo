@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
 import at.moritzmusel.cluedo.network.data.QuestionCards;
 import at.moritzmusel.cluedo.network.pojo.Card;
 import at.moritzmusel.cluedo.network.pojo.Killer;
-import at.moritzmusel.cluedo.network.pojo.Player;
 
 public class DebugNetwork extends AppCompatActivity {
 
@@ -40,7 +40,7 @@ public class DebugNetwork extends AppCompatActivity {
         card1.add(new Card(5));
         card1.add(new Card(3));
         card1.add(new Card(12));
-        list.add(new Player("qsd",card1));
+        list.add(new Player("qsd"));
         //killer
         List<Card> killer = new ArrayList<>();
         killer.add(new Card(1));
