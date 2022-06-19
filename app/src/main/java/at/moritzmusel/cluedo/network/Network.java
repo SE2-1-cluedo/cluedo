@@ -1,15 +1,10 @@
 package at.moritzmusel.cluedo.network;
 
 import android.content.Context;
-import android.os.Build;
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,13 +23,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import at.moritzmusel.cluedo.entities.Character;
-import at.moritzmusel.cluedo.network.pojo.Card;
-import at.moritzmusel.cluedo.network.pojo.CardState;
 import at.moritzmusel.cluedo.network.pojo.GameState;
 import at.moritzmusel.cluedo.network.pojo.Question;
 import at.moritzmusel.cluedo.entities.Player;

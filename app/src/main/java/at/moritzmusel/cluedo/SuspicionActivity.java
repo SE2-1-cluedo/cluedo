@@ -18,8 +18,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import at.moritzmusel.cluedo.communication.SuspicionCommunicator;
 import at.moritzmusel.cluedo.entities.Player;
-import at.moritzmusel.cluedo.game.Communicator;
 import at.moritzmusel.cluedo.game.Gameplay;
 
 public class SuspicionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -42,7 +42,7 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
     private Spinner weapon;
     float x1, x2;
     Gameplay gp1;
-    Communicator ca;
+    SuspicionCommunicator ca;
     static final int MIN_SWIPE_DISTANCE = 150;
 
     @SuppressLint("ResourceType")
@@ -77,7 +77,7 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
         int room = gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard()-1;
         currentRoom.setText(roomsArray[room]);
 
-        ca = Communicator.getInstance();
+        ca = SuspicionCommunicator.getInstance();
 
         //Button Bestätigung des Verdachts / Anklage
         accusation = findViewById(R.id.submit_Accusation);

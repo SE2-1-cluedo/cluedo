@@ -8,14 +8,12 @@ import static at.moritzmusel.cluedo.entities.Character.REVEREND_GREEN;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
-import at.moritzmusel.cluedo.network.pojo.Killer;
 
 public class Gameplay {
     private static int numDice;
@@ -25,18 +23,10 @@ public class Gameplay {
     private ArrayList<Integer> clueCards = new ArrayList<>();
     private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
-    private Killer killer;
 
     private static final Gameplay OBJ = new Gameplay();
 
     private Gameplay() {
-        players.add(new Player(1,MISS_SCARLETT));
-        players.add(new Player(2, REVEREND_GREEN));
-        players.add(new Player(3, PROFESSOR_PLUM));
-        players.add(new Player(4, MRS_PEACOCK));
-        players.add(new Player(5, DR_ORCHID));
-
-        //players = Network.getPlayers();
     }
 
     public static Gameplay getInstance(){
@@ -71,7 +61,7 @@ public class Gameplay {
     public void canMove(){
         stepsTaken++;
         if(stepsTaken == numDice)
-            findPlayerByCharacterName(currentPlayer).setIsAbleToMove(false);
+            findPlayerByCharacterName(currentPlayer).setAbleToMove(false);
     }
 
     /**
@@ -81,7 +71,7 @@ public class Gameplay {
     public void useSecretPassage(int newPosition) {
         Player player = findPlayerByCharacterName(currentPlayer);
         int position = player.getPositionOnBoard();
-        player.setIsAbleToMove(true);
+        player.setAbleToMove(true);
         if (player.getIsAbleToMove()) {
             switch (newPosition) {
                 case 7:
@@ -141,7 +131,8 @@ public class Gameplay {
 
             Player current = checkWhoIsNextPlaying(players.get(i));
             System.out.println("Player: "+ current.getPlayerCharacterName());
-            if (current.getPlayerOwnedCards().contains(weapon.getId())) {
+           /*
+           if (current.getPlayerOwnedCards().contains(weapon.getId())) {
                 player.addCardsKnownThroughQuestions(weapon.getId());
                 cardSend = true;
                 break;
@@ -154,6 +145,7 @@ public class Gameplay {
                 cardSend = true;
                 break;
             }
+            */
             i++;
             counter++;
         }
@@ -209,7 +201,7 @@ public class Gameplay {
                 currentPlayer = currentPlayer.getNextCharacter();
             } else {
                 currentPlayer = firstPlayer.getPlayerCharacterName();
-                findPlayerByCharacterName(currentPlayer).setIsAbleToMove(true);
+                findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
                 break;
             }
         }
@@ -226,20 +218,10 @@ public class Gameplay {
             Player player = findPlayerByCharacterName(currentPlayer);
             if (player != null) {
                 currentPlayer = player.getPlayerCharacterName();
-                findPlayerByCharacterName(currentPlayer).setIsAbleToMove(true);
+                findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
                 break;
             }
         }
-    }
-
-
-    public void distributeCluedoCards(){
-        //if player is host
-        generateCluedoCards();
-        //send die generierten Cluedo Cards zu den Spielern
-
-        //else nicht host
-        //update player Cluedo Cards
     }
 
     /**
@@ -272,32 +254,6 @@ public class Gameplay {
         clueCards = generateRandomCards(22,51);
     }
 
-    /**
-     * randomized the Cluedo Cards and safes them in the players card list
-     */
-    void generateCluedoCards(){
-        ArrayList<Integer> cards = generateRandomCards(1,21);
-        List<Integer> playerCards = new ArrayList<>();
-        List<Integer> killerCards = new ArrayList<>();
-        killerCards.add(killer.getCards().get(0).getCardID());
-        killerCards.add(killer.getCards().get(1).getCardID());
-        killerCards.add(killer.getCards().get(2).getCardID());
-
-        for(int i = 0; i < cards.size(); i++){
-            if(!killerCards.contains(cards.get(i))){
-                playerCards.add(cards.get(i));
-            }
-        }
-
-        int j = 0;
-        for(int i = 0; i < playerCards.size();i++){
-            if(players.size() == j){
-                j = 0;
-            }
-            players.get(j).setPlayerCard(playerCards.get(i));
-            j++;
-        }
-    }
 
     /**
      * Fill a List with numbers from min to max and then randomize it through Collection.shuffle
@@ -318,16 +274,6 @@ public class Gameplay {
         return cards;
     }
 
-    /**
-     * Method to generate a Card from Typ Pojo
-     * @param min minimum value incl.
-     * @param max max. value incl.
-     * @return
-     * Card typ Pojo Card
-     */
-    public at.moritzmusel.cluedo.network.pojo.Card generateRandomKillerCard(int min,int max){
-        return new at.moritzmusel.cluedo.network.pojo.Card(rand.nextInt(max + 1 - min) + min);
-    }
 
     /**
      * @param character Find the Character belonging to a player if not return null
@@ -351,49 +297,6 @@ public class Gameplay {
     //characters: 1-6
     //weapons: 7-12
     //rooms: 13-21
-
-    /**
-     * Create New Game with connection to Database
-     */
-    public void createNewGame(){
-        List<at.moritzmusel.cluedo.network.pojo.Card> killerCards = new ArrayList<>();
-        killerCards.add(generateRandomKillerCard(1,6));
-        killerCards.add(generateRandomKillerCard(7,12));
-        killerCards.add(generateRandomKillerCard(13,21));
-        killer = new Killer(killerCards);
-        distributeCluedoCards();
-        generatePlayers();
-        //Network.startGame(Network.getCurrentGameID(),generatePlayers() ,killer);
-    }
-
-    /**
-     * Method to generate a List of players who are playing
-     * @return List of players
-     */
-    private List<at.moritzmusel.cluedo.network.pojo.Player> generatePlayers(){
-        List<at.moritzmusel.cluedo.network.pojo.Player> playerArray = new ArrayList<>();
-        for(int i = 0; i < players.size();i++){
-            at.moritzmusel.cluedo.network.pojo.Player player =
-                    new at.moritzmusel.cluedo.network.pojo.Player(convertIntegerToCards(players.get(i).getPlayerOwnedCards()));
-            playerArray.add(player);
-        }
-        return playerArray;
-    }
-
-
-    /**
-     * Convert a Integer List to a List of the Type Card
-     * @param integers integers to convert
-     * @return card List
-     */
-    private List<at.moritzmusel.cluedo.network.pojo.Card> convertIntegerToCards(List<Integer> integers){
-        List<at.moritzmusel.cluedo.network.pojo.Card> cards = new ArrayList<>();
-        for(int i = 0; i < integers.size(); i++){
-            at.moritzmusel.cluedo.network.pojo.Card card = new at.moritzmusel.cluedo.network.pojo.Card(integers.get(i));
-            cards.add(card);
-        }
-        return cards;
-    }
 
     /**
      * @param position  the current position of the player on board

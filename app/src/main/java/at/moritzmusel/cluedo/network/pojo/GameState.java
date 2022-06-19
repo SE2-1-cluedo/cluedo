@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import at.moritzmusel.cluedo.AllTheCards;
+import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.communication.Communicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Player;

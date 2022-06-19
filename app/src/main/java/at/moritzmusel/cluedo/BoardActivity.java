@@ -35,7 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import at.moritzmusel.cluedo.game.Communicator;
+import at.moritzmusel.cluedo.communication.Communicator;
+import at.moritzmusel.cluedo.communication.SuspicionCommunicator;
 import at.moritzmusel.cluedo.game.Dice;
 import at.moritzmusel.cluedo.sensor.ShakeDetector;
 import at.moritzmusel.cluedo.game.Gameplay;
@@ -48,7 +49,7 @@ public class BoardActivity extends AppCompatActivity {
     private float x1;
     private String character,weapon;
     private boolean hasSuspected, hasAccused;
-    private Communicator ca;
+    private SuspicionCommunicator ca;
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
     private Dice dice;
@@ -150,7 +151,7 @@ public class BoardActivity extends AppCompatActivity {
             diceRolled();
         });*/
 
-        ca = Communicator.getInstance();
+        ca = SuspicionCommunicator.getInstance();
         ca.register(() -> {
             character = ca.getCharacter();
             weapon = ca.getWeapon();

@@ -28,8 +28,6 @@ import at.moritzmusel.cluedo.network.Network;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG_AUTH = "AnonymousAuth";
-    //Firebase Authentifizierung von Nutzern
-    private FirebaseAuth mAuth;
     private Button startGame;
     private Button gamerules;
     private Button closeApp;
@@ -40,17 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //authentifiziere Nutzer zur einzigartigen zuordnung von spielern
-        mAuth = FirebaseAuth.getInstance();
-        //end
-        //Network instance, currently for testing
 
-        Network n = new Network();
-        //n.initDB();
-        signInAnonymously();
-        n.createLobby(mAuth.getCurrentUser());
-        //end
-        
         startGame = findViewById(R.id.btn_startgame);
         startGame.setOnClickListener(this);
         gamerules = findViewById(R.id.btn_gamerules);
@@ -73,43 +61,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //FirebaseUser currentUser = mAuth.getCurrentUser();
         //placeholderMethod_updateUI(currentUser);
     }
-    //Methode um Nutzer anonym anzumelden falls nicht angemeldet
-    private void signInAnonymously() {
-        mAuth.signInAnonymously()
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG_AUTH, "signInAnonymously:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            placeholderMethod_updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG_AUTH, "signInAnonymously:failure", task.getException());
-                            //Toast.makeText(AnonymousAuthActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                            placeholderMethod_updateUI(null);
-                        }
-                    }
-                });
-    }
 
-    //TODO: Logik hier falls Nutzer nicht eingeloggt ist
-    //update ui falls nutzer bereits angemeldet ist, ansonsten zeige eine Anmelde fläche
-    private void placeholderMethod_updateUI(FirebaseUser user){
-        //Falls Nutzer eingeloggt->Überspringe Login Screen, ansonsten `signInAnonymously()`
-        if(user != null){
-            //Skippe hier Login Button oder so, keine Ahnung Bro
-            Log.i(TAG_AUTH, user.getUid());
-        }else{
-           signInAnonymously();
-        }
-    }
-  
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_startgame){
-            Intent i = new Intent(MainActivity.this, LobbyDecisionActivity.class);
+            Intent i = new Intent(MainActivity.this, BoardActivity.class);
             startActivity(i);
         }
         if(view.getId() == R.id.btn_gamerules){

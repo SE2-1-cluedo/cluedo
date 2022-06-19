@@ -6,14 +6,14 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.moritzmusel.cluedo.network.pojo.Card;
+import at.moritzmusel.cluedo.Card;
+import at.moritzmusel.cluedo.CardType;
 
 public class QuestionCards {
     private final int questionsAmount = 39;
@@ -43,7 +43,7 @@ public class QuestionCards {
             String line;
             int i = 0;
             while ((line = br.readLine()) != null) {
-                q.add(new Card(i+questionsAmount,line.split(":")[1]+ " " + line.split(":")[2]));
+                q.add(new Card(i+questionsAmount,line.split(":")[1]+ " " + line.split(":")[2], CardType.ROOM));
                 i++;
             }
             br.close();

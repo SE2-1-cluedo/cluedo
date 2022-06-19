@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="at.moritzmusel.cluedo">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,11 +10,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".LobbyWaitingActivity"
-            android:parentActivityName=".JoinLobbyActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
 
         <activity
             android:name=".JoinLobbyActivity"
@@ -47,6 +43,10 @@
             android:exported="false" />
         <activity
             android:name=".NotepadActivity"
+            android:screenOrientation="landscape"
+            android:exported="false" />
+        <activity
+            android:name=".DebugNetwork"
             android:screenOrientation="landscape"
             android:exported="false" />
         <activity

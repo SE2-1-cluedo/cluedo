@@ -3,21 +3,15 @@ package at.moritzmusel.cluedo.game;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import static java.util.Collections.addAll;
-
 import at.moritzmusel.cluedo.AllTheCards;
-import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
-import at.moritzmusel.cluedo.network.pojo.Killer;
 
 import static at.moritzmusel.cluedo.entities.Character.*;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
 import java.util.ArrayList;
 
 public class GameplayTest {
@@ -32,11 +26,11 @@ public class GameplayTest {
     @Before
     public void setUp() {
         gameOdd = Gameplay.getInstance();
-        Player1 = new Player(1,MISS_SCARLETT);
-        Player2 = new Player(2, REVEREND_GREEN);
-        Player3 = new Player(3, PROFESSOR_PLUM);
-        Player4 = new Player(4, MRS_PEACOCK);
-        Player5 = new Player(5, DR_ORCHID);
+        Player1 = new Player("1");
+        Player2 = new Player("2");
+        Player3 = new Player("3");
+        Player4 = new Player("4");
+        Player5 = new Player("5");
     }
 
     @Test
@@ -87,7 +81,7 @@ public class GameplayTest {
 
     @Test
     public void checkIfTheGeneratedCluedoCardsAreUnique(){
-        gameOdd.createNewGame();
+        //gameOdd.createNewGame();
         ArrayList<Integer> allPlayerCards = new ArrayList<>();
         boolean check = false;
         allPlayerCards.addAll(Player1.getPlayerOwnedCards());
@@ -125,7 +119,7 @@ public class GameplayTest {
 
     @Test
     public void checkIfCluedoCardsAreEvenDistributedForOddPlayers() {
-        gameOdd.createNewGame();
+        //gameOdd.createNewGame();
         assertEquals(4, Player1.getPlayerOwnedCards().size());
         assertEquals(4, Player2.getPlayerOwnedCards().size());
         assertEquals(4, Player3.getPlayerOwnedCards().size());
@@ -187,7 +181,7 @@ public class GameplayTest {
     @Test
     public void canMoveTest(){
         gameOdd.decidePlayerWhoMovesFirst();
-        gameOdd.createNewGame();
+        //gameOdd.createNewGame();
         gameOdd.setStepsTaken(2);
         Gameplay.setNumDice(3);
         gameOdd.canMove();
@@ -196,7 +190,7 @@ public class GameplayTest {
 
     @Test
     public void quitGameTest(){
-        gameOdd.createNewGame();
+        //gameOdd.createNewGame();
         gameOdd.quitGame(Player1);
         assertEquals(5, Player2.getPlayerOwnedCards().size());
         assertEquals(5, Player3.getPlayerOwnedCards().size());
