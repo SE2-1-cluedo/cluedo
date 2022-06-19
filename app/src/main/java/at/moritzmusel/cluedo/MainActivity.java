@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         startGame = findViewById(R.id.btn_startgame);
         startGame.setOnClickListener(this);
         gamerules = findViewById(R.id.btn_gamerules);
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_startgame){
-            Intent i = new Intent(MainActivity.this, BoardActivity.class);
+            Intent i = new Intent(MainActivity.this, LobbyDecisionActivity.class);
             startActivity(i);
         }
         if(view.getId() == R.id.btn_gamerules){
