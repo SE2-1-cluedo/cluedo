@@ -34,6 +34,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private Character c;
     private TextView character_name;
     private ImageView character_picture;
+    private String game_id;
 
     /**
      * Creates and initialises all buttons and lists
@@ -68,7 +69,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
         playerlist.setAdapter(adapter);
 
-        c = Character.DR_ORCHID;
+        c = Character.getFirstCharacter();
         character_name = findViewById(R.id.txt_character_name);
         character_picture = findViewById(R.id.img_character);
         addPlayer(playerlist);
@@ -151,9 +152,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      */
     public String getGameID() {
         if(decision){
+            game_id = getIntent().getExtras().getString("game_id");
+            return game_id;
             //Schnittstelle mit dem Netzwerk um die id zu bekommen.
-            String id = "12345";//Nur zum sehen ob es geht
-            return id;
         }else{
             Intent intent = getIntent();
             String id_from_joinlobby = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -177,24 +178,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         adapter.notifyDataSetChanged();
         vibrate(500);
     }
-
-    /**
-     * Used to check if the decision boolean worked
-     */
-    /*
-    public void checkCreateOrJoin(boolean decision){
-        new AlertDialog.Builder(CreateLobbyActivity.this)
-                .setTitle("Did it work?")
-                .setMessage("Join = false, Create = true: " + decision)
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).show();
-        vibrate(300);
-    }*/
 
     /**
      * lets the phone vibrate for the time of the duration

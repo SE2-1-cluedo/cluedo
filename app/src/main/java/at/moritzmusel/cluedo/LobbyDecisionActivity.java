@@ -8,11 +8,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import at.moritzmusel.cluedo.network.Network;
+
 public class LobbyDecisionActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button create_lobby;
     private Button join_lobby;
     private Button back_to_main;
+    private String game = "";
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,22 +31,32 @@ public class LobbyDecisionActivity extends AppCompatActivity implements View.OnC
         join_lobby.setOnClickListener(this);
         back_to_main = findViewById(R.id.btn_back_to_main);
         back_to_main.setOnClickListener(this);
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        Network.signInAnonymously(mAuth);
+        user = mAuth.getCurrentUser();
     }
 
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_create_lobby){
+            Network.setCtx(this);
+            //
+            game = Network.createLobby(user);
             Intent i = new Intent(LobbyDecisionActivity.this, CreateLobbyActivity.class);
             i.putExtra("decision",true);
+            i.putExtra("game_id",game);
             startActivity(i);
         }
         if(view.getId() == R.id.btn_join_lobby){
+            Network.setCtx(this);
+            Network.joinLobby(user, game);
             Intent i = new Intent(LobbyDecisionActivity.this, JoinLobbyActivity.class);
             startActivity(i);
         }
         if(view.getId() == R.id.btn_back_to_main){
-            //Intent i = new Intent(LobbyDecisionActivity.this, MainActivity.class);
-            //startActivity(i);
+            Network.setCtx(this);
+            Network.leaveLobby(user, Network.getCurrentGameID());
             finish();
         }
     }
