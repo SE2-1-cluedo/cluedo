@@ -27,6 +27,18 @@ public class Gameplay {
     private static final Gameplay OBJ = new Gameplay();
 
     private Gameplay() {
+        Player p1 = new Player("1");
+        p1.setPlayerCharacterName(MISS_SCARLETT);
+        Player p2 = new Player("2");
+        p2.setPlayerCharacterName(DR_ORCHID);
+        Player p3 = new Player("3");
+        p3.setPlayerCharacterName(PROFESSOR_PLUM);
+        Player p4 = new Player("4");
+        p4.setPlayerCharacterName(REVEREND_GREEN);
+        players.add(p1);
+        players.add(p2);
+        players.add(p3);
+        players.add(p4);
     }
 
     public static Gameplay getInstance(){
