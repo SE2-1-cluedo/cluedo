@@ -32,7 +32,7 @@ public class GameState {
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponPositions = new int[]{5,1,9,3,6,8};
     DatabaseReference dbRef;
-    private final Communicator communicator = NetworkCommunicator.getInstance();
+    private final NetworkCommunicator communicator = NetworkCommunicator.getInstance();
 
     private static final GameState OBJ = new GameState();
 
@@ -51,8 +51,9 @@ public class GameState {
 
     public void setCardState(List<Integer> cardState, boolean database) {
         this.cardState = cardState;
-        if(!database)
+        if(!database) {
             communicator.notifyList();
+        }
 
         else if (cardState == null)
             dbRef.child("players").child(Network.getCurrentUser().getUid()).child("cards").setValue("");
@@ -72,9 +73,10 @@ public class GameState {
 
     public void setPlayerState(List<Player> playerState, boolean database) {
         this.playerState = playerState;
-        if(!database)
+        if(!database) {
+            communicator.setPlayerChanged(true);
             communicator.notifyList();
-
+        }
         else if(playerState == null){
             List<String> players = new ArrayList<>();
             dbRef.child("players").get().addOnCompleteListener(task -> {
@@ -135,9 +137,10 @@ public class GameState {
 
     public void setAskQuestion(Question askQuestion, boolean database) {
         this.askQuestion = askQuestion;
-        if(!database)
+        if(!database) {
+            communicator.setQuestionChanged(true);
             communicator.notifyList();
-
+        }
         else if(askQuestion == null)
             dbRef.child("turn-flag").child("question").setValue("");
         else {
@@ -171,9 +174,10 @@ public class GameState {
 
     public void setPlayerTurn(String playerTurn, boolean database) {
         this.playerTurn = playerTurn;
-        if(!database)
+        if(!database) {
+            communicator.setTurnChanged(true);
             communicator.notifyList();
-
+        }
         else if(playerTurn == null)
             dbRef.child("turn-flag").child("player-turn").setValue("");
         else dbRef.child("turn-flag").child("player-turn").setValue(playerTurn);
@@ -190,9 +194,10 @@ public class GameState {
 
     public void setWeaponPositions(int[] weaponPositions, boolean database) {
         this.weaponPositions = weaponPositions;
-        if(!database)
+        if(!database) {
+            communicator.setWeaponsChanged(true);
             communicator.notifyList();
-
+        }
         else if(weaponPositions == null)
             dbRef.child("weapon-positions").setValue("");
         else {

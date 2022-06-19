@@ -38,10 +38,9 @@ public class Network {
     private static final DatabaseReference database = fb.getReference();
     private static final DatabaseReference games = database.child("games");
     private static String currentGameID;
-    private static Character currentCharacter = Character.MISS_SCARLETT;
+    private static Character currentCharacter = Character.getFirstCharacter();
     private static GameState gameState;
     private static FirebaseUser currentUser;
-    private static final List<Player> playerList = new ArrayList<>();
     public static Context ctx;
 
     //Wird aufgerufen wenn eine Lobby erstellt wird
@@ -109,10 +108,6 @@ public class Network {
             }
         }
         return killer;
-    }
-
-    public static List<Player> getPlayerList() {
-        return playerList;
     }
 
     public static Character getCurrentCharacter() {

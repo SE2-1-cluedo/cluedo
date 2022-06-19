@@ -18,7 +18,6 @@ public class Player {
     /**
      * @param playerId
      * Player ID assigned by the Server
-     * @param playerCharacterName
      * Chosen by the player
      */
     public Player(String playerId) {
