@@ -54,14 +54,13 @@ public class Network {
             Log.e(TAG, "Cant create game if you are already inside one! Call leaveLobby() first.");
             return null;
         }
-        setCurrentUser(user);
         Date current = Calendar.getInstance().getTime();
         String gameID = intToChars(current.hashCode());
-        setCurrentGameID(gameID);
         DatabaseReference game = database.child("games").child(gameID);
         SimpleDateFormat formated = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         formated.setTimeZone(TimeZone.getTimeZone("GMT"));
         game.child("timestamp").setValue(formated.format(current));
+
         //add Turn Flag path
         DatabaseReference turnFlag = game.child("turn-flag");
         turnFlag.child("question").setValue("");
@@ -70,60 +69,59 @@ public class Network {
         game.child("players").setValue("");
         game.child("turn-order").setValue("");
         game.child("killer").setValue("");
-        games.child(gameID).addValueEventListener(new ValueEventListener() {
-            final AtomicBoolean bool = new AtomicBoolean(false);
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists() && !bool.get()) {
-                    joinLobby(user, gameID);
-                    bool.set(true);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
         return gameID;
     }
 
     //Wird aufgerufen nachdem eine Lobby erstellt wurde. Es wird der Nutzer, welcher die Lobby erstellt hat hinzugefügt
     //Parameter 3 "Player" enthält die bereits
-    public static boolean joinLobby(FirebaseUser user, String gameID) {
+    public static void joinLobby(FirebaseUser user, String gameID) {
         //check if FB user and game exists
-        //Log.i(TAG, "getCurrentGameID() " + getCurrentGameID() + ", user " + user.getUid() + ", gameExists() " + checkIfGameExists(gameID));
-        //TODO: Why the fuk funktioniert checkIfGameExists() nicht wenn man lobby joined??!?!
-        if (user != null && (getCurrentGameID() == null || getCurrentGameID().equals(gameID)) /*&& checkIfGameExists()*/) {
-            if(getCurrentGameID()==null) setCurrentGameID(gameID);
-            setCurrentUser(user);
-            DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
-            p.child("cards").setValue("");
-            p.child("cards-eliminated").setValue("");
-            p.child("position").setValue("");
-            p.child("character").setValue("");
-            //TODO: SET GAMESTATE
-            return true;
-        } else {
-            throw new IllegalStateException("Make sure you are not already in a game when joining!");
-        }
+        //Log.i(TAG, ("joinLobby() called params:"+ user +" "+ (getCurrentGameID() == null) +" "+ checkIfGameExists(gameID)));
+        OnDataRetreive onDataRetreive = new OnDataRetreive() {
+            @Override
+            public void onSuccess(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    if (user != null && getCurrentGameID() == null) {
+                        setCurrentGameID(gameID);
+                        setCurrentUser(user);
+                        DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
+                        p.child("cards").setValue("");
+                        p.child("cards-eliminated").setValue("");
+                        p.child("position").setValue("");
+                        p.child("character").setValue("");
+                        //TODO: SET GAMESTATE
+                    } else {
+                        throw new IllegalStateException("Make sure you are not already in a game when joining!");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Object error) {
+                Log.e(TAG, ((Exception)error).getMessage());
+            }
+        };
+        checkIfGameExists(gameID, onDataRetreive);
     }
 
     public static void leaveLobby(FirebaseUser user, String gameID) {
-        Log.i(TAG, "leaveLobby() called");
-       OnDataRetreive onDataRetreive = new OnDataRetreive() {
-           @Override
-           public void onSuccess(DataSnapshot dataSnapshot) {
-               if(dataSnapshot.exists()) {
-                   setCurrentGameID(null);
-                   setGameState(null);
-                   games.child(gameID).child("players").child(user.getUid()).removeValue();
-               }
-           }
-           @Override
-           public void onFailure(Object error) {
-                Log.e(TAG, ((DatabaseError)error).getMessage());
-           }
-       };
-        if (getCurrentGameID() != null && user != null) checkIfGameExists(gameID, onDataRetreive);
+        OnDataRetreive onDataRetreive = new OnDataRetreive() {
+            @Override
+            public void onSuccess(DataSnapshot dataSnapshot) {
+                DatabaseReference player = games.child(gameID).child("players").child(user.getUid());
+                if (dataSnapshot!= null && dataSnapshot.exists() && getCurrentGameID() != null && user != null){
+                    player.removeValue();
+                    setCurrentGameID(null);
+                    setGameState(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Object error) {
+                Log.e(TAG, ((Exception)error).getMessage());
+            }
+        };
+        checkIfGameExists(gameID, onDataRetreive);
     }
 
     public static void startGame(String gameID, List<Player> list, Killer killer) {
@@ -193,6 +191,7 @@ public class Network {
             }
 
             @Override
+
             public void onCancelled(DatabaseError error) {
                 Log.e(TAG, error.getMessage());
             }
@@ -258,16 +257,16 @@ public class Network {
     }
 
     private static void checkIfGameExists(String gameID, OnDataRetreive onDataRetreive) {
-        games.child(gameID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                onDataRetreive.onSuccess(snapshot);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                onDataRetreive.onFailure(error);
-            }
-        });
+        Log.i(TAG, "checkIfGameExists() called params:"+gameID);
+        if(gameID == null || gameID.isEmpty()) {
+            onDataRetreive.onSuccess(null);
+            onDataRetreive.onFailure(new Exception("GameID cannot be null or empty!"));
+        }else {
+            games.child(gameID).get().addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) onDataRetreive.onFailure(task.getException());
+                else onDataRetreive.onSuccess(task.getResult());
+            });
+        }
     }
 
     public static void signInAnonymously(FirebaseAuth mAuth) {
@@ -291,15 +290,6 @@ public class Network {
     }
 
     public static void test(){
-        games.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.i(TAG, (String) snapshot.getValue());
-                System.out.println(snapshot.getValue());
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
+        //Log.i(TAG, ""+checkIfGameExists(getCurrentGameID()));
     }
 }

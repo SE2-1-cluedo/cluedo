@@ -28,6 +28,7 @@ public class QuestionCards {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        initCards();
     }
 
     public List<Card> getQuestionCards() {
@@ -42,7 +43,7 @@ public class QuestionCards {
             String line;
             int i = 0;
             while ((line = br.readLine()) != null) {
-                q.add(new Card(i+questionsAmount,line.split(":")[1]));
+                q.add(new Card(i+questionsAmount,line.split(":")[1]+ " " + line.split(":")[2]));
                 i++;
             }
             br.close();

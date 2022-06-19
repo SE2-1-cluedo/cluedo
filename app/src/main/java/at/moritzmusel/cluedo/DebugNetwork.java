@@ -23,7 +23,7 @@ import at.moritzmusel.cluedo.network.pojo.Player;
 public class DebugNetwork extends AppCompatActivity {
 
     private static final String TAG_DEBUG = "DEBUG Activity ~";
-
+    private String game = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +40,7 @@ public class DebugNetwork extends AppCompatActivity {
         card1.add(new Card(5));
         card1.add(new Card(3));
         card1.add(new Card(12));
-        list.add(new Player(card1));
+        list.add(new Player("qsd",card1));
         //killer
         List<Card> killer = new ArrayList<>();
         killer.add(new Card(1));
@@ -50,11 +50,12 @@ public class DebugNetwork extends AppCompatActivity {
         Button btn1 = findViewById(R.id.create),btn2=findViewById(R.id.start), btn3 = findViewById(R.id.leave);
         btn1.setOnClickListener(click -> {
             Network.setCtx(this);
-            Network.test();
+            game = Network.createLobby(user);
         });
         btn2.setOnClickListener(click -> {
             Network.setCtx(this);
-            Network.startGame(Network.getCurrentGameID(), list, new Killer(killer));
+            //Network.startGame(Network.getCurrentGameID(), list, new Killer(killer));
+            Network.joinLobby(user, game);
         });
         btn3.setOnClickListener(click -> {
             Network.setCtx(this);
