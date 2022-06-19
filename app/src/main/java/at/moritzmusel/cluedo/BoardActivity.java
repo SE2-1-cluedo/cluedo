@@ -37,17 +37,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Dice;
-import at.moritzmusel.cluedo.sensor.OnSwipeTouchListener;
 import at.moritzmusel.cluedo.sensor.ShakeDetector;
 import at.moritzmusel.cluedo.game.Gameplay;
 
 public class BoardActivity extends AppCompatActivity{
     private AllTheCards allcards;
-    private OnSwipeTouchListener swipeTouchListener;
     private float x1, x2, y1, y2;
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
@@ -240,7 +237,6 @@ public class BoardActivity extends AppCompatActivity{
         });*/
 
         android.app.AlertDialog alertDialog = builder.create();
-
         alertDialog.show();
 
         shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
@@ -836,13 +832,13 @@ public class BoardActivity extends AppCompatActivity{
             case MotionEvent.ACTION_UP:
                 x2 = touchEvent.getX();
                 y2 = touchEvent.getY();
-                float swipeRight = x2-x1, swipeLeft = x1-x2;
+                float swipeRight = x2-x1, swipeLeft = x1-x2, swipe = y1-y2;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
                     startSuspicion();
-                }else{
+                }else if (swipe > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
                 }
                 break;
