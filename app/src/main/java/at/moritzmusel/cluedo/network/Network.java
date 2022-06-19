@@ -87,7 +87,7 @@ public class Network {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists() && !bool.get()){
-                    joinLobby(user.getUid(), gameID);
+                    joinLobby(user, gameID);
                     bool.set(true);
                 }
             }
@@ -161,7 +161,7 @@ public class Network {
                 }
                 getGameState().setPlayerState(playerList,false);
 
-                System.out.println("Ohh something changed");
+                //System.out.println("Ohh something changed");
             }
 
             @Override
@@ -178,7 +178,7 @@ public class Network {
 
     //Wird aufgerufen nachdem eine Lobby erstellt wurde. Es wird der Nutzer, welcher die Lobby erstellt hat hinzugefügt
     //Parameter 3 "Player" enthält die bereits
-    public static boolean joinLobby(String user, String gameID) {
+    public static boolean joinLobby(FirebaseUser user, String gameID) {
         //check if FB user and game exists
         //Log.i(TAG, "getCurrentGameID() " + getCurrentGameID() + ", user " + user.getUid() + ", gameExists() " + checkIfGameExists(gameID));
         //TODO: Why the fuk funktioniert checkIfGameExists() nicht wenn man lobby joined??!?!
@@ -186,7 +186,7 @@ public class Network {
             setCurrentGameID(gameID);
             //etCurrentUser(user);
             currentCharacter = currentCharacter.getNextCharacter();
-            DatabaseReference p = games.child(gameID).child("players").child(user);
+            DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
             p.child("cards").setValue("");
             p.child("cards-eliminated").setValue("");
             p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));

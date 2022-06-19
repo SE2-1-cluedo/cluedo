@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import at.moritzmusel.cluedo.AllTheCards;
+import at.moritzmusel.cluedo.communication.Communicator;
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
 import at.moritzmusel.cluedo.network.data.QuestionCards;
@@ -30,6 +32,7 @@ public class GameState {
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponPositions = new int[]{5,1,9,3,6,8};
     DatabaseReference dbRef;
+    private final Communicator communicator = NetworkCommunicator.getInstance();
 
     private static final GameState OBJ = new GameState();
 
@@ -48,9 +51,13 @@ public class GameState {
 
     public void setCardState(List<Integer> cardState, boolean database) {
         this.cardState = cardState;
-        if (cardState == null && database)
+        if(!database)
+            communicator.notifyList();
+
+        else if (cardState == null)
             dbRef.child("players").child(Network.getCurrentUser().getUid()).child("cards").setValue("");
-        else if(database){
+
+        else {
             StringBuilder sB = new StringBuilder();
             for (int c : cardState)
                 sB.append(c).append("");
@@ -65,7 +72,10 @@ public class GameState {
 
     public void setPlayerState(List<Player> playerState, boolean database) {
         this.playerState = playerState;
-        if(playerState == null && database){
+        if(!database)
+            communicator.notifyList();
+
+        else if(playerState == null){
             List<String> players = new ArrayList<>();
             dbRef.child("players").get().addOnCompleteListener(task -> {
                 if (!task.isSuccessful())
@@ -86,7 +96,7 @@ public class GameState {
                     }
                 }
             });
-        } else if(database){
+        } else {
             for (Player p : playerState){
                 dbRef.child("players").child(p.getPlayerId()).child("cards").setValue(p.getOwnedCardsAsString());
                 dbRef.child("players").child(p.getPlayerId()).child("cards-eliminated").setValue(p.getKnownCardsAsString());
@@ -125,9 +135,12 @@ public class GameState {
 
     public void setAskQuestion(Question askQuestion, boolean database) {
         this.askQuestion = askQuestion;
-        if(askQuestion == null && database)
+        if(!database)
+            communicator.notifyList();
+
+        else if(askQuestion == null)
             dbRef.child("turn-flag").child("question").setValue("");
-        else if(database){
+        else {
             StringBuilder sB = new StringBuilder();
             sB.append(askQuestion.getAskPerson()).append(" ");
             for(int i : askQuestion.getCards())
@@ -158,10 +171,12 @@ public class GameState {
 
     public void setPlayerTurn(String playerTurn, boolean database) {
         this.playerTurn = playerTurn;
-        if(playerTurn == null && database)
+        if(!database)
+            communicator.notifyList();
+
+        else if(playerTurn == null)
             dbRef.child("turn-flag").child("player-turn").setValue("");
-        else if(database)
-            dbRef.child("turn-flag").child("player-turn").setValue(playerTurn);
+        else dbRef.child("turn-flag").child("player-turn").setValue(playerTurn);
     }
 
     private void initQuestionCardsStack(Context ctx){
@@ -175,9 +190,12 @@ public class GameState {
 
     public void setWeaponPositions(int[] weaponPositions, boolean database) {
         this.weaponPositions = weaponPositions;
-        if(weaponPositions == null && database)
+        if(!database)
+            communicator.notifyList();
+
+        else if(weaponPositions == null)
             dbRef.child("weapon-positions").setValue("");
-        else if(database){
+        else {
             StringBuilder sB = new StringBuilder();
             for(int i: weaponPositions)
                 sB.append(i).append(" ");

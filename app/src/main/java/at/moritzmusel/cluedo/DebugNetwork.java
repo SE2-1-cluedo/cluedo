@@ -14,12 +14,11 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.moritzmusel.cluedo.entities.Character;
+
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
-import at.moritzmusel.cluedo.network.pojo.Card;
 import at.moritzmusel.cluedo.network.pojo.GameState;
-import at.moritzmusel.cluedo.network.pojo.Killer;
 
 public class DebugNetwork extends AppCompatActivity {
 
@@ -64,13 +63,16 @@ public class DebugNetwork extends AppCompatActivity {
 
         final Button btn3 = findViewById(R.id.test2);
         btn3.setOnClickListener(click -> {
-            list.add(new Player("shuekilogb3eht58sze2n19ht36z"));
-           Network.joinLobby("shuekilogb3eht58sze2n19ht36z",getCurrentGameID());
+            //list.add(new Player("shuekilogb3eht58sze2n19ht36z"));
+          // Network.joinLobby("shuekilogb3eht58sze2n19ht36z",getCurrentGameID());
         });
 
         final Button btn2 = findViewById(R.id.test);
         btn2.setOnClickListener(click -> {
             Network.startGame(getCurrentGameID(),list);
+            NetworkCommunicator.getInstance().register(() -> {
+                System.out.println("Something changed");
+            });
         });
 
         /*
