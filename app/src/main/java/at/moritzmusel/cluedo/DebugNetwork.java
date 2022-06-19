@@ -50,6 +50,7 @@ public class DebugNetwork extends AppCompatActivity {
         Button btn1 = findViewById(R.id.create),btn2=findViewById(R.id.start), btn3 = findViewById(R.id.leave);
         btn1.setOnClickListener(click -> {
             Network.setCtx(this);
+            //
             game = Network.createLobby(user);
         });
         btn2.setOnClickListener(click -> {
