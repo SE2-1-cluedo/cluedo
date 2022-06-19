@@ -1,5 +1,10 @@
 package at.moritzmusel.cluedo;
 
+import static at.moritzmusel.cluedo.entities.Character.DR_ORCHID;
+import static at.moritzmusel.cluedo.entities.Character.MRS_PEACOCK;
+import static at.moritzmusel.cluedo.entities.Character.PROFESSOR_PLUM;
+import static at.moritzmusel.cluedo.entities.Character.REVEREND_GREEN;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +40,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import at.moritzmusel.cluedo.communication.Communicator;
 import at.moritzmusel.cluedo.communication.SuspicionCommunicator;
@@ -47,7 +54,7 @@ public class BoardActivity extends AppCompatActivity {
 
     private View decorView, diceView, playerCardsView;
     private AllTheCards allCards;
-    private float x1;
+    private float x1, x2, y1, y2;
     private String character,weapon;
     private boolean hasSuspected, hasAccused;
     private SuspicionCommunicator ca;
@@ -64,6 +71,8 @@ public class BoardActivity extends AppCompatActivity {
     List<Integer> helpList = Arrays.asList(help);
     HashMap<Integer,String> freeWeaponPlaces = new HashMap<>();
     private EvidenceCards evidenceCards;
+    private ImageView image;
+    private View dice_layout;
 
     private SensorManager mSensorManager;
     private Sensor accel;
@@ -73,6 +82,7 @@ public class BoardActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,13 +171,14 @@ public class BoardActivity extends AppCompatActivity {
         });
 
         allCards = new AllTheCards();
+        allCards.getGameCards();
 
         evidenceCards = new EvidenceCards();
 
         //ImageButton cardView = findViewById(R.id.cardView);
         //cardView.setOnClickListener(this);
 
-        ImageView image = new ImageView(this);
+        image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -177,7 +188,11 @@ public class BoardActivity extends AppCompatActivity {
         callDice();
     }
 
-    private void rolledMagnifyingGlass(Dice dice) {
+    /**
+     * Creates an AlertDialog which informs the player that a card is owned by somebody or the murderer
+     * uses the methods of the EvidenceCards-Class
+     */
+    private void rolledMagnifyingGlass() {
         if(dice.getNumberRolled() == 4){
             AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
             builder.setTitle("What is going on?");
@@ -186,185 +201,76 @@ public class BoardActivity extends AppCompatActivity {
                     + "It is revealed that the Card: " + evidenceCards.getDrawnCard().getDesignation() + "\n"
                     + "is owned by: " + evidenceCards.getPlayer());
 
-            builder.setNeutralButton("OK", (dialog, which) -> dialog.dismiss());
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
             builder.create();
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
     }
 
-    @SuppressLint("InflateParams")
+
+
+    /**
+     * Creates an alert with a dice action, which is shakeable and clickable.
+     */
     private void callDice(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BoardActivity.this,R.style.AlertDialogStyle);
         builder.setTitle("Throw Dice");
-        
+
         LayoutInflater inflater = getLayoutInflater();
-        View dice_layout = inflater.inflate(R.layout.custom_dialog, null);
+        dice_layout = inflater.inflate(R.layout.custom_dialog, null);
         builder.setView(dice_layout);
 
         diceView = dice_layout.findViewById(R.id.dialogDice);
         dice = new Dice((ImageView) diceView);
 
-        diceView.setOnClickListener(view -> {
-            dice.throwDice();
-            diceRolled();
-        });
+        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
 
-        shakeDetector.setOnShakeListener(count -> {
-            if(count < 2){
-                dice.throwDice();
-                diceRolled();
+        builder.setCancelable(false);
+
+        /*builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });*/
+
+        android.app.AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+        shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+            @Override
+            public void onShake(int count){
+                if(count < 2){
+                    dice.throwDice();
+                    diceRolled();
+                    final Timer timer2 = new Timer();
+                    timer2.schedule(new TimerTask() {
+                        public void run() {
+                            alertDialog.dismiss();
+                            timer2.cancel(); //this will cancel the timer of the system
+                        }
+                    }, 2000);
+                }
             }
         });
-        
-        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-    @Override
-    public void onRestart() {
-        super.onRestart();
-        if(hasSuspected || hasAccused) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setCancelable(false);
-            if(hasAccused)
-                builder.setMessage("This is your one and only accusation, are you sure about it?");
-            else
-            builder.setMessage("You suspected: ");
-
-            setPlayerCardImages();
-            builder.setView(playerCardsView);
-
-            builder.setPositiveButton("Yes, proceed", (dialog, which) -> {
-                switchWeapon(weapon.toLowerCase());
-                moveSuspectedPlayer(character);
-                //moveCharacter
-                if(hasSuspected)
-                    System.out.println("Suspected");
-                    //do something to ask the next player about your suspicion
-                else if (hasAccused)
-                    System.out.println("Accused");
-                    //check with murder cards either player wins or is out
-                ca.setHasSuspected(false);
-                ca.setHasAccused(false);
-                dialog.cancel();
-            });
-            builder.setNegativeButton("No, I want to change", (dialog, which) -> {
-                ca.setHasSuspected(false);
-                ca.setHasAccused(false);
-                Intent intent = new Intent(BoardActivity.this, SuspicionActivity.class);
-                startActivity(intent);
-            });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
-    }
 
 
-    /**
-     * sets the Images used in the builders by calling the image_show_cards.xml
-     */
-    @SuppressLint("InflateParams")
-    private void setPlayerCardImages() {
-        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
-        playerCardsView = factory.inflate(R.layout.image_show_cards, null);
-        LinearLayout linear = playerCardsView.findViewById(R.id.linearLayout);
-        int[] card_ids;
 
-        if(hasSuspected || hasAccused)
-            card_ids = new int[]{allCards.findIdWithName(character),allCards.findIdWithName(weapon),newPosition+11};
-        else
-            //here we need the cards from the hand (given by network)
-            card_ids = new int[]{0,10,18};
-
-        for(int i = 0; i < linear.getChildCount(); i++) {
-            setPlayerCard((ImageView) linear.getChildAt(i),card_ids[i]);
-        }
     }
 
     /**
-     * Sets the picture connected to the id on the imageView card
-     * @param card the imageView we want to set the picture on
-     * @param id for finding the picture
-     */
-    private void setPlayerCard(ImageView card, int id){
-        switch(id) {
-            case 0:
-                card.setImageResource(R.drawable.scarlett_card);
-                break;
-            case 1:
-                card.setImageResource(R.drawable.plum_card);
-                break;
-            case 2:
-                card.setImageResource(R.drawable.green_card);
-                break;
-            case 3:
-                card.setImageResource(R.drawable.peacock_card);
-                break;
-            case 4:
-                card.setImageResource(R.drawable.mustard_card);
-                break;
-            case 5:
-                card.setImageResource(R.drawable.orchid_card);
-                break;
-            case 6:
-                card.setImageResource(R.drawable.dagger);
-                break;
-            case 7:
-                card.setImageResource(R.drawable.candlestick);
-                break;
-            case 8:
-                card.setImageResource(R.drawable.revolver);
-                break;
-            case 9:
-                card.setImageResource(R.drawable.rope);
-                break;
-            case 10:
-                card.setImageResource(R.drawable.pipe);
-                break;
-            case 11:
-                card.setImageResource(R.drawable.wrench);
-                break;
-            case 12:
-                card.setImageResource(R.drawable.lounge_card);
-                break;
-            case 13:
-                card.setImageResource(R.drawable.conservatory_card);
-                break;
-            case 14:
-                card.setImageResource(R.drawable.ballroom_card);
-                break;
-            case 15:
-                card.setImageResource(R.drawable.dining_card);
-                break;
-            case 16:
-                card.setImageResource(R.drawable.kitchen_card);
-                break;
-            case 17:
-                card.setImageResource(R.drawable.library_card);
-                break;
-            case 18:
-                card.setImageResource(R.drawable.billiard_card);
-                break;
-            case 19:
-                card.setImageResource(R.drawable.study_card);
-                break;
-            case 20:
-                card.setImageResource(R.drawable.hall_card);
-                break;
-            default:
-                card.setImageResource(R.drawable.cardback);
-        }
-    }
-
-    /**
-     * Called when dice gets rolled. Removes dice clickListener, resets stepsTaken in Gameplay
+     * Called when dice gets rolled. Removes dice clickListener, resets stepsTaken in Gameplay, creates a alert for the magnifying glass method
      * and calls the move methode
      */
     public void diceRolled() {
-        diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
-        rolledMagnifyingGlass(dice);
+        //diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
+        rolledMagnifyingGlass();
         gp1.setStepsTaken(0);
         movePlayerWithArrows();
     }
@@ -763,31 +669,162 @@ public class BoardActivity extends AppCompatActivity {
      */
     public void onCardViewClick() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this,R.style.AlertDialogStyle);
         builder.setTitle("My Cards");
 
         setPlayerCardImages();
         builder.setView(playerCardsView);
 
-        //final String[] items = {allCards.getGameCards().get(0).getDesignation(),allCards.getGameCards().get(10).getDesignation(),allCards.getGameCards().get(18).getDesignation()};
-        //Später vielleicht mit den Bildern
-        //Nur Demo brauche Methode um die eigentlichen Karten zu bekommen
-        //builder.setItems(items, (dialog, item) -> {
-
-        //});
         builder.setNeutralButton("OK", (dialog, which) -> dialog.cancel());
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
+    /**
+     * sets the layout for the card alert
+     * initialises the ImageViews of the cards and sets
+     * the right image for the views.
+     */
+    private void setPlayerCardImages() {
+        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
+        playerCardsView = factory.inflate(R.layout.image_show_cards, null);
+
+        ImageView card1 = playerCardsView.findViewById(R.id.myCard1);
+        ImageView card2 = playerCardsView.findViewById(R.id.myCard2);
+        ImageView card3 = playerCardsView.findViewById(R.id.myCard3);
+        ImageView card4 = playerCardsView.findViewById(R.id.myCard4);
+        ImageView card5 = playerCardsView.findViewById(R.id.myCard5);
+        ImageView card6 = playerCardsView.findViewById(R.id.myCard6);
+
+        ArrayList<ImageView> card_list = new ArrayList<>();
+        card_list.add(card1);
+        card_list.add(card2);
+        card_list.add(card3);
+        card_list.add(card4);
+        card_list.add(card5);
+        card_list.add(card6);
+
+        int[] card_ids = getPlayerCardIds();
+
+        if(card_ids.length <= 6){
+            for(int i = 0; i < card_ids.length;i++){
+                setPlayerCard(card_list.get(i), card_ids[i]);
+            }
+            for(int i = card_ids.length; i < card_list.size();i++){
+                card_list.get(i).setVisibility(View.GONE);
+            }
+        }
+        else{
+            for(int i = 0; i < 6;i++){
+                setPlayerCard(card_list.get(i), card_ids[i]);
+            }
+        }
+
+
+    }
+
+    /**
+     * Connects with the network to get the cardids for the images
+     * @return Array with three to six ids for the images
+     */
+    private int[] getPlayerCardIds(){
+        int[] id;
+        //Hier mit Netzwerk verknüpfen
+        id = new int[]{
+                allCards.getGameCards().get(0).getId(),
+                allCards.getGameCards().get(7).getId(),
+                allCards.getGameCards().get(8).getId(),
+                allCards.getGameCards().get(20).getId(),
+                allCards.getGameCards().get(10).getId(),
+                allCards.getGameCards().get(18).getId()};
+        return id;
+    }
+
+    /**
+     * sets the image for the ImageView according to the id
+     * @param card ImageView to set the image
+     * @param id to get the right image
+     */
+    private void setPlayerCard(ImageView card, int id){
+        switch(id) {
+            case 0:
+                card.setImageResource(R.drawable.scarlett_card);
+                break;
+            case 1:
+                card.setImageResource(R.drawable.plum_card);
+                break;
+            case 2:
+                card.setImageResource(R.drawable.green_card);
+                break;
+            case 3:
+                card.setImageResource(R.drawable.peacock_card);
+                break;
+            case 4:
+                card.setImageResource(R.drawable.mustard_card);
+                break;
+            case 5:
+                card.setImageResource(R.drawable.orchid_card);
+                break;
+            case 6:
+                card.setImageResource(R.drawable.dagger);
+                break;
+            case 7:
+                card.setImageResource(R.drawable.candlestick);
+                break;
+            case 8:
+                card.setImageResource(R.drawable.revolver);
+                break;
+            case 9:
+                card.setImageResource(R.drawable.rope);
+                break;
+            case 10:
+                card.setImageResource(R.drawable.pipe);
+                break;
+            case 11:
+                card.setImageResource(R.drawable.wrench);
+                break;
+            case 12:
+                card.setImageResource(R.drawable.hall_card);
+                break;
+            case 13:
+                card.setImageResource(R.drawable.lounge_card);
+                break;
+            case 14:
+                card.setImageResource(R.drawable.dining_card);
+                break;
+            case 15:
+                card.setImageResource(R.drawable.kitchen_card);
+                break;
+            case 16:
+                card.setImageResource(R.drawable.ballroom_card);
+                break;
+            case 17:
+                card.setImageResource(R.drawable.conservatory_card);
+                break;
+            case 18:
+                card.setImageResource(R.drawable.billiard_card);
+                break;
+            case 19:
+                card.setImageResource(R.drawable.library_card);
+                break;
+            case 20:
+                card.setImageResource(R.drawable.study_card);
+                break;
+            default:
+                card.setImageResource(R.drawable.cardback);
+        }
+    }
+
+    /**
+     * starts the Notepad Activity for the swipe motion
+     */
     public void startNotepad(){
         Intent intent = new Intent(this, NotepadActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
     }
-
     /**
-     * starts a new Activity to call an accusation or suspicion
+     * starts the Suspicion Activity for the swipe motion
      */
     public void startSuspicion(){
         Intent intent = new Intent(this, SuspicionActivity.class);
@@ -795,30 +832,33 @@ public class BoardActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
-    //EventListener für Swipe-Event
+    /**
+     * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert
+     */
     @Override
     public boolean onTouchEvent (MotionEvent touchEvent){
+
         switch(touchEvent.getAction()){
             case MotionEvent.ACTION_DOWN:
                 x1 = touchEvent.getX();
-                float y1 = touchEvent.getY();
+                y1 = touchEvent.getY();
                 break;
 
             case MotionEvent.ACTION_UP:
-                float x2 = touchEvent.getX();
-                float y2 = touchEvent.getY();
-                float swipeRight = x2 -x1,
-                        swipeLeft = x1- x2;
+                x2 = touchEvent.getX();
+                y2 = touchEvent.getY();
+                float swipeRight = x2-x1, swipeLeft = x1-x2, swipe = y1-y2;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
                     startSuspicion();
-                }else{
+                }else if (swipe > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
                 }
                 break;
         }
         return false;
     }
+
 }
