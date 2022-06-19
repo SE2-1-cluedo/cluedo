@@ -54,22 +54,11 @@ public class DebugNetwork extends AppCompatActivity {
         });
         btn2.setOnClickListener(click -> {
             Network.setCtx(this);
-            //Network.startGame(Network.getCurrentGameID(), list, new Killer(killer));
             Network.joinLobby(user, game);
         });
         btn3.setOnClickListener(click -> {
             Network.setCtx(this);
             Network.leaveLobby(user, Network.getCurrentGameID());
         });
-        /*
-        TextView view = findViewById(R.id.debug);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) if (Network.getCurrentGameID() != null) break;
-                Log.i(TAG_DEBUG, Network.getCurrentGameID());
-                view.setText(Network.getCurrentGameID());
-            }
-        }).start();*/
     }
 }
