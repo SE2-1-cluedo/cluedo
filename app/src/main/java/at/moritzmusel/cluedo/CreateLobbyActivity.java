@@ -68,7 +68,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
         playerlist.setAdapter(adapter);
 
-        c = Character.DR_ORCHID;
+        c = Character.getFirstCharacter();
         character_name = findViewById(R.id.txt_character_name);
         character_picture = findViewById(R.id.img_character);
         addPlayer(playerlist);
