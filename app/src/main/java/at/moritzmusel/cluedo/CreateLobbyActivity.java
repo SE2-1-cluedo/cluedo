@@ -181,24 +181,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             Network.setCtx(this);
             Network.leaveLobby(user, game_id);
             finish();
-            new AlertDialog.Builder(CreateLobbyActivity.this)
-                    .setTitle("Attention!")
-                    .setMessage("If you leave the lobby, you will have to make a new one")
-                    .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .show();
-
         }
     }
 
