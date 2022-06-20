@@ -42,6 +42,7 @@ public class GameState {
     DatabaseReference dbRef;
     private final NetworkCommunicator communicator = NetworkCommunicator.getInstance();
 
+
     private static final GameState OBJ = new GameState();
 
     private GameState(){

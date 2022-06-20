@@ -50,7 +50,6 @@ public class LobbyDecisionActivity extends AppCompatActivity implements View.OnC
         }
         if(view.getId() == R.id.btn_join_lobby){
             Intent i = new Intent(LobbyDecisionActivity.this, JoinLobbyActivity.class);
-            i.putExtra("game_id", Network.getCurrentGameID());
             i.putExtra("user",user);
             startActivity(i);
         }

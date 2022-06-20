@@ -95,6 +95,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         networkCommunicator.register(() -> {
             if(networkCommunicator.isPlayerChanged()){
                 player_list = game_state.getPlayerState();
+                System.out.println(player_list);
                 for (Player p : game_state.getPlayerState()) {
                     if(p.getPlayerId().equals(user.getUid())){
                         c = p.getPlayerCharacterName();
@@ -196,7 +197,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                     dialog.dismiss();
                 }
             });
-
             builder.create();
             AlertDialog alertDialog = builder.create();
             alertDialog.show();

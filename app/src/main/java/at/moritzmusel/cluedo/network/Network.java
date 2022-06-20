@@ -104,6 +104,10 @@ public class Network {
 
         }
     };
+
+    public static DatabaseReference getDatabaseReference(){
+        return games;
+    }
     public static Context ctx;
 
     //Wird aufgerufen wenn eine Lobby erstellt wird
