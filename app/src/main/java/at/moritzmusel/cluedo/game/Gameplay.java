@@ -2,18 +2,21 @@ package at.moritzmusel.cluedo.game;
 
 import static at.moritzmusel.cluedo.entities.Character.DR_ORCHID;
 import static at.moritzmusel.cluedo.entities.Character.MISS_SCARLETT;
-import static at.moritzmusel.cluedo.entities.Character.MRS_PEACOCK;
 import static at.moritzmusel.cluedo.entities.Character.PROFESSOR_PLUM;
 import static at.moritzmusel.cluedo.entities.Character.REVEREND_GREEN;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import at.moritzmusel.cluedo.Card;
+import at.moritzmusel.cluedo.communication.GameplayCommunicator;
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.network.Network;
 import at.moritzmusel.cluedo.network.pojo.GameState;
 import at.moritzmusel.cluedo.network.pojo.Question;
 
@@ -31,30 +34,52 @@ public class Gameplay {
     private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
     private String[] turnOrderGame;
+    private GameplayCommunicator gameCommunicator;
+    private NetworkCommunicator netCommunicator;
+    //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
+    private int[] weaponsPos;
 
     private static final Gameplay OBJ = new Gameplay();
 
     private Gameplay() {
-        /*Player p1 = new Player("1");
-        p1.setPlayerCharacterName(MISS_SCARLETT);
-        Player p2 = new Player("2");
-        p2.setPlayerCharacterName(DR_ORCHID);
-        Player p3 = new Player("3");
-        p3.setPlayerCharacterName(PROFESSOR_PLUM);
-        Player p4 = new Player("4");
-        p4.setPlayerCharacterName(REVEREND_GREEN);
-        players.add(p1);
-        players.add(p2);
-        players.add(p3);
-        players.add(p4);
-        turnOrderGame = GameState.getInstance().getTurnOrder();
-        setPlayersGame();*/
+        startGame();
     }
 
     public void startGame(){
         /*turnOrderGame = GameState.getInstance().getTurnOrder();
         players = GameState.getInstance().getPlayerState();
         decidePlayerWhoMovesFirst();*/
+        weaponsPos = GameState.getInstance().getWeaponPositions();
+        gameCommunicator = GameplayCommunicator.getInstance();
+        netCommunicator = NetworkCommunicator.getInstance();
+
+        netCommunicator.register(()->{
+            if(netCommunicator.isPlayerChanged()){
+                checkWhatChangedInPlayer(GameState.getInstance().getPlayerState());
+            }
+            if(netCommunicator.isQuestionChanged()){
+                gameCommunicator.setSuspicion(true);
+                gameCommunicator.notifyList();
+            }
+            if(netCommunicator.isTurnChanged()){
+                checkTurnChanged(GameState.getInstance().getPlayerTurn());
+            }
+            if(netCommunicator.isWeaponsChanged()){
+                checkWeaponChanged(GameState.getInstance().getWeaponPositions());
+            }
+            if(netCommunicator.isHasWon()){
+                gameCommunicator.setWinner(true);
+                gameCommunicator.notifyList();
+            }
+            if(netCommunicator.isHasLost()){
+                gameCommunicator.setLoser(true);
+                gameCommunicator.notifyList();
+            }
+            if (netCommunicator.isMagnify()){
+                gameCommunicator.setMagnifying(true);
+                gameCommunicator.notifyList();
+            }
+        });
 
         Player p1 = new Player("1");
         p1.setPlayerCharacterName(MISS_SCARLETT);
@@ -77,10 +102,23 @@ public class Gameplay {
      * Called after the Player ends his/her turn
      */
     public Character endTurn() {
-        currentPlayer = getCharacterByPlayerID(getPlayerIDOfNextPlayer());
-        GameState.getInstance().setPlayerTurn(getPlayerIDOfNextPlayer(), true);
-        updateGameState();
+        String playerID = getPlayerIDOfNextPlayerInTurnOrder();
+        currentPlayer = getCharacterByPlayerID(playerID);
+        GameState.getInstance().setPlayerTurn(getPlayerIDOfNextPlayerInTurnOrder(), true);
+        gameCommunicator.setTurnChange(true);
+        gameCommunicator.notifyList();
         return currentPlayer;
+    }
+
+    public String getPlayerForSuspectedCards(int[] cards){
+        for(Player p : players){
+            for (int j = 0; j < 3; j++){
+                if(p.getPlayerOwnedCards().contains(cards[j]))
+                    return p.getPlayerCharacterName().name();
+
+            }
+        }
+        return "nobody";
     }
 
     /**
@@ -128,15 +166,23 @@ public class Gameplay {
     }
 
     /**
-     * Method to check if one of the players in the correct order has a card
-     * which is equal to one of the cards send. If yes the person who asked the question
-     * get the card added to their inventory. And update to the other players
+     * Method to ask other Players a Question
      * @param cardsForQuestion the 3 cards person, weapon and room. The player is known
      */
     public void askPlayerAQuestion(int[] cardsForQuestion){
         String playerCharacterName = getCurrentPlayer().name();
         Question question = new Question(playerCharacterName,cardsForQuestion);
         GameState.getInstance().setAskQuestion(question,true);
+    }
+
+    public void notifyDatabase(int[] array){
+        weaponsPos = array;
+        GameState.getInstance().setWeaponPositions(array,true);
+    }
+
+    public boolean accusation(int[] cards) {
+        int[] killerCards = GameState.getInstance().getKiller();
+        return Arrays.equals(cards,killerCards);
     }
 
     /**
@@ -156,7 +202,6 @@ public class Gameplay {
     public void decidePlayerWhoMovesFirst() {
         String playerID = GameState.getInstance().getTurnOrder()[0];
         currentPlayer = getCharacterByPlayerID(playerID);
-
     }
 
 
@@ -164,32 +209,17 @@ public class Gameplay {
      * Draw a Random Card from the Clue Cards staple
      * and delete it from the staple
      */
-    public void drawClueCard(){
-        cardDrawn = getRandomIntInRange(22,51);
-        if(clueCards.size() == 1){
-            cardDrawn = clueCards.get(0);
-            //no Cards left
-        }else{
-            while(true){
-                if(clueCards.contains(cardDrawn)){
-                    break;
-                }else if(cardDrawn < 51){
-                    cardDrawn++;
-                }else{
-                    cardDrawn = 0;
-                }
+    public String getPlayerToWhichCardBelongs(int cardDrawn){
+        gameCommunicator.setMagnifying(true);
+        for(Player p : players) {
+            if(p.getPlayerOwnedCards().contains(cardDrawn)){
+                gameCommunicator.notifyList();
+                return p.getPlayerCharacterName().name();
             }
         }
-        //send cardDrawn to UI and to other Players
-        clueCards.remove((Integer) cardDrawn);
-        //send rest of Cluedo Cards to Players
+        gameCommunicator.notifyList();
+        return "?nobody? :^)";
     }
-
-    public void generateClueCards(){
-        //if host send to other players
-        clueCards = generateRandomCards(22,51);
-    }
-
 
     /**
      * Fill a List with numbers from min to max and then randomize it through Collection.shuffle
@@ -229,10 +259,6 @@ public class Gameplay {
         }
     }
 
-    private int getRandomIntInRange(int min,int max) {
-        int range = max - min + 1;
-        return min + rand.nextInt(range);
-    }
 
     private void distributeCardsEquallyToPlayers(List<Integer> cards){
         int i = 0;
@@ -256,16 +282,57 @@ public class Gameplay {
         return currentPlayer;
     }
 
-    private void updateGameState(){
-        //GameState.getInstance().getPlayerState().replace->{}
+    private void checkWhatChangedInPlayer(List<Player> newPlayers){
+        for(int i = 0; i < players.size(); i++){
+            if(!(newPlayers.get(i).getPositionOnBoard() == players.get(i).getPositionOnBoard())){
+                players = newPlayers;
+                gameCommunicator.setMoved(true);
+                gameCommunicator.notifyList();
+            }
+        }
     }
 
+    private void questionChanged(Question newQuestion) {
+        //if(!newQuestion.equals())
+    }
 
+    private void checkWeaponChanged(int[] newWeapon) {
+        if(!(Arrays.equals(newWeapon, weaponsPos))){
+            weaponsPos = newWeapon;
+            gameCommunicator.setMoved(true);
+            gameCommunicator.notifyList();
+        }
+    }
+
+    private void checkTurnChanged(String newTurn){
+        if(!currentPlayer.name().equals(newTurn)){
+            gameCommunicator.setTurnChange(true);
+            gameCommunicator.notifyList();
+        }
+    }
+
+    /**
+     * Check if the currentPlayer is the Player who owns the device
+     * @return true if it is the currentPlayer
+     */
+    public boolean checkIfPlayerIsOwn(){
+        return Network.getCurrentUser().getUid().equals(findPlayerByCharacterName(currentPlayer).getPlayerId());
+    }
+
+    public List<Integer> getCardsOfPlayerOwn(){
+        List<Integer> cards = null;
+        for(int i = 0; i<players.size();i++){
+            if(players.get(i).getPlayerId().equals(Network.getCurrentUser().getUid())){
+                cards = players.get(i).getPlayerOwnedCards();
+            }
+        }
+        return cards;
+    }
     /**
      * A method to find the next Player according to the turn Order
      * @return playerID whos turn is next
      */
-    private String getPlayerIDOfNextPlayer(){
+    private String getPlayerIDOfNextPlayerInTurnOrder(){
         String playerID = "";
         for (int i = 0; i < turnOrderGame.length;i++) {
             if (turnOrderGame[i].equals(GameState.getInstance().getPlayerTurn())) {

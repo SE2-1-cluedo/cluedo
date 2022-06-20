@@ -21,7 +21,7 @@ import at.moritzmusel.cluedo.entities.Player;
 
 @RunWith(Parameterized.class)
 public class GameplayParameterizedTests {
-
+/*
     Gameplay game;
 
     //param 1: pos Player; param 2: goto Field
@@ -63,5 +63,5 @@ public class GameplayParameterizedTests {
         Player player = game.findPlayerByCharacterName(game.getCurrentPlayer());
         player.setPositionOnBoard(secretInput);
         assertTrue(game.isAllowedToUseSecretPassage());
-    }
+    }*/
 }

@@ -5,13 +5,6 @@ import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 
-import androidx.annotation.NonNull;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,7 +16,6 @@ import java.util.stream.IntStream;
 
 import at.moritzmusel.cluedo.AllTheCards;
 import at.moritzmusel.cluedo.Card;
-import at.moritzmusel.cluedo.communication.Communicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
@@ -34,9 +26,10 @@ public class GameState {
     private List<Integer> cardState;
     private List<Card> questionCardStack;
     private Question askQuestion;
+    private String winner, loser;
     private int[] killer;
     private String playerTurn;
-    private String[] turnOrder;
+    private String[] turnOrder, magnify;
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponPositions = new int[]{5,1,9,3,6,8};
     DatabaseReference dbRef;
@@ -77,6 +70,42 @@ public class GameState {
 
     public List<Player> getPlayerState() {
         return playerState;
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(String winner, boolean database){
+        this.winner = winner;
+        if(!database){
+            communicator.setHasWon(true);
+            communicator.notifyList();
+        }
+    }
+
+    public String getLoser() {
+        return loser;
+    }
+
+    public void setLoser(String loser, boolean database) {
+        this.loser = loser;
+        if(!database){
+            communicator.setHasLost(true);
+            communicator.notifyList();
+        }
+    }
+
+    public String[] getMagnify() {
+        return magnify;
+    }
+
+    public void setMagnify(String[] magnify, boolean database) {
+        this.magnify = magnify;
+        if(!database) {
+            communicator.setMagnify(true);
+            communicator.notifyList();
+        }
     }
 
     public void setPlayerState(List<Player> playerState, boolean database) {
@@ -221,7 +250,7 @@ public class GameState {
         this.turnOrder = turnOrder;
     }
 
-    private String[] getTurnOrder(){
+    public String[] getTurnOrder(){
         return turnOrder;
     }
 }
