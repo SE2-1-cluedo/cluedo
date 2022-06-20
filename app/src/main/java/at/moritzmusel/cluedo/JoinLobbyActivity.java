@@ -12,13 +12,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseUser;
+
 import org.w3c.dom.Text;
+
+import at.moritzmusel.cluedo.network.Network;
 
 public class JoinLobbyActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText enter_id;
     private String enter;
     private String game_id;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,7 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
         enter_id = findViewById(R.id.txt_enter_id);
         enter = getEnterId();
         game_id = getIntent().getExtras().getString("game_id");
+        user = (FirebaseUser) getIntent().getExtras().get("user");
     }
 
     @Override
@@ -59,6 +65,8 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
                 Intent i = new Intent(JoinLobbyActivity.this, CreateLobbyActivity.class);
                 i.putExtra("decision",false);
                 i.putExtra(Intent.EXTRA_TEXT, enter);
+                Network.setCtx(this);
+                Network.joinLobby(user, game_id);
                 //false = join
                 //true = create
                 startActivity(i);

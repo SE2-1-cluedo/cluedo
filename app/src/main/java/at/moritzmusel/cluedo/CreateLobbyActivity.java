@@ -16,9 +16,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 
 import at.moritzmusel.cluedo.entities.Character;
+import at.moritzmusel.cluedo.network.Network;
 
 public class CreateLobbyActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -35,6 +38,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private TextView character_name;
     private ImageView character_picture;
     private String game_id;
+    FirebaseUser user;
 
     /**
      * Creates and initialises all buttons and lists
@@ -52,6 +56,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         //Intent intent = getIntent();
         decision = getIntent().getExtras().getBoolean("decision");
         //checkCreateOrJoin(decision);
+        user = (FirebaseUser) getIntent().getExtras().get("user");
 
         send_link = findViewById(R.id.btn_send_link);
         send_link.setOnClickListener(this);
@@ -142,6 +147,8 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             startActivity(i);
         }
         if(view.getId() == R.id.btn_back){
+            Network.setCtx(this);
+            Network.leaveLobby(user, Network.getCurrentGameID());
             finish();
         }
     }

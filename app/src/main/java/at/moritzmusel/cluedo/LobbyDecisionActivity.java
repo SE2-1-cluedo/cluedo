@@ -35,28 +35,26 @@ public class LobbyDecisionActivity extends AppCompatActivity implements View.OnC
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         Network.signInAnonymously(mAuth);
         user = mAuth.getCurrentUser();
-        Network.setCtx(this);
-        game = Network.createLobby(user);
     }
 
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_create_lobby){
+            Network.setCtx(this);
+            game = Network.createLobby(user);
             Intent i = new Intent(LobbyDecisionActivity.this, CreateLobbyActivity.class);
             i.putExtra("decision",true);
             i.putExtra("game_id",game);
+            i.putExtra("user",user);
             startActivity(i);
         }
         if(view.getId() == R.id.btn_join_lobby){
-            Network.setCtx(this);
-            Network.joinLobby(user, game);
             Intent i = new Intent(LobbyDecisionActivity.this, JoinLobbyActivity.class);
             i.putExtra("game_id",game);
+            i.putExtra("user",user);
             startActivity(i);
         }
         if(view.getId() == R.id.btn_back_to_main){
-            Network.setCtx(this);
-            Network.leaveLobby(user, Network.getCurrentGameID());
             finish();
         }
     }
