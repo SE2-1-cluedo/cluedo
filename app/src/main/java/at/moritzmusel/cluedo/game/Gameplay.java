@@ -14,6 +14,13 @@ import java.util.List;
 import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.network.pojo.GameState;
+import at.moritzmusel.cluedo.network.pojo.Question;
+
+
+//characters: 1-6
+//weapons: 7-12
+//rooms: 13-21
 
 public class Gameplay {
     private static int numDice;
@@ -23,10 +30,32 @@ public class Gameplay {
     private ArrayList<Integer> clueCards = new ArrayList<>();
     private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
+    private String[] turnOrderGame;
 
     private static final Gameplay OBJ = new Gameplay();
 
     private Gameplay() {
+        /*Player p1 = new Player("1");
+        p1.setPlayerCharacterName(MISS_SCARLETT);
+        Player p2 = new Player("2");
+        p2.setPlayerCharacterName(DR_ORCHID);
+        Player p3 = new Player("3");
+        p3.setPlayerCharacterName(PROFESSOR_PLUM);
+        Player p4 = new Player("4");
+        p4.setPlayerCharacterName(REVEREND_GREEN);
+        players.add(p1);
+        players.add(p2);
+        players.add(p3);
+        players.add(p4);
+        turnOrderGame = GameState.getInstance().getTurnOrder();
+        setPlayersGame();*/
+    }
+
+    public void startGame(){
+        /*turnOrderGame = GameState.getInstance().getTurnOrder();
+        players = GameState.getInstance().getPlayerState();
+        decidePlayerWhoMovesFirst();*/
+
         Player p1 = new Player("1");
         p1.setPlayerCharacterName(MISS_SCARLETT);
         Player p2 = new Player("2");
@@ -40,7 +69,6 @@ public class Gameplay {
         players.add(p3);
         players.add(p4);
     }
-
     public static Gameplay getInstance(){
         return OBJ;
     }
@@ -49,7 +77,9 @@ public class Gameplay {
      * Called after the Player ends his/her turn
      */
     public Character endTurn() {
-        decideCharacterWhoMovesNext();
+        currentPlayer = getCharacterByPlayerID(getPlayerIDOfNextPlayer());
+        GameState.getInstance().setPlayerTurn(getPlayerIDOfNextPlayer(), true);
+        updateGameState();
         return currentPlayer;
     }
 
@@ -61,10 +91,10 @@ public class Gameplay {
      * @param position new position of player
      */
 
-    //Todo: Fragen wie ich die position übergeben bekomm
     public void updatePlayerPosition(int position) {
         Player player = findPlayerByCharacterName(currentPlayer);
         player.setPositionOnBoard(position);
+        GameState.getInstance().setPlayerState(players,true);
     }
 
     /**
@@ -72,32 +102,11 @@ public class Gameplay {
      */
     public void canMove(){
         stepsTaken++;
-        if(stepsTaken == numDice)
+        if(stepsTaken == numDice) {
             findPlayerByCharacterName(currentPlayer).setAbleToMove(false);
-    }
-
-    /**
-     * method to use the secret passage if the player is on the field 9 , 5, 7 or 2
-     * cant throw dice after the use of the passage
-     */
-    public void useSecretPassage(int newPosition) {
-        Player player = findPlayerByCharacterName(currentPlayer);
-        int position = player.getPositionOnBoard();
-        player.setAbleToMove(true);
-        if (player.getIsAbleToMove()) {
-            switch (newPosition) {
-                case 7:
-                    player.setPositionOnBoard(7); //move from salon to winter garden
-                    break;
-                case 1:
-                    player.setPositionOnBoard(1); //move from winter garden to salon
-                    break;
-                case 3:
-                    player.setPositionOnBoard(3); //move from winter garden to salon
-                    break;
-            }
         }
     }
+
 
     /**
      * Called when a player left the game without finishing it
@@ -114,6 +123,7 @@ public class Gameplay {
         }
         players.remove(player);
         distributeCardsEquallyToPlayers(cards);
+        GameState.getInstance().setPlayerState(players,true);
         //send all cards to other players
     }
 
@@ -121,68 +131,14 @@ public class Gameplay {
      * Method to check if one of the players in the correct order has a card
      * which is equal to one of the cards send. If yes the person who asked the question
      * get the card added to their inventory. And update to the other players
-     * @param player Player how asked the question
-     * @param weapon the used weapon
-     * @param person the person who did it
-     * @param room the room
+     * @param cardsForQuestion the 3 cards person, weapon and room. The player is known
      */
-    public void askPlayerAQuestion(Player player, Card person,Card weapon, Card room){
-        boolean cardSend = false;
-        int counter = 0;
-        int i = 0;
-
-        for(; i < players.size();i++){
-            if(players.get(i).equals(player)){
-                break;
-            }
-        }
-        while (counter < players.size()) {
-            if(i >= players.size()){
-                i = 0;
-            }
-
-            Player current = checkWhoIsNextPlaying(players.get(i));
-            System.out.println("Player: "+ current.getPlayerCharacterName());
-           /*
-           if (current.getPlayerOwnedCards().contains(weapon.getId())) {
-                player.addCardsKnownThroughQuestions(weapon.getId());
-                cardSend = true;
-                break;
-            } else if (current.getPlayerOwnedCards().contains(person.getId())) {
-                player.addCardsKnownThroughQuestions(person.getId());
-                cardSend = true;
-                break;
-            } else if (current.getPlayerOwnedCards().contains(room.getId())) {
-                player.addCardsKnownThroughQuestions(room.getId());
-                cardSend = true;
-                break;
-            }
-            */
-            i++;
-            counter++;
-        }
-        if(!cardSend){
-            //Todo: sende nichts und hinweis an players
-            System.out.println("Nichts gefunden");
-        }
-        //send updated cards to other players and which player showed the card to whom
+    public void askPlayerAQuestion(int[] cardsForQuestion){
+        String playerCharacterName = getCurrentPlayer().name();
+        Question question = new Question(playerCharacterName,cardsForQuestion);
+        GameState.getInstance().setAskQuestion(question,true);
     }
 
-    /**
-     * A method to check which player plays next
-     * @param player which player
-     * @return player whos turn is next
-     */
-    private Player checkWhoIsNextPlaying(Player player){
-        Character character = player.getPlayerCharacterName().getNextCharacter();
-        while(true){
-            character = character.getNextCharacter();
-            Player currentPlayer = findPlayerByCharacterName(character);
-            if (currentPlayer != null) {
-                return currentPlayer;
-            }
-        }
-    }
     /**
      * Checks if the current Player is allowed to use the Secret Passage
      * @return true if allowed / false if isnt allowed
@@ -193,48 +149,16 @@ public class Gameplay {
         return position == 1 || position == 7 || position == 3;
     }
 
-    /**
-     * Takes the result after the Player throw the dice and safes it in a variable
-     *
-     * @param numberRolled Takes the result after the dice throw
-     */
-    public static void rollDiceForPlayer(int numberRolled) {
-        numDice = numberRolled;
-    }
 
     /**
      * Decides which Player/Character is able to move first
      */
     public void decidePlayerWhoMovesFirst() {
-        currentPlayer = Character.MISS_SCARLETT;
-        while (true) {
-            Player firstPlayer = findPlayerByCharacterName(currentPlayer);
-            if (firstPlayer == null) {
-                currentPlayer = currentPlayer.getNextCharacter();
-            } else {
-                currentPlayer = firstPlayer.getPlayerCharacterName();
-                findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
-                break;
-            }
-        }
+        String playerID = GameState.getInstance().getTurnOrder()[0];
+        currentPlayer = getCharacterByPlayerID(playerID);
 
     }
 
-    /**
-     * which character moves next
-     */
-    private void decideCharacterWhoMovesNext() {
-        while (true) {
-            assert currentPlayer != null;
-            currentPlayer = currentPlayer.getNextCharacter();
-            Player player = findPlayerByCharacterName(currentPlayer);
-            if (player != null) {
-                currentPlayer = player.getPlayerCharacterName();
-                findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
-                break;
-            }
-        }
-    }
 
     /**
      * Draw a Random Card from the Clue Cards staple
@@ -305,27 +229,6 @@ public class Gameplay {
         }
     }
 
-
-    //characters: 1-6
-    //weapons: 7-12
-    //rooms: 13-21
-
-    /**
-     * @param position  the current position of the player on board
-     * @param direction if the player wants to move right(1) or left(0)
-     * @param diceNum   the number thrown by the player
-     * @return final position that the position is a valid field on the board
-     */
-    private int calculatePosition(int position, byte direction, int diceNum) {
-        int finalPosition;
-        if (direction == 1) {
-            finalPosition = position + diceNum <= 9 ? diceNum + position : (diceNum + position) - 9;
-        } else {
-            finalPosition = position - diceNum > 0 ? position - diceNum : (position - diceNum) + 9;
-        }
-        return finalPosition;
-    }
-
     private int getRandomIntInRange(int min,int max) {
         int range = max - min + 1;
         return min + rand.nextInt(range);
@@ -344,6 +247,51 @@ public class Gameplay {
         }
     }
 
+    public Character getCharacterByPlayerID(String playerID){
+        for(int i = 0; i < players.size(); i++){
+            if(players.get(i).getPlayerId().equals(playerID)){
+                return players.get(i).getPlayerCharacterName();
+            }
+        }
+        return currentPlayer;
+    }
+
+    private void updateGameState(){
+        //GameState.getInstance().getPlayerState().replace->{}
+    }
+
+
+    /**
+     * A method to find the next Player according to the turn Order
+     * @return playerID whos turn is next
+     */
+    private String getPlayerIDOfNextPlayer(){
+        String playerID = "";
+        for (int i = 0; i < turnOrderGame.length;i++) {
+            if (turnOrderGame[i].equals(GameState.getInstance().getPlayerTurn())) {
+                if(i+1 == turnOrderGame.length){
+                    i = 0;
+                }else {
+                    i+=1;
+                }
+                playerID = turnOrderGame[i];
+                break;
+            }
+        }
+        return playerID;
+    }
+
+    /**
+     * Takes the result after the Player throw the dice and safes it in a variable
+     *
+     * @param numberRolled Takes the result after the dice throw
+     */
+    public static void rollDiceForPlayer(int numberRolled) {
+        numDice = numberRolled;
+    }
+
+
+    // ---------------------------------------Getter and Setter ------------------------------------ //
     public static void setNumDice(int numDice) {
         Gameplay.numDice = numDice;
     }
@@ -374,4 +322,5 @@ public class Gameplay {
     public int getCardDrawn() {
         return cardDrawn;
     }
+
 }

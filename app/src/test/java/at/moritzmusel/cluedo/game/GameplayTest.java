@@ -208,7 +208,7 @@ public class GameplayTest {
 
         gameOdd.decidePlayerWhoMovesFirst();
         AllTheCards allCluedoCards = new AllTheCards();
-        gameOdd.askPlayerAQuestion(Player1,allCluedoCards.getGameCards().get(3),allCluedoCards.getGameCards().get(10),allCluedoCards.getGameCards().get(17));
+        //gameOdd.askPlayerAQuestion(Player1,allCluedoCards.getGameCards().get(3),allCluedoCards.getGameCards().get(10),allCluedoCards.getGameCards().get(17));
         int result = Player1.getCardsKnownThroughQuestions().get(0);
         assertEquals(10,result);
     }
