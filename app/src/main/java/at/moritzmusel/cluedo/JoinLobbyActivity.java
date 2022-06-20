@@ -18,6 +18,7 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
 
     private EditText enter_id;
     private String enter;
+    private String game_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,7 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
         join.setOnClickListener(this);
         enter_id = findViewById(R.id.txt_enter_id);
         enter = getEnterId();
+        game_id = getIntent().getExtras().getString("game_id");
     }
 
     @Override
@@ -41,7 +43,7 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
         if(view.getId() == R.id.btn_lobby_join){
             enter = getEnterId();
             //Checken ob die überhaupt exisitert
-            if(enter.isEmpty()){
+            if(enter.isEmpty() || !enter.equals(game_id)){
                 new AlertDialog.Builder(JoinLobbyActivity.this)
                         .setTitle("ERROR")
                         .setMessage("The ENTER ID is false/empty")
