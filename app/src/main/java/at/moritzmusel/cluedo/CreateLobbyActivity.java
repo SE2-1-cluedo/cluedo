@@ -43,8 +43,8 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private String game_id;
     private List<Player> player_list;
     FirebaseUser user;
-    GameState game_state = GameState.getInstance();
     NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
+    private GameState gamestate;
 
     /**
      * Creates and initialises all buttons and lists
@@ -56,6 +56,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_lobby);
+        gamestate = GameState.getInstance();
 
         lobby_title = findViewById(R.id.txt_create_lobby);
 
@@ -94,9 +95,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
         networkCommunicator.register(() -> {
             if(networkCommunicator.isPlayerChanged()){
-                player_list = game_state.getPlayerState();
+                player_list = gamestate.getPlayerState();
                 System.out.println(player_list);
-                for (Player p : game_state.getPlayerState()) {
+                for (Player p : gamestate.getPlayerState()) {
                     if(p.getPlayerId().equals(user.getUid())){
                         c = p.getPlayerCharacterName();
                         character_name.setText(c.name());

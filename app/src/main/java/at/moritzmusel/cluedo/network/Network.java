@@ -184,25 +184,30 @@ public class Network {
     //Wird aufgerufen nachdem eine Lobby erstellt wurde. Es wird der Nutzer, welcher die Lobby erstellt hat hinzugefügt
     //Parameter 3 "Player" enthält die bereits
     public static void joinLobby(FirebaseUser user, String gameID) {
+        setCurrentGameID(gameID);
+        setCurrentUser(user);
+        currentCharacter = currentCharacter.getNextCharacter();
+        DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
+        p.child("cards").setValue("");
+        p.child("cards-eliminated").setValue("");
+        p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
+        p.child("character").setValue(currentCharacter.name());
+        gameState = GameState.getInstance();
+        gamestate_databaseListener();
+
         //check if FB user and game exists
-        //Log.i(TAG, ("joinLobby() called params:"+ user +" "+ (getCurrentGameID() == null) +" "+ checkIfGameExists(gameID)));
-        OnDataRetreive onDataRetreive = new OnDataRetreive() {
+        Log.i(TAG, ("joinLobby() called params:"+ user +" "+ (getCurrentGameID() == null)));
+       /*
+       OnDataRetreive onDataRetreive = new OnDataRetreive() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
+                Log.i(TAG, "onSuccess()");
                 if(dataSnapshot.exists()){
                     if (user != null && getCurrentGameID() == null) {
-                        setCurrentGameID(gameID);
-                        setCurrentUser(user);
-                        currentCharacter = currentCharacter.getNextCharacter();
-                        DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
-                        p.child("cards").setValue("");
-                        p.child("cards-eliminated").setValue("");
-                        p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
-                        p.child("character").setValue(currentCharacter.name());
-                        gamestate_databaseListener();
+
                         //TODO: SET GAMESTATE
                     } else {
-                        throw new IllegalStateException("Make sure you are not already in a game when joining!");
+                        throw new IllegalStateException("Make sure you are not already in a game when joining, or the game exists!");
                     }
                 }
             }
@@ -213,6 +218,7 @@ public class Network {
             }
         };
         checkIfGameExists(gameID, onDataRetreive);
+        */
     }
 
 

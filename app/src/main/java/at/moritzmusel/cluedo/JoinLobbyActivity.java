@@ -46,37 +46,30 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
         join.setOnClickListener(this);
 
         enter_id = findViewById(R.id.txt_enter_id);
-        enter = getEnterId();
-        game_id = Network.getCurrentGameID();
+        //game_id = Network.getCurrentGameID();
         user = (FirebaseUser) getIntent().getExtras().get("user");
     }
 
     @Override
     public void onClick(View view) {
-        Network.getDatabaseReference().get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful())
-                    Log.e("firebase", "Error getting data", task.getException());
-                else {
-                    right_game_id = task.getResult().child(enter).exists();
-                }
-            }
-        });
-
         if(view.getId() == R.id.btn_back_to_lobbydecision){
-            //Intent i = new Intent(JoinLobbyActivity.this, LobbyDecisionActivity.class);
-            //startActivity(i);
+            /*Intent i = new Intent(JoinLobbyActivity.this, LobbyDecisionActivity.class);
+            startActivity(i);
             new AlertDialog.Builder(JoinLobbyActivity.this)
                     .setMessage("String: " + right_game_id)
                     .show();
-            //finish();
+            */
+            finish();
         }
 
         if(view.getId() == R.id.btn_lobby_join){
-            //Checken ob die überhaupt exisitert
             enter = getEnterId();
-            if(enter.isEmpty() || !right_game_id){
+            Network.getDatabaseReference().get().addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) Log.e("firebase", "Error getting data", task.getException());
+                else right_game_id = task.getResult().child(enter).exists();
+            });
+            //Checken ob die überhaupt exisitert
+            if(right_game_id && !enter.isEmpty()){
                 new AlertDialog.Builder(JoinLobbyActivity.this)
                         .setTitle("ERROR")
                         .setMessage("The ENTER ID is false/empty: " + right_game_id + enter)
@@ -89,13 +82,13 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
                         }).show();
             }
             else{
+                Network.setCtx(this);
+                Network.joinLobby(user, enter);
                 Intent i = new Intent(JoinLobbyActivity.this, CreateLobbyActivity.class);
                 i.putExtra("decision",false);
-                i.putExtra("game_id",game_id);
+                //i.putExtra("game_id",game_id);
                 i.putExtra("user",user);
                 i.putExtra(Intent.EXTRA_TEXT, enter);
-                Network.setCtx(this);
-                Network.joinLobby(user, game_id);
                 //false = join
                 //true = create
                 startActivity(i);
