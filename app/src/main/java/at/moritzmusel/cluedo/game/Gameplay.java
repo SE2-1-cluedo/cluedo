@@ -2,7 +2,6 @@ package at.moritzmusel.cluedo.game;
 
 import static at.moritzmusel.cluedo.entities.Character.DR_ORCHID;
 import static at.moritzmusel.cluedo.entities.Character.MISS_SCARLETT;
-import static at.moritzmusel.cluedo.entities.Character.MRS_PEACOCK;
 import static at.moritzmusel.cluedo.entities.Character.PROFESSOR_PLUM;
 import static at.moritzmusel.cluedo.entities.Character.REVEREND_GREEN;
 
@@ -14,12 +13,14 @@ import java.util.List;
 import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class Gameplay {
     private static int numDice;
     private static int stepsTaken = 0;
     private Character currentPlayer;
     private List<Player> players = new ArrayList<>();
+    private int[] weaponPositions;
     private ArrayList<Integer> clueCards = new ArrayList<>();
     private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
@@ -27,6 +28,23 @@ public class Gameplay {
     private static final Gameplay OBJ = new Gameplay();
 
     private Gameplay() {
+        Player p1 = new Player("1");
+        p1.setPlayerCharacterName(MISS_SCARLETT);
+        p1.setPositionOnBoard(5);
+        Player p2 = new Player("2");
+        p2.setPlayerCharacterName(DR_ORCHID);
+        p2.setPositionOnBoard(1);
+        Player p3 = new Player("3");
+        p3.setPlayerCharacterName(PROFESSOR_PLUM);
+        p3.setPositionOnBoard(8);
+        Player p4 = new Player("4");
+        p4.setPlayerCharacterName(REVEREND_GREEN);
+        p4.setPositionOnBoard(3);
+        players.add(p1);
+        players.add(p2);
+        players.add(p3);
+        players.add(p4);
+        weaponPositions = GameState.getInstance().getWeaponPositions();
     }
 
     public static Gameplay getInstance(){
@@ -208,6 +226,13 @@ public class Gameplay {
 
     }
 
+    public Player findPlayerByUserId(String userId){
+        for(Player p : players)
+            if(p.getPlayerId().equals(userId))
+                return p;
+            return null;
+    }
+
     /**
      * which character moves next
      */
@@ -354,6 +379,14 @@ public class Gameplay {
 
     public void setClueCards(List<Integer> clueCards) {
         this.clueCards = (ArrayList<Integer>) clueCards;
+    }
+
+    public int[] getWeaponPositions() {
+        return weaponPositions;
+    }
+
+    public void setWeaponPositions(int[] weaponPositions) {
+        this.weaponPositions = weaponPositions;
     }
 
     public List<Player> getPlayers() {

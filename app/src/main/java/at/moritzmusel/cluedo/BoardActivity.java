@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -27,29 +26,28 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.security.SecureRandom;
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.stream.IntStream;
 
-import at.moritzmusel.cluedo.communication.Communicator;
+import at.moritzmusel.cluedo.communication.GameplayCommunicator;
 import at.moritzmusel.cluedo.communication.SuspicionCommunicator;
 import at.moritzmusel.cluedo.game.Dice;
 import at.moritzmusel.cluedo.sensor.ShakeDetector;
 import at.moritzmusel.cluedo.game.Gameplay;
 import at.moritzmusel.cluedo.entities.Character;
+import at.moritzmusel.cluedo.network.Network;
 
 public class BoardActivity extends AppCompatActivity {
 
     private View decorView, diceView, playerCardsView;
     private AllTheCards allCards;
     private float x1;
-    private String character,weapon;
-    private boolean hasSuspected, hasAccused;
-    private SuspicionCommunicator ca;
+    private SuspicionCommunicator susCommunicator;
+    private GameplayCommunicator gameplayCommunicator;
     static final int MIN_SWIPE_DISTANCE = 150;
     private final ArrayList<ImageButton> allArrows = new ArrayList<>();
     private Dice dice;
@@ -59,9 +57,7 @@ public class BoardActivity extends AppCompatActivity {
     ArrayList<ImageView> allPlayers = new ArrayList<>();
     ArrayList<Button> secrets = new ArrayList<>();
     ArrayList<ImageView> allWeapons = new ArrayList<>();
-    Integer[] help = {1,2,3,4,5,6,7,8,9};
-    List<Integer> helpList = Arrays.asList(help);
-    HashMap<Integer,String> freeWeaponPlaces = new HashMap<>();
+    private final ArrayList<String> weaponNames = new ArrayList<>(Arrays.asList("dagger","candlestick","revolver","rope", "pipe","wrench"));
     private EvidenceCards evidenceCards;
 
     private SensorManager mSensorManager;
@@ -112,30 +108,19 @@ public class BoardActivity extends AppCompatActivity {
                     @Override
                     public void onGlobalLayout() {
                         // Layout has happened here.
-                            SecureRandom r = new SecureRandom();
                             for (int i = 0; i < gp1.getPlayers().size(); i++) {
-                                for (int j = 0; j < allPlayers.size(); j++) {
-                                    if (getResources().getResourceEntryName(allPlayers.get(j).getId()).equals(gp1.getPlayers().get(i).getPlayerCharacterName().name().split("[_]")[1].toLowerCase())) {
-                                            findViewById(allPlayers.get(j).getId()).setVisibility(View.VISIBLE);
-                                            String name = getResources().getResourceEntryName(allPlayers.get(j).getId()) + "_";
-                                            int room = r.nextInt(9) + 1;
-                                            Button startPlace = findViewById(createRoomDestination(name, room));
-                                            findViewById(allPlayers.get(j).getId()).setX(startPlace.getX());
-                                            findViewById(allPlayers.get(j).getId()).setY(startPlace.getY());
-                                            gp1.getPlayers().get(i).setPositionOnBoard(room);
-                                    }
+                                    String player = gp1.getPlayers().get(i).getPlayerCharacterName().name().split("[_]")[1].toLowerCase();
+                                    findViewById(createPlayer(player)).setVisibility(View.VISIBLE);
+                                    String name = player + "_";
+                                    Button startPlace = findViewById(createRoomDestination(name, gp1.getPlayers().get(i).getPositionOnBoard()));
+                                    findViewById(createPlayer(player)).setX(startPlace.getX());
+                                    findViewById(createPlayer(player)).setY(startPlace.getY());
                                 }
-                            }
-                        Collections.shuffle(helpList);
-                            helpList.toArray(help);
-                            for(int i = 0; i < help.length; i++){
-                                if(i < allWeapons.size()) {
-                                    Button startPosition = findViewById(createRoomDestination("weapon", help[i]));
-                                    findViewById(allWeapons.get(i).getId()).setX(startPosition.getX());
-                                    findViewById(allWeapons.get(i).getId()).setY(startPosition.getY());
-                                    freeWeaponPlaces.put(help[i],getResources().getResourceEntryName(allWeapons.get(i).getId()));
-                                } else
-                                    freeWeaponPlaces.put(help[i],null);
+                            for(int i = 0; i < gp1.getWeaponPositions().length; i++){
+                                    String str = "w_"+weaponNames.get(i);
+                                    Button startPosition = findViewById(createRoomDestination("weapon", gp1.getWeaponPositions()[i]));
+                                    findViewById(getResources().getIdentifier(str,"id",getPackageName())).setX(startPosition.getX());
+                                    findViewById(getResources().getIdentifier(str,"id",getPackageName())).setY(startPosition.getY());
                             }
                         newPosition = gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard();
                         // Don't forget to remove your listener when you are done with it.
@@ -151,12 +136,11 @@ public class BoardActivity extends AppCompatActivity {
             diceRolled();
         });*/
 
-        ca = SuspicionCommunicator.getInstance();
-        ca.register(() -> {
-            character = ca.getCharacter();
-            weapon = ca.getWeapon();
-            hasSuspected = ca.getHasSuspected();
-            hasAccused = ca.getHasAccused();
+        susCommunicator = SuspicionCommunicator.getInstance();
+
+        gameplayCommunicator = GameplayCommunicator.getInstance();
+        gameplayCommunicator.register(() -> {
+
         });
 
         allCards = new AllTheCards();
@@ -224,10 +208,10 @@ public class BoardActivity extends AppCompatActivity {
     @Override
     public void onRestart() {
         super.onRestart();
-        if(hasSuspected || hasAccused) {
+        if(susCommunicator.getHasSuspected() || susCommunicator.getHasAccused()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setCancelable(false);
-            if(hasAccused)
+            if(susCommunicator.getHasAccused())
                 builder.setMessage("This is your one and only accusation, are you sure about it?");
             else
             builder.setMessage("You suspected: ");
@@ -236,22 +220,22 @@ public class BoardActivity extends AppCompatActivity {
             builder.setView(playerCardsView);
 
             builder.setPositiveButton("Yes, proceed", (dialog, which) -> {
-                switchWeapon(weapon.toLowerCase());
-                moveSuspectedPlayer(character);
+                switchWeapon(susCommunicator.getWeapon().toLowerCase());
+                moveSuspectedPlayer(susCommunicator.getCharacter());
                 //moveCharacter
-                if(hasSuspected)
+                if(susCommunicator.getHasSuspected())
                     System.out.println("Suspected");
                     //do something to ask the next player about your suspicion
-                else if (hasAccused)
+                else if (susCommunicator.getHasAccused())
                     System.out.println("Accused");
                     //check with murder cards either player wins or is out
-                ca.setHasSuspected(false);
-                ca.setHasAccused(false);
+                susCommunicator.setHasSuspected(false);
+                susCommunicator.setHasAccused(false);
                 dialog.cancel();
             });
             builder.setNegativeButton("No, I want to change", (dialog, which) -> {
-                ca.setHasSuspected(false);
-                ca.setHasAccused(false);
+                susCommunicator.setHasSuspected(false);
+                susCommunicator.setHasAccused(false);
                 Intent intent = new Intent(BoardActivity.this, SuspicionActivity.class);
                 startActivity(intent);
             });
@@ -269,16 +253,17 @@ public class BoardActivity extends AppCompatActivity {
         LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
         playerCardsView = factory.inflate(R.layout.image_show_cards, null);
         LinearLayout linear = playerCardsView.findViewById(R.id.linearLayout);
-        int[] card_ids;
+        ArrayList<Integer> card_ids;
 
-        if(hasSuspected || hasAccused)
-            card_ids = new int[]{allCards.findIdWithName(character),allCards.findIdWithName(weapon),newPosition+11};
+        if(susCommunicator.getHasSuspected() || susCommunicator.getHasAccused())
+            card_ids = new ArrayList<>(Arrays.asList(allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),newPosition+11));
         else
+            //card_ids = gp1.findPlayerByUserId(Network.getCurrentUser().getUid()).getPlayerOwnedCards();
             //here we need the cards from the hand (given by network)
-            card_ids = new int[]{0,10,18};
+            card_ids = new ArrayList<>(Arrays.asList(0,10,18));
 
         for(int i = 0; i < linear.getChildCount(); i++) {
-            setPlayerCard((ImageView) linear.getChildAt(i),card_ids[i]);
+            setPlayerCard((ImageView) linear.getChildAt(i),card_ids.get(i));
         }
     }
 
@@ -428,123 +413,85 @@ public class BoardActivity extends AppCompatActivity {
         String character = getResources().getResourceEntryName(mover.getId())+"_";
 
         switch (getResources().getResourceEntryName(v.getId())) {
-                case "secret_1":
-                case "secret_2":
+
+            case "secret_1":
+            case "secret_2":
                 if(gp1.isAllowedToUseSecretPassage()) {
                         destination = findViewById(createRoomDestination(character, 7));
                         gp1.setStepsTaken(dice.getNumberRolled()-1);
-                        moveAnimation(mover, destination, null, false);
+                        moveAnimation(mover, destination);
                     }
                     break;
 
-                case "secret_3":
-                    if(gp1.isAllowedToUseSecretPassage()) {
+            case "secret_3":
+               if(gp1.isAllowedToUseSecretPassage()) {
                         destination = findViewById(createRoomDestination(character, 3));
                         gp1.setStepsTaken(dice.getNumberRolled()-1);
-                        moveAnimation(mover, destination, null, false);
+                        moveAnimation(mover, destination);
                     }
                     break;
 
-                case "lounge_btn_right":
-                case "ballroom_btn_left":
+            case "lounge_btn_right":
+            case "ballroom_btn_left":
+            case "kitchen_btn_up":
                 destination = findViewById(createRoomDestination(character,2));
-                    moveAnimation(mover, destination, null, false);
+                    moveAnimation(mover, destination);
                     break;
 
-                case "lounge_btn_down":
-                case "billiard_btn_up":
-                    destination = findViewById(createRoomDestination(character,4));
-                    moveAnimation(mover, destination, findViewById(R.id.median_left), true);
+            case "lounge_btn_down":
+            case "billiard_btn_up":
+
+            case "kitchen_btn_left":
+                destination = findViewById(createRoomDestination(character,4));
+                    moveAnimation(mover, destination);
                     break;
 
-                case "dining_btn_up":
-                    destination = findViewById(createRoomDestination(character,1));
-                    moveAnimation(mover, destination, findViewById(R.id.median_left), true);
+            case "dining_btn_up":
+            case "conservatory_btn_left":
+                destination = findViewById(createRoomDestination(character,1));
+                    moveAnimation(mover, destination);
                     break;
 
-                case "dining_btn_right":
-                case "library_btn_left":
+            case "dining_btn_right":
+            case "library_btn_left":
+            case "conservatory_btn_down":
+            case "study_btn_up":
                 destination = findViewById(createRoomDestination(character,5));
-                    moveAnimation(mover, destination, null, false);
+                    moveAnimation(mover, destination);
                     break;
 
-                case "dining_btn_down":
-                    destination = findViewById(createRoomDestination(character,7));
-                    moveAnimation(mover, destination, findViewById(R.id.median_left), true);
+            case "dining_btn_down":
+            case "study_btn_left":
+                destination = findViewById(createRoomDestination(character,7));
+                    moveAnimation(mover, destination);
                     break;
 
-                case "billiard_btn_right":
-                    destination = findViewById(createRoomDestination(character,8));
-                    moveAnimation(mover, destination, findViewById(R.id.median_left), true);
+            case "billiard_btn_right":
+            case "hall_btn_left":
+            case "kitchen_btn_down":
+                destination = findViewById(createRoomDestination(character,8));
+                    moveAnimation(mover, destination);
                     break;
 
             case "ballroom_btn_down":
-                case "hall_btn_up":
-                    destination = findViewById(createRoomDestination(character,6));
-                    moveAnimation(mover, destination, findViewById(R.id.median_right), true);
+            case "hall_btn_up":
+            case "kitchen_btn_right":
+                destination = findViewById(createRoomDestination(character,6));
+                    moveAnimation(mover, destination);
                     break;
 
-                case "library_btn_up":
-                    destination = findViewById(createRoomDestination(character,3));
-                    moveAnimation(mover, destination, findViewById(R.id.median_right), true);
+            case "library_btn_up":
+            case "conservatory_btn_right":
+                destination = findViewById(createRoomDestination(character,3));
+                    moveAnimation(mover, destination);
                     break;
 
             case "library_btn_down":
-                    destination = findViewById(createRoomDestination(character,9));
-                    moveAnimation(mover, destination, findViewById(R.id.median_right), true);
+            case "study_btn_right":
+                destination = findViewById(createRoomDestination(character,9));
+                    moveAnimation(mover, destination);
                     break;
-
-                case "hall_btn_left":
-                    destination = findViewById(createRoomDestination(character,8));
-                    moveAnimation(mover, destination, null, false);
-                    break;
-
-                case "conservatory_btn_left":
-                    destination = findViewById(createRoomDestination(character,1));
-                    moveAnimation(mover, destination, null, false);
-                    break;
-
-                case "conservatory_btn_down":
-                case "study_btn_up":
-                    destination = findViewById(createRoomDestination(character,5));
-                    moveAnimation(mover, destination, findViewById(R.id.median_center), true);
-                    break;
-
-                case "conservatory_btn_right":
-                    destination = findViewById(createRoomDestination(character,3));
-                    moveAnimation(mover, destination, null, false);
-                    break;
-
-                case "kitchen_btn_up":
-                    destination = findViewById(createRoomDestination(character,2));
-                    moveAnimation(mover, destination, findViewById(R.id.median_center), true);
-                    break;
-
-                case "kitchen_btn_right":
-                    destination = findViewById(createRoomDestination(character,6));
-                    moveAnimation(mover, destination, null, false);
-                    break;
-
-                case "kitchen_btn_down":
-                    destination = findViewById(createRoomDestination(character,8));
-                    moveAnimation(mover, destination, findViewById(R.id.median_center), true);
-                    break;
-
-                case "kitchen_btn_left":
-                    destination = findViewById(createRoomDestination(character,4));
-                    moveAnimation(mover, destination, null, false);
-                    break;
-
-                case "study_btn_left":
-                    destination = findViewById(createRoomDestination(character,7));
-                    moveAnimation(mover, destination, null, false);
-                    break;
-
-                case "study_btn_right":
-                    destination = findViewById(createRoomDestination(character,9));
-                    moveAnimation(mover, destination, null, false);
-                    break;
-            }
+        }
     }
 
     /**
@@ -595,6 +542,10 @@ public class BoardActivity extends AppCompatActivity {
         return getResources().getIdentifier("weapon"+room, "id", getPackageName());
     }
 
+    private int createPlayer(String player){
+        return getResources().getIdentifier(player, "id",getPackageName());
+    }
+
     private void moveSuspectedPlayer(String player){
         StringBuilder myName = new StringBuilder(player.toUpperCase());
         myName.setCharAt(player.indexOf(" "), '_');
@@ -616,34 +567,38 @@ public class BoardActivity extends AppCompatActivity {
      */
     private void switchWeapon(String str) {
         String weapon = "w_"+str;
-        if (freeWeaponPlaces.get(newPosition) == null) {
+        if (IntStream.of(gp1.getWeaponPositions()).noneMatch(x -> x==newPosition)) {
             for (ImageView IV:allWeapons) {
                 if (getResources().getResourceEntryName(IV.getId()).equals(weapon)) {
                     IV.setX(findViewById(createWeaponDestination(newPosition)).getX());
                     IV.setY(findViewById(createWeaponDestination(newPosition)).getY());
-                    for(int s: freeWeaponPlaces.keySet()) {
-                        if (Objects.equals(freeWeaponPlaces.get(s), weapon)) {
-                            freeWeaponPlaces.put(s, null);
-                            freeWeaponPlaces.put(newPosition, weapon);
-                            break;
-                        }
+                    for(String s: weaponNames) {
+                       if(s.equals(str)){
+                           int[] pos = gp1.getWeaponPositions();
+                           pos[weaponNames.indexOf(s)] = newPosition;
+                           gp1.setWeaponPositions(pos);
+                       }
                     }
                     break;
                 }
             }
         } else {
-            String otherWeapon = freeWeaponPlaces.get(newPosition);
+            String otherWeapon = weaponNames.get(ArrayUtils.indexOf(gp1.getWeaponPositions(),newPosition));
             ImageView otherWeaponView = findViewById(getResources().getIdentifier(otherWeapon, "id", getPackageName()));
             for (ImageView IV: allWeapons) {
                 if (getResources().getResourceEntryName(IV.getId()).equals(weapon)) {
                     IV.setX(findViewById(createWeaponDestination( newPosition)).getX());
                     IV.setY(findViewById(createWeaponDestination(newPosition)).getY());
-                    for(int s: freeWeaponPlaces.keySet()) {
-                        if(Objects.equals(freeWeaponPlaces.get(s), weapon)){
-                            otherWeaponView.setX(findViewById(createWeaponDestination(s)).getX());
-                            otherWeaponView.setY(findViewById(createWeaponDestination(s)).getY());
-                            freeWeaponPlaces.put(s,otherWeapon);
-                            freeWeaponPlaces.put(newPosition,weapon);
+                    for(String s: weaponNames) {
+                        if(s.equals(str)){
+                            int[] pos = gp1.getWeaponPositions();
+                            System.out.println(Arrays.toString(pos));
+//                            otherWeaponView.setX(findViewById(createWeaponDestination(pos[weaponNames.indexOf(s)])).getX());
+//                            otherWeaponView.setY(findViewById(createWeaponDestination(pos[weaponNames.indexOf(s)])).getY());
+//                            int help = pos[weaponNames.indexOf(otherWeapon)];
+//                            pos[weaponNames.indexOf(otherWeapon)] = pos[weaponNames.indexOf(s)];
+//                            pos[weaponNames.indexOf(s)] = help;
+                            gp1.setWeaponPositions(pos);
                             break;
                         }
                     }
@@ -657,10 +612,8 @@ public class BoardActivity extends AppCompatActivity {
      *
      * @param mover       the view that's been moved
      * @param destination the position we want to move to
-     * @param median      important for the path for the animation
-     * @param vertical    if true we follow the path, if false we move in a strait line
      */
-    private void moveAnimation(View mover, View destination, View median, boolean vertical) {
+    private void moveAnimation(View mover, View destination) {
 
         mover.setX(destination.getX());
         mover.setY(destination.getY());

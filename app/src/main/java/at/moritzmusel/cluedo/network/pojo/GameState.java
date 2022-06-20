@@ -45,8 +45,8 @@ public class GameState {
     private static final GameState OBJ = new GameState();
 
     private GameState(){
-        initQuestionCardsStack(Network.getCtx());
-        dbRef = Network.getCurrentGame();
+       // initQuestionCardsStack(Network.getCtx());
+        //dbRef = Network.getCurrentGame();
     }
 
     public static GameState getInstance() {
