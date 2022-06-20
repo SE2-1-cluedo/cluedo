@@ -1,8 +1,8 @@
 package at.moritzmusel.cluedo;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -179,8 +179,27 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         }
         if(view.getId() == R.id.btn_back){
             Network.setCtx(this);
-            Network.leaveLobby(user, game_id);
-            finish();
+            androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(CreateLobbyActivity.this);
+            builder.setTitle("Attention!");
+            builder.setMessage("If you leave the Lobby now, you will have to create a new one.");
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Network.leaveLobby(user, game_id);
+                    finish();
+                }
+            });
+
+            builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            builder.create();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
     }
 
