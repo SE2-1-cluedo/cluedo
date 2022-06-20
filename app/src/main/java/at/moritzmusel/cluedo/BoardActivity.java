@@ -77,7 +77,7 @@ public class BoardActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         gp1 = Gameplay.getInstance();
-        gp1.decidePlayerWhoMovesFirst();
+        //gp1.decidePlayerWhoMovesFirst();
 
         setContentView(R.layout.test_board2);
         ConstraintLayout constraint = findViewById(R.id.constraintLayout);
@@ -437,7 +437,7 @@ public class BoardActivity extends AppCompatActivity {
                 destination = findViewById(createRoomDestination(character,2));
                     moveAnimation(mover, destination);
                     break;
-
+                    
             case "lounge_btn_down":
             case "billiard_btn_up":
 
