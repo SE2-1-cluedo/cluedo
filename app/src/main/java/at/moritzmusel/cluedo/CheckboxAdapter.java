@@ -209,22 +209,7 @@ public class CheckboxAdapter extends ArrayAdapter {
         }
     }
 
-/*
-    public void setPlayersOwnedCards() {
-        for (int i = 0; i < checkboxItems.size(); i++) {
-            for (int j = 0; j < player.getPlayerOwnedCards().size(); j++) {
-                if (Integer.valueOf(checkboxItems.get(i)).equals(player.getPlayerOwnedCards().get(j))) {
-                    cb1.setChecked(true);
-                    cb2.setChecked(true);
-                    cb3.setChecked(true);
-                    cb4.setChecked(true);
-                    cb5.setChecked(true);
-                    cb6.setChecked(true);
-                }
-            }
-        }
-    }
-*/
+
 
 static class CheckHolder {
 

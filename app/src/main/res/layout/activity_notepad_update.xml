@@ -26,18 +26,20 @@
 
     <LinearLayout
         android:id="@+id/tableHeaderScrollContent"
-        android:layout_width="821dp"
-        android:layout_height="41dp"
+        android:layout_width="876dp"
+        android:layout_height="58dp"
 
-        android:layout_marginTop="72dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="250dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_closeNotepad">
 
         <TextView
             android:id="@+id/col2"
-            android:layout_width="200dp"
+            android:layout_width="186dp"
             android:layout_height="match_parent"
             android:text="NOTEPAD"
             android:textAlignment="center"
@@ -49,11 +51,11 @@
 
         <TextView
             android:id="@+id/col"
-            android:layout_width="134dp"
+            android:layout_width="30dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Player 1"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Miss Scarlett"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#689F38"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="6dp"
@@ -61,11 +63,11 @@
 
         <TextView
             android:id="@+id/col3"
-            android:layout_width="134dp"
+            android:layout_width="24dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Player 2"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Col. Mustard"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#689F38"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="6dp"
@@ -73,11 +75,11 @@
 
         <TextView
             android:id="@+id/col4"
-            android:layout_width="134dp"
+            android:layout_width="23dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Player 3"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Dr. Orchid"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#689F38"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="6dp"
@@ -85,11 +87,11 @@
 
         <TextView
             android:id="@+id/col1"
-            android:layout_width="106dp"
+            android:layout_width="113dp"
             android:layout_height="match_parent"
-            android:text="Player 4"
+            android:text="Revd. Green"
             android:textAlignment="textStart"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#689F38"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="318dp"
@@ -99,8 +101,8 @@
             android:id="@+id/col0"
             android:layout_width="117dp"
             android:layout_height="match_parent"
-            android:text="Player 5"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Mrs. Peacock"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#689F38"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="6dp"
@@ -108,11 +110,11 @@
 
         <TextView
             android:id="@+id/col5"
-            android:layout_width="134dp"
+            android:layout_width="103dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Player 6"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Prof. Plum"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#689F38"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="6dp"

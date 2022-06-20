@@ -1,7 +1,5 @@
 package at.moritzmusel.cluedo;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,20 +13,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import at.moritzmusel.cluedo.entities.Character;
+
 import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.game.Gameplay;
+import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class NotepadActivity extends AppCompatActivity implements View.OnClickListener {
 
     CheckboxAdapter checkAdapter;
-    boolean checked;
-    at.moritzmusel.cluedo.Card card;
     float x1, x2;
     static final int MIN_SWIPE_DISTANCE = 150;
-    Player player;
     NotepadData notepadData = new NotepadData();
-
-    private Button btn_closeNotepad;
+    Gameplay gpl = Gameplay.getInstance();
 
 
     @Override
@@ -43,13 +39,20 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
         checkAdapter = new CheckboxAdapter(this, list, notepadData);
         listView.setAdapter(checkAdapter);
 
+        //setPlayersOwnedCards();
+        //setQuitPlayersCards();
+
         Button btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
         btn_closeNotepad.setOnClickListener(this);
 
+
     }
-    public void onStart () {
+
+    public void onStart() {
         super.onStart();
         checkAdapter.loadState();
+
+
     }
 
 
@@ -62,13 +65,47 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-
+/*     //TODO autamtic setChecked QuitPlayersCards
+       public void setQuitPlayersCards() {
+           int [] cards = new int[];
+           cards = Methode von Konstantin
+           for (int i = 0; i < checkAdapter.checkboxItems.size(); i++) {
+               for (int j = 0; j < cards.length; j++) {
+                   if (Integer.valueOf(checkAdapter.checkboxItems.get(i)).equals(cards[j])) {
+                       checkAdapter.cb1.setChecked(true);
+                       checkAdapter.cb2.setChecked(true);
+                       checkAdapter.cb3.setChecked(true);
+                       checkAdapter.cb4.setChecked(true);
+                       checkAdapter.cb5.setChecked(true);
+                       checkAdapter.cb6.setChecked(true);
+                   }
+               }
+           }
+       }
+  */
+    //TODO autamtic setChecked PlayerOwnedCards
+    public void setPlayersOwnedCards() {
+        ArrayList<Integer> cards = new ArrayList<>();
+        //cards = Methode von Robert
+        for (int x = 0; x < checkAdapter.checkboxItems.size(); x++) {
+            for (int j = 0; j < cards.size(); j++) {
+                if (Integer.valueOf(checkAdapter.checkboxItems.get(x)).equals(cards.get(j))) {
+                    checkAdapter.cb1.setChecked(true);
+                    checkAdapter.cb2.setChecked(true);
+                    checkAdapter.cb3.setChecked(true);
+                    checkAdapter.cb4.setChecked(true);
+                    checkAdapter.cb5.setChecked(true);
+                    checkAdapter.cb6.setChecked(true);
+                }
+            }
+        }
+    }
 
     /**
      * With a swipe to the left you get back to the main board.
      */
     @Override
-    public boolean onTouchEvent (MotionEvent touchEvent){
+    public boolean onTouchEvent(MotionEvent touchEvent) {
         switch (touchEvent.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
@@ -100,7 +137,7 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
 
         public NotepadData() {
             super();
-            if (!active){
+            if (!active) {
                 checkboxStatecb1 = new ArrayList<Boolean>();
                 checkboxStatecb2 = new ArrayList<Boolean>();
                 checkboxStatecb3 = new ArrayList<Boolean>();
