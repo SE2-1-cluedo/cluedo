@@ -49,7 +49,7 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
         if(view.getId() == R.id.btn_lobby_join){
             enter = getEnterId();
             //Checken ob die überhaupt exisitert
-            if(enter.isEmpty() || !enter.equals(game_id)){
+            if(enter.isEmpty() || !enter.equals(Network.getCurrentGameID())){
                 new AlertDialog.Builder(JoinLobbyActivity.this)
                         .setTitle("ERROR")
                         .setMessage("The ENTER ID is false/empty")
@@ -66,7 +66,7 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
                 i.putExtra("decision",false);
                 i.putExtra(Intent.EXTRA_TEXT, enter);
                 Network.setCtx(this);
-                Network.joinLobby(user, game_id);
+                Network.joinLobby(user, Network.getCurrentGameID());
                 //false = join
                 //true = create
                 startActivity(i);

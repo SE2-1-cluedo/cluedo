@@ -80,6 +80,9 @@ public class Network {
 
         p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
         p.child("character").setValue(getCurrentCharacter().name());
+
+        gamestate_databaseListener();
+
         return gameID;
     }
 
@@ -122,28 +125,43 @@ public class Network {
                         .mapToInt(Integer::parseInt).toArray();
               getGameState().setWeaponPositions(weaponPositions,false);
 
-              //get Players
-                ArrayList<Player> playerList = new ArrayList<Player>();
+                //get Players
+                ArrayList<Player> playerList = new ArrayList<>();
+                boolean playerChanged = false;
                 for (DataSnapshot snap: snapshot.child("players").getChildren()){
                     Player p = new Player(snap.getKey());
+                    //set character
+                    if(snap.child("character").exists()) {
+                        playerChanged = true;
+                        p.setPlayerCharacterName(Character.valueOf((String) Objects.requireNonNull(snap.child("character").getValue())));
+                    }
                     //set position
-                    p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(snap.child("position").getValue())));
+                    if(snap.child("position").exists()) {
+                        playerChanged = true;
+                        p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(snap.child("position").getValue())));
+                    }
                     //set owned Cards
-                    String[] ownedCards = ((String) (Objects.requireNonNull(snap.child("cards").getValue()))).split(" ");
-                    if(!Objects.equals(ownedCards[0],""))
-                    p.setPlayerOwnedCards((ArrayList<Integer>)Arrays.stream(Stream.of(ownedCards)
-                            .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
+                    if(snap.child("cards").exists()) {
+                        String[] ownedCards = ((String) (Objects.requireNonNull(snap.child("cards").getValue()))).split(" ");
+                        if (!Objects.equals(ownedCards[0], "")) {
+                            playerChanged = true;
+                            p.setPlayerOwnedCards((ArrayList<Integer>) Arrays.stream(Stream.of(ownedCards)
+                                    .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
+                        }
+                    }
                     //set known Cards
-                    String[] knownCards = ((String) Objects.requireNonNull(snap.child("cards-eliminated").getValue())).split(" ");
-                    if(!Objects.equals(knownCards[0],""))
-                    p.setCardsKnownThroughQuestions((ArrayList<Integer>)Arrays.stream(Stream.of(knownCards)
-                            .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
-
+                    if(snap.child("cards-eliminated").exists()) {
+                        String[] knownCards = ((String) Objects.requireNonNull(snap.child("cards-eliminated").getValue())).split(" ");
+                        if (!Objects.equals(knownCards[0], "")) {
+                            playerChanged = true;
+                            p.setCardsKnownThroughQuestions((ArrayList<Integer>) Arrays.stream(Stream.of(knownCards)
+                                    .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
+                        }
+                    }
                     playerList.add(p);
                 }
-                getGameState().setPlayerState(playerList,false);
-
-                //System.out.println("Ohh something changed");
+                if(playerChanged)
+                    getGameState().setPlayerState(playerList,false);
             }
 
             @Override
@@ -176,6 +194,7 @@ public class Network {
                         p.child("cards-eliminated").setValue("");
                         p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
                         p.child("character").setValue(currentCharacter.name());
+                        gamestate_databaseListener();
                         //TODO: SET GAMESTATE
                     } else {
                         throw new IllegalStateException("Make sure you are not already in a game when joining!");
@@ -234,7 +253,6 @@ public class Network {
                 gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
                 setGameState(gameState);
                 gameState.assignCards();
-                gamestate_databaseListener();
             }
         });
     }

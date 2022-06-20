@@ -3,10 +3,9 @@ package at.moritzmusel.cluedo;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
@@ -19,13 +18,17 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Character;
+import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
+import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class CreateLobbyActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private ListView playerlist;
+    private ListView list_playerlist;
     private TextView lobby_title;
     private ArrayList<String> playerItems = new ArrayList<>();
     private ArrayAdapter<String> adapter;
@@ -38,7 +41,10 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private TextView character_name;
     private ImageView character_picture;
     private String game_id;
+    private List<Player> player_list;
     FirebaseUser user;
+    GameState game_state = GameState.getInstance();
+    NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
 
     /**
      * Creates and initialises all buttons and lists
@@ -55,8 +61,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
         //Intent intent = getIntent();
         decision = getIntent().getExtras().getBoolean("decision");
-        //checkCreateOrJoin(decision);
         user = (FirebaseUser) getIntent().getExtras().get("user");
+        //checkCreateOrJoin(decision);
+        //user = game_state.getPlayerState();
 
         send_link = findViewById(R.id.btn_send_link);
         send_link.setOnClickListener(this);
@@ -70,16 +77,40 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         TextView join_id = findViewById(R.id.txt_lobbyid);
         join_id.setText(getGameID());
 
-        playerlist = findViewById(R.id.playerlist);
+        list_playerlist = findViewById(R.id.playerlist);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
-        playerlist.setAdapter(adapter);
+        list_playerlist.setAdapter(adapter);
 
-        c = Character.getFirstCharacter();
+        /*for (Player p : game_state.getPlayerState()) {
+            if(p.getPlayerId().equals(user.getUid())){
+                addPlayer(list_playerlist);
+            }
+        }*/
+
         character_name = findViewById(R.id.txt_character_name);
         character_picture = findViewById(R.id.img_character);
-        addPlayer(playerlist);
-        setCharacter();
+        //addPlayer(list_playerlist);
 
+
+        networkCommunicator.register(() -> {
+            if(networkCommunicator.isPlayerChanged()){
+                player_list = game_state.getPlayerState();
+                for (Player p : game_state.getPlayerState()) {
+                    if(p.getPlayerId().equals(user.getUid())){
+                        c = p.getPlayerCharacterName();
+                        character_name.setText(c.name());
+                        setImage();
+                    }
+                    playerItems.add(playerCounter++ + " " + p.getPlayerCharacterName());
+                    //c.getNextCharacter();
+                    adapter.notifyDataSetChanged();
+                    vibrate(500);
+
+                }
+            }
+        });
+
+        //setCharacter();
 
 
         if(decision) {
@@ -148,8 +179,26 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         }
         if(view.getId() == R.id.btn_back){
             Network.setCtx(this);
-            Network.leaveLobby(user, Network.getCurrentGameID());
+            Network.leaveLobby(user, game_id);
             finish();
+            new AlertDialog.Builder(CreateLobbyActivity.this)
+                    .setTitle("Attention!")
+                    .setMessage("If you leave the lobby, you will have to make a new one")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .show();
+
         }
     }
 
