@@ -30,7 +30,6 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.stream.IntStream;
 
 import at.moritzmusel.cluedo.communication.GameplayCommunicator;
@@ -53,10 +52,8 @@ public class BoardActivity extends AppCompatActivity {
     private Dice dice;
     private Gameplay gp1;
     private int newPosition;
-    ArrayList<Button> allPositions = new ArrayList<>();
-    ArrayList<ImageView> allPlayers = new ArrayList<>();
-    ArrayList<Button> secrets = new ArrayList<>();
-    ArrayList<ImageView> allWeapons = new ArrayList<>();
+    private final ArrayList<Button> secrets = new ArrayList<>();
+    private final ArrayList<ImageView> allWeapons = new ArrayList<>();
     private final ArrayList<String> weaponNames = new ArrayList<>(Arrays.asList("dagger","candlestick","revolver","rope", "pipe","wrench"));
     private EvidenceCards evidenceCards;
 
@@ -77,7 +74,7 @@ public class BoardActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         gp1 = Gameplay.getInstance();
-        //gp1.decidePlayerWhoMovesFirst();
+        gp1.decidePlayerWhoMovesFirst();
 
         setContentView(R.layout.test_board2);
         ConstraintLayout constraint = findViewById(R.id.constraintLayout);
@@ -92,15 +89,8 @@ public class BoardActivity extends AppCompatActivity {
             else if(test instanceof  ImageView && getResources().getResourceEntryName(test.getId()).contains("w_"))
                 allWeapons.add((ImageView) test);
 
-            else if (test instanceof Button && getResources().getResourceEntryName(test.getId()).matches("[a-z_]+[0-9]+"))
-                allPositions.add((Button) test);
-
              else if (test instanceof ImageButton && !getResources().getResourceEntryName(test.getId()).contains("cardView"))
                 allArrows.add((ImageButton) test);
-
-             else if (test instanceof ImageView && getResources().getResourceEntryName(test.getId()).matches("^[a-z]+$"))
-                allPlayers.add((ImageView) test);
-
         }
 
         constraint.getViewTreeObserver().addOnGlobalLayoutListener(
@@ -554,7 +544,7 @@ public class BoardActivity extends AppCompatActivity {
         ImageView calledPlayer = findViewById(getResources().getIdentifier(player,"id",getPackageName()));
         player += "_";
 
-        if(gp1.findPlayerByCharacterName(Character.valueOf(myName.toString())).getPositionOnBoard() != newPosition){
+        if(calledPlayer.getVisibility() == View.VISIBLE && gp1.findPlayerByCharacterName(Character.valueOf(myName.toString())).getPositionOnBoard() != newPosition){
             calledPlayer.setX(findViewById(createRoomDestination(player,newPosition)).getX());
             calledPlayer.setY(findViewById(createRoomDestination(player,newPosition)).getY());
             gp1.findPlayerByCharacterName(Character.valueOf(myName.toString())).setPositionOnBoard(newPosition);
@@ -584,7 +574,7 @@ public class BoardActivity extends AppCompatActivity {
             }
         } else {
             String otherWeapon = weaponNames.get(ArrayUtils.indexOf(gp1.getWeaponPositions(),newPosition));
-            ImageView otherWeaponView = findViewById(getResources().getIdentifier(otherWeapon, "id", getPackageName()));
+            ImageView otherWeaponView = findViewById(getResources().getIdentifier("w_"+otherWeapon, "id", getPackageName()));
             for (ImageView IV: allWeapons) {
                 if (getResources().getResourceEntryName(IV.getId()).equals(weapon)) {
                     IV.setX(findViewById(createWeaponDestination( newPosition)).getX());
@@ -592,12 +582,11 @@ public class BoardActivity extends AppCompatActivity {
                     for(String s: weaponNames) {
                         if(s.equals(str)){
                             int[] pos = gp1.getWeaponPositions();
-                            System.out.println(Arrays.toString(pos));
-//                            otherWeaponView.setX(findViewById(createWeaponDestination(pos[weaponNames.indexOf(s)])).getX());
-//                            otherWeaponView.setY(findViewById(createWeaponDestination(pos[weaponNames.indexOf(s)])).getY());
-//                            int help = pos[weaponNames.indexOf(otherWeapon)];
-//                            pos[weaponNames.indexOf(otherWeapon)] = pos[weaponNames.indexOf(s)];
-//                            pos[weaponNames.indexOf(s)] = help;
+                            otherWeaponView.setX(findViewById(createWeaponDestination(pos[weaponNames.indexOf(s)])).getX());
+                            otherWeaponView.setY(findViewById(createWeaponDestination(pos[weaponNames.indexOf(s)])).getY());
+                            int help = pos[weaponNames.indexOf(otherWeapon)];
+                            pos[weaponNames.indexOf(otherWeapon)] = pos[weaponNames.indexOf(s)];
+                            pos[weaponNames.indexOf(s)] = help;
                             gp1.setWeaponPositions(pos);
                             break;
                         }
