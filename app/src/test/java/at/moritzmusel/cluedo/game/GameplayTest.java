@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class GameplayTest {
 
-    Player Player1;
+    /*Player Player1;
     Player Player2;
     Player Player3;
     Player Player4;
@@ -61,23 +61,23 @@ public class GameplayTest {
         assertEquals(MISS_SCARLETT, gameOdd.getCurrentPlayer());
     }
 
-    /*
+    *//*
     @Test
     public void decidePlayerWhoMovesWhenScarlettIsNotPlayed() {
         gameEven.decidePlayerWhoMovesFirst();
         assertEquals(DR_ORCHID, gameEven.getCurrentPlayer());
-    }*/
+    }*//*
 
     @Test
     public void findPlayerByCharacterName() {
         assertEquals(Player3, gameOdd.findPlayerByCharacterName(PROFESSOR_PLUM));
     }
 
-    /*
+    *//*
     @Test
     public void findCharacterWhoIsNotInGame() {
         Assert.assertNull(gameEven.findPlayerByCharacterName(COLONEL_MUSTARD));
-    }*/
+    }*//*
 
     @Test
     public void checkIfTheGeneratedCluedoCardsAreUnique(){
@@ -106,7 +106,7 @@ public class GameplayTest {
         assertFalse(check);
     }
 
-    /*
+    *//*
     @Test
     public void checkIfCluedoCardsAreEvenDistributedForEvenPlayers(){
         gameEven.createNewGame();
@@ -114,7 +114,7 @@ public class GameplayTest {
         assertEquals(5,Player3.getPlayerOwnedCards().size());
         assertEquals(4,Player4.getPlayerOwnedCards().size());
         assertEquals(4,Player5.getPlayerOwnedCards().size());
-    }*/
+    }*//*
 
 
     @Test
@@ -208,8 +208,8 @@ public class GameplayTest {
 
         gameOdd.decidePlayerWhoMovesFirst();
         AllTheCards allCluedoCards = new AllTheCards();
-        gameOdd.askPlayerAQuestion(Player1,allCluedoCards.getGameCards().get(3),allCluedoCards.getGameCards().get(10),allCluedoCards.getGameCards().get(17));
+        //gameOdd.askPlayerAQuestion(Player1,allCluedoCards.getGameCards().get(3),allCluedoCards.getGameCards().get(10),allCluedoCards.getGameCards().get(17));
         int result = Player1.getCardsKnownThroughQuestions().get(0);
         assertEquals(10,result);
-    }
+    }*/
 }
