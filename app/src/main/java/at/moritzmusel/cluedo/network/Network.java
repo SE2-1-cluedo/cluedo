@@ -45,6 +45,10 @@ public class Network {
     private static ValueEventListener listener = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
+            //get TurnOrder
+            String[] turnOrder = ((String) Objects.requireNonNull(snapshot.child("turn-order").getValue())).split(" ");
+            gameState.setTurnOrder(turnOrder,false);
+
             //start Game
             String start = (String) snapshot.child("turn-flag").child("startGame").getValue();
             assert start != null;
@@ -297,7 +301,7 @@ public class Network {
                 Log.e("firebase", "Error getting data", task.getException());
             else {
                 String[] turnOrder = String.valueOf(task.getResult().child("turn-order").getValue()).split(" ");
-                gameState.setTurnOrder(turnOrder);
+                gameState.setTurnOrder(turnOrder,false);
                 for (Player p : list)
                     p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(task.getResult().child("players").child(p.getPlayerId()).child("position").getValue())));
 

@@ -41,7 +41,7 @@ public class GameState {
     private static final GameState OBJ = new GameState();
 
     private GameState(){
-        initQuestionCardsStack(Network.getCtx());
+        //initQuestionCardsStack(Network.getCtx());
         dbRef = Network.getCurrentGame();
     }
 
@@ -264,8 +264,15 @@ public class GameState {
         }
     }
 
-    public void setTurnOrder(String[] turnOrder){
+    public void setTurnOrder(String[] turnOrder, boolean database){
         this.turnOrder = turnOrder;
+        if(database) {
+            StringBuilder sB = new StringBuilder();
+            for(String s: turnOrder)
+                sB.append(s).append(" ");
+
+            dbRef.child("turn-order").setValue(sB.toString().trim());
+        }
     }
 
     public String[] getTurnOrder(){

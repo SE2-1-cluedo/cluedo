@@ -93,7 +93,7 @@ public class BoardActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         gp1 = Gameplay.getInstance();
-        gp1.decidePlayerWhoMovesFirst();
+        gp1.startGame();
 
         setContentView(R.layout.test_board2);
         ConstraintLayout constraint = findViewById(R.id.constraintLayout);
@@ -191,7 +191,9 @@ public class BoardActivity extends AppCompatActivity {
         accel = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         shakeDetector = new ShakeDetector();
 
-        //callDice();
+        if(gp1.checkIfPlayerIsOwn()){
+            callDice();
+        }
     }
 
     /**
@@ -257,7 +259,7 @@ public class BoardActivity extends AppCompatActivity {
 
         builder.setCancelable(false);
 
-        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+        //builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
 
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -402,9 +404,7 @@ public class BoardActivity extends AppCompatActivity {
         else if(gameplayCommunicator.isSuspicion())
             card_ids = new ArrayList<>(Arrays.asList(gameState.getAskQuestion().getCards()[0],gameState.getAskQuestion().getCards()[1],gameState.getAskQuestion().getCards()[2]));
         else
-            //card_ids = gp1.findPlayerByUserId(Network.getCurrentUser().getUid()).getPlayerOwnedCards();
-            //here we need the cards from the hand (given by network)
-            card_ids = new ArrayList<>(Arrays.asList(0,10,18));
+            card_ids = gp1.findPlayerById(Network.getCurrentUser().getUid()).getPlayerOwnedCards();
 
         return card_ids;
     }
@@ -770,7 +770,6 @@ public class BoardActivity extends AppCompatActivity {
      */
     private void moveAnimation(View mover, View destination) {
 
-//        gameState.setAskQuestion(new Question("TestPlayer",new int[]{2,9,15}),false);
         mover.setX(destination.getX());
         mover.setY(destination.getY());
 
@@ -787,7 +786,7 @@ public class BoardActivity extends AppCompatActivity {
      *
      */
     private void movePlayerWithArrows() {
-//        if(Network.getCurrentUser().getUid().equals(gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId())) {
+        if (gp1.checkIfPlayerIsOwn()) {
             if (gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getIsAbleToMove()) {
                 activateSecrets();
                 switch (newPosition) {
@@ -860,10 +859,9 @@ public class BoardActivity extends AppCompatActivity {
 
             } else {
                 deactivateSecrets();
-                //notifyCurrentPlayer();
-                // callDice();
             }
         }
+    }
 
     /**
      * if button is clicked or the screen is swiped horizontally, the current cards of the player are shown
