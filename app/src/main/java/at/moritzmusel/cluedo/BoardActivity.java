@@ -191,7 +191,7 @@ public class BoardActivity extends AppCompatActivity {
         accel = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         shakeDetector = new ShakeDetector();
 
-        //callDice();
+        callDice();
     }
 
     /**
@@ -266,6 +266,13 @@ public class BoardActivity extends AppCompatActivity {
 
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
+
+        diceView = findViewById(R.id.dialogDice);
+        dice = new Dice((ImageView) diceView);
+        diceView.setOnClickListener(v -> {
+            dice.throwDice();
+            diceRolled();
+        });
 
         shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
             @Override

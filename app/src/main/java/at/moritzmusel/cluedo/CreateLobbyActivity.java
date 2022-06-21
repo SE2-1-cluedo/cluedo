@@ -1,8 +1,10 @@
 package at.moritzmusel.cluedo;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -59,11 +61,8 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
         TextView lobby_title = findViewById(R.id.txt_create_lobby);
 
-        //Intent intent = getIntent();
         decision = getIntent().getExtras().getBoolean("decision");
         user = (FirebaseUser) getIntent().getExtras().get("user");
-        //checkCreateOrJoin(decision);
-        //user = game_state.getPlayerState();
 
         send_link = findViewById(R.id.btn_send_link);
         send_link.setOnClickListener(this);
@@ -126,7 +125,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             //if the player entered through the creation button
         }else{
            start.setClickable(false);
-           //start.setBackgroundColor(getColor(R.color.gray));
            start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
            start.setText(R.string.waiting);
            send_link.setVisibility(View.INVISIBLE);
@@ -197,7 +195,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                     Network.leaveLobby(user, getGameID());
                     finish();
                 });
-
                 builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
                 builder.create();
                 AlertDialog alertDialog = builder.create();

@@ -62,6 +62,12 @@ public class Dialogs {
         dialog.show();
     }
 
+    public void testDialog(Activity ac, Object ob){
+        new AlertDialog.Builder(ac)
+                .setMessage(ob.toString())
+                .show();
+    }
+
     /**
      * Shows a Dialog with the Information that you lost.
      * @param ac Activity where it will be shown

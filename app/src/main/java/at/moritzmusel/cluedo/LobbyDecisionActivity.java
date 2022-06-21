@@ -2,6 +2,7 @@ package at.moritzmusel.cluedo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +22,9 @@ public class LobbyDecisionActivity extends AppCompatActivity implements View.OnC
     private Button back_to_main;
     private String game = "";
     FirebaseUser user;
+
+    Dialogs d = new Dialogs();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,4 +62,5 @@ public class LobbyDecisionActivity extends AppCompatActivity implements View.OnC
             finish();
         }
     }
+
 }
