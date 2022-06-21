@@ -3,6 +3,7 @@ package at.moritzmusel.cluedo.network.pojo;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class GameState {
     private static final GameState OBJ = new GameState();
 
     private GameState(){
-        //initQuestionCardsStack(Network.getCtx());
+        initQuestionCardsStack(Network.getCtx());
         dbRef = Network.getCurrentGame();
     }
 
@@ -83,7 +84,11 @@ public class GameState {
         if(!database){
             communicator.setHasWon(true);
             communicator.notifyList();
-        }
+        } else if(winner == null)
+            dbRef.child("result").child("winner").setValue("");
+        else
+            dbRef.child("result").child("winner").setValue(winner);
+
     }
 
     public String getLoser() {
@@ -95,7 +100,10 @@ public class GameState {
         if(!database){
             communicator.setHasLost(true);
             communicator.notifyList();
-        }
+        } else if(loser == null)
+            dbRef.child("result").child("loser").setValue("");
+        else
+            dbRef.child("result").child("loser").setValue(loser);
     }
 
     public String[] getMagnify() {
@@ -107,6 +115,14 @@ public class GameState {
         if(!database) {
             communicator.setMagnify(true);
             communicator.notifyList();
+        } else if(magnify == null)
+            dbRef.child("turn-flag").child("magnify").setValue("");
+        else {
+            StringBuilder sB = new StringBuilder();
+            for(String s: magnify)
+                sB.append(s).append(" ");
+
+            dbRef.child("turn-flag").child("magnify").setValue(sB.toString().trim());
         }
     }
 

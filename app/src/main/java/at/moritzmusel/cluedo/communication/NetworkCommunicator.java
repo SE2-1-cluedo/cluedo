@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class NetworkCommunicator implements Communicator {
     private final ArrayList<ChangeListener> listenerArray;
-    private boolean turnChanged, playerChanged, questionChanged, weaponsChanged, hasWon, hasLost, magnify;
+    private boolean turnChanged, playerChanged, questionChanged, weaponsChanged, hasWon, hasLost, magnify, characterChanged;
 
     private static final NetworkCommunicator OBJ = new NetworkCommunicator();
 
@@ -81,5 +81,13 @@ public class NetworkCommunicator implements Communicator {
 
     public void setMagnify(boolean magnify) {
         this.magnify = magnify;
+    }
+
+    public boolean isCharacterChanged() {
+        return characterChanged;
+    }
+
+    public void setCharacterChanged(boolean characterChanged) {
+        this.characterChanged = characterChanged;
     }
 }

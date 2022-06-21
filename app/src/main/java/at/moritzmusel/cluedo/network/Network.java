@@ -27,6 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.network.pojo.GameState;
 import at.moritzmusel.cluedo.network.pojo.Question;
@@ -47,12 +48,21 @@ public class Network {
             //get PlayerTurn
             getGameState().setPlayerTurn((String)snapshot.child("turn-flag").child("player-turn").getValue(),false);
 
+            //getMagnify
+            String[] magnify = ((String) Objects.requireNonNull(snapshot.child("turn-flag").child("magnify").getValue())).split(" ");
+            getGameState().setMagnify(magnify,false);
+
             //get Question
             String[] question = ((String) Objects.requireNonNull(snapshot.child("turn-flag").child("question").getValue())).split(" ");
             if(question.length == 4) {
                 int[] numbers = new int[]{Integer.parseInt(question[1]), Integer.parseInt(question[2]), Integer.parseInt(question[3])};
                 getGameState().setAskQuestion(new Question(question[0],numbers),false);
             }
+
+            //get Winner/Loser
+            getGameState().setWinner((String) Objects.requireNonNull(snapshot.child("result").child("winner").getValue()),false);
+
+            getGameState().setLoser((String) Objects.requireNonNull(snapshot.child("result").child("loser").getValue()),false);
 
             //get weapons
             String[] weapons = ((String) Objects.requireNonNull(snapshot.child("weapon-positions").getValue())).split(" ");
@@ -68,6 +78,7 @@ public class Network {
                 //set character
                 if(snap.child("character").exists()) {
                     playerChanged = true;
+                    NetworkCommunicator.getInstance().setCharacterChanged(true);
                     p.setPlayerCharacterName(Character.valueOf((String) Objects.requireNonNull(snap.child("character").getValue())));
                 }
                 //set position
@@ -137,6 +148,13 @@ public class Network {
         DatabaseReference turnFlag = game.child("turn-flag");
         turnFlag.child("question").setValue("");
         turnFlag.child("player-turn").setValue(getCurrentUser().getUid());
+        turnFlag.child("magnify").setValue("");
+
+        //add result path
+        DatabaseReference result = game.child("result");
+        result.child("winner").setValue("");
+        result.child("loser").setValue("");
+
         //add players path
         gameState.setKiller(createKiller());
         gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
@@ -186,14 +204,24 @@ public class Network {
     public static void joinLobby(FirebaseUser user, String gameID) {
         setCurrentGameID(gameID);
         setCurrentUser(user);
-        currentCharacter = currentCharacter.getNextCharacter();
-        DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
-        p.child("cards").setValue("");
-        p.child("cards-eliminated").setValue("");
-        p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
-        p.child("character").setValue(currentCharacter.name());
-        gameState = GameState.getInstance();
-        gamestate_databaseListener();
+        getCurrentGame().get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful())
+                Log.e("firebase", "Error getting data", task.getException());
+            else {
+                for(DataSnapshot snap: task.getResult().child("players").getChildren())
+                    if(Objects.equals((String)snap.child("character").getValue(),currentCharacter.name()))
+                        currentCharacter = currentCharacter.getNextCharacter();
+
+                    DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
+                    p.child("character").setValue(currentCharacter.name());
+                    p.child("cards").setValue("");
+                    p.child("cards-eliminated").setValue("");
+                    p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
+                    gameState = GameState.getInstance();
+                    gamestate_databaseListener();
+            }
+        });
+
 
         //check if FB user and game exists
         Log.i(TAG, ("joinLobby() called params:"+ user +" "+ (getCurrentGameID() == null)));
