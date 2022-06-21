@@ -137,13 +137,6 @@ public class BoardActivity extends AppCompatActivity {
                     }
                 });
 
-
-        /*diceView = findViewById(R.id.dialogDice);
-        dice = new Dice((ImageView) diceView);
-        diceView.setOnClickListener(v -> {
-            dice.throwDice();
-            diceRolled();
-        });*/
         gameState = GameState.getInstance();
 
         susCommunicator = SuspicionCommunicator.getInstance();
@@ -151,6 +144,7 @@ public class BoardActivity extends AppCompatActivity {
         gameplayCommunicator = GameplayCommunicator.getInstance();
         gameplayCommunicator.register(() -> {
             if(gameplayCommunicator.isMoved()){
+                System.out.println("Now we refreshed");
                 refreshBoard();
                 gameplayCommunicator.setMoved(false);
             }
@@ -159,7 +153,9 @@ public class BoardActivity extends AppCompatActivity {
             }
             if(gameplayCommunicator.isTurnChange()){
                 notifyCurrentPlayer();
+                if(gp1.checkIfPlayerIsOwn())
                 callDice();
+                gameplayCommunicator.setTurnChange(false);
             }
         });
 
@@ -192,6 +188,7 @@ public class BoardActivity extends AppCompatActivity {
         shakeDetector = new ShakeDetector();
 
         if(gp1.checkIfPlayerIsOwn()){
+            System.out.println("This device");
             callDice();
         }
     }
@@ -222,6 +219,7 @@ public class BoardActivity extends AppCompatActivity {
     }
 
     private void refreshBoard() {
+        System.out.println("Should have moved now");
         for (int i = 0; i < gp1.getPlayers().size(); i++) {
             String player = gp1.getPlayers().get(i).getPlayerCharacterName().name().split("[_]")[1].toLowerCase();
             String name = player + "_";
@@ -254,28 +252,35 @@ public class BoardActivity extends AppCompatActivity {
 
         diceView = dice_layout.findViewById(R.id.dialogDice);
         dice = new Dice((ImageView) diceView);
+        diceView.setOnClickListener(v -> {
+            dice.throwDice();
+            diceRolled();
+        });
 
         mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
 
         builder.setCancelable(false);
 
-        //builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
 
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
 
         shakeDetector.setOnShakeListener(count -> {
-            if(count < 2)
-            new Thread(){
-                public void run() {
-                    try {
-                        Thread.sleep(2000);
-                        runOnUiThread(alertDialog::cancel);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
+            if(count < 2){
+                dice.throwDice();
+                diceRolled();
+            }
+//            new Thread(){
+//                public void run() {
+//                    try {
+//                        Thread.sleep(2000);
+//                        runOnUiThread(alertDialog::cancel);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }.start();
     });
     }
 
@@ -286,7 +291,7 @@ public class BoardActivity extends AppCompatActivity {
         if(susCommunicator.getHasSuspected() || susCommunicator.getHasAccused()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setCancelable(false);
-            gameState.setAskQuestion(new Question("TestPlayer",new int[]{2,9,15}),false);
+//            gameState.setAskQuestion(new Question("TestPlayer",new int[]{2,9,15}),false);
             if(susCommunicator.getHasAccused())
                 builder.setMessage("This is your one and only accusation, are you sure about it?");
             else
@@ -490,7 +495,6 @@ public class BoardActivity extends AppCompatActivity {
      * and calls the move methode
      */
     public void diceRolled() {
-        //diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
         rolledMagnifyingGlass();
         gp1.setStepsTaken(0);
         movePlayerWithArrows();

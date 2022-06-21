@@ -48,16 +48,19 @@ public class Gameplay {
         turnOrderGame = gameState.getTurnOrder();
         players = gameState.getPlayerState();
         weaponsPos = gameState.getWeaponPositions();
+//        decidePlayerWhoMovesFirst();
+        currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
+        findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
     }
 
     public void startGame(){
 
-        decidePlayerWhoMovesFirst();
         gameCommunicator = GameplayCommunicator.getInstance();
         netCommunicator = NetworkCommunicator.getInstance();
 
         netCommunicator.register(()->{
             if(netCommunicator.isPlayerChanged()){
+                System.out.println("Notification from Gamestate");
                 checkWhatChangedInPlayer(gameState.getPlayerState());
             }
             if(netCommunicator.isQuestionChanged()){
@@ -86,11 +89,11 @@ public class Gameplay {
     public Character endTurn() {
         String playerID = getPlayerIDOfNextPlayerInTurnOrder();
         currentPlayer = getCharacterByPlayerID(playerID);
-        if(counter == 4)
-            counter = -1;
-        currentPlayer = players.get(++counter).getPlayerCharacterName();
+//        if(counter == 4)
+//            counter = -1;
+//        currentPlayer = players.get(++counter).getPlayerCharacterName();
         findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
-        gameState.setPlayerTurn(getPlayerIDOfNextPlayerInTurnOrder(), true);
+        gameState.setPlayerTurn(playerID, true);
         gameCommunicator.setTurnChange(true);
         gameCommunicator.notifyList();
         return currentPlayer;
@@ -137,6 +140,7 @@ public class Gameplay {
         stepsTaken++;
         if(stepsTaken == numDice) {
             findPlayerByCharacterName(currentPlayer).setAbleToMove(false);
+            endTurn();
         }
     }
 
@@ -195,9 +199,8 @@ public class Gameplay {
      * Decides which Player/Character is able to move first
      */
     public void decidePlayerWhoMovesFirst() {
-        String playerID = turnOrderGame[0];
+        String playerID = gameState.getPlayerTurn();
         currentPlayer = getCharacterByPlayerID(playerID);
-        currentPlayer = players.get(counter).getPlayerCharacterName();
         findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
     }
 
@@ -288,6 +291,7 @@ public class Gameplay {
     private void checkWhatChangedInPlayer(List<Player> newPlayers){
         for(int i = 0; i < players.size(); i++){
             if(!(newPlayers.get(i).getPositionOnBoard() == players.get(i).getPositionOnBoard())){
+                System.out.println("Found difference");
                 players = newPlayers;
                 gameCommunicator.setMoved(true);
                 gameCommunicator.notifyList();
@@ -308,7 +312,8 @@ public class Gameplay {
     }
 
     private void checkTurnChanged(String newTurn){
-        if(!currentPlayer.name().equals(newTurn)){
+        if(!findPlayerByCharacterName(currentPlayer).getPlayerId().equals(newTurn)){
+            currentPlayer = findPlayerById(newTurn).getPlayerCharacterName();
             gameCommunicator.setTurnChange(true);
             gameCommunicator.notifyList();
         }
@@ -319,6 +324,10 @@ public class Gameplay {
      * @return true if it is the currentPlayer
      */
     public boolean checkIfPlayerIsOwn(){
+        String currentUser = Network.getCurrentUser().getUid();
+        String player = findPlayerByCharacterName(currentPlayer).getPlayerId();
+        System.out.println(Network.getCurrentUser().getUid());
+        System.out.println(currentUser.equals(player));
         return Network.getCurrentUser().getUid().equals(findPlayerByCharacterName(currentPlayer).getPlayerId());
     }
 
