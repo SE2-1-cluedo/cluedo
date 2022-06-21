@@ -110,6 +110,16 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                 Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
                 startActivity(i);
             }
+            if(decision){
+                if(playerItems.size() < 3 || playerItems.size() > 6){
+                    start.setClickable(false);
+                    start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
+                }
+                else{
+                    start.setClickable(true);
+                    start.setBackground(getResources().getDrawable(R.drawable.custom_button));
+                }
+            }
         });
 
         if(decision) {
