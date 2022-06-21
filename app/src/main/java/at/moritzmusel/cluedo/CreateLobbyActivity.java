@@ -1,25 +1,35 @@
 package at.moritzmusel.cluedo;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
+import at.moritzmusel.cluedo.entities.Character;
+import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.network.Network;
+import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class CreateLobbyActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private ListView playerlist;
+    private ListView list_playerlist;
     private TextView lobby_title;
     private ArrayList<String> playerItems = new ArrayList<>();
     private ArrayAdapter<String> adapter;
@@ -28,17 +38,34 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private Button start;
     private Button back;
     private boolean decision;
+    private Character c;
+    private TextView character_name;
+    private ImageView character_picture;
+    private String game_id;
+    private List<Player> player_list;
+    FirebaseUser user;
+    NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
+    private GameState gamestate;
 
+    /**
+     * Creates and initialises all buttons and lists
+     * Also changes the design according to the decision boolean
+     * true nothing has to change
+     * false to the join lobby where they have to wait for the host
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_lobby);
+        gamestate = GameState.getInstance();
 
         lobby_title = findViewById(R.id.txt_create_lobby);
 
         //Intent intent = getIntent();
         decision = getIntent().getExtras().getBoolean("decision");
+        user = (FirebaseUser) getIntent().getExtras().get("user");
         //checkCreateOrJoin(decision);
+        //user = game_state.getPlayerState();
 
         send_link = findViewById(R.id.btn_send_link);
         send_link.setOnClickListener(this);
@@ -52,15 +79,38 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         TextView join_id = findViewById(R.id.txt_lobbyid);
         join_id.setText(getGameID());
 
-        playerlist = findViewById(R.id.playerlist);
-
+        list_playerlist = findViewById(R.id.playerlist);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, playerItems);
-        playerlist.setAdapter(adapter);
-        //addPlayer(playerlist);
+        list_playerlist.setAdapter(adapter);
+
+        character_name = findViewById(R.id.txt_character_name);
+        character_picture = findViewById(R.id.img_character);
+        //addPlayer(list_playerlist);
+
+
+        networkCommunicator.register(() -> {
+            if(networkCommunicator.isPlayerChanged()){
+                player_list = gamestate.getPlayerState();
+                for (Player p : player_list) {
+                    if(p.getPlayerId().equals(user.getUid())){
+                        c = p.getPlayerCharacterName();
+                        character_name.setText(c.name());
+                        setImage();
+                    }
+                    playerItems.add(p.getPlayerCharacterName().toString());
+                    adapter.notifyDataSetChanged();
+                    vibrate(500);
+                }
+            }
+            //c.getNextCharacter();
+
+        });
+
+        //removeDuplicates(playerItems);
+
 
         if(decision) {
-
+            //if the player entered through the creation button
         }else{
            start.setClickable(false);
            //start.setBackgroundColor(getColor(R.color.gray));
@@ -68,6 +118,41 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
            start.setText(R.string.waiting);
            send_link.setVisibility(View.INVISIBLE);
            lobby_title.setText(R.string.lobby);
+        }
+    }
+
+    /**
+     * Sets the character for the player in the lobby
+     */
+    private void setCharacter() {
+        character_name.setText(c.name());
+        setImage();
+        c = c.getNextCharacter();
+    }
+
+    /**
+     * Sets the image in the lobby according to the character
+     */
+    private void setImage() {
+        switch(c) {
+            case DR_ORCHID:
+                character_picture.setImageResource(R.drawable.orchid);
+                break;
+            case COLONEL_MUSTARD:
+                character_picture.setImageResource(R.drawable.mustard);
+                break;
+            case MISS_SCARLETT:
+                character_picture.setImageResource(R.drawable.scarlett);
+                break;
+            case PROFESSOR_PLUM:
+                character_picture.setImageResource(R.drawable.plum);
+                break;
+            case MRS_PEACOCK:
+                character_picture.setImageResource(R.drawable.peacock);
+                break;
+            case REVEREND_GREEN:
+                character_picture.setImageResource(R.drawable.green);
+                break;
         }
     }
 
@@ -82,8 +167,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             Intent shareIntent = Intent.createChooser(sendIntent, null);
             startActivity(shareIntent);
 
-            //addPlayer(view);
-
         }
         if(view.getId() == R.id.btn_lobby_start){
             //select the character screen
@@ -91,17 +174,46 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             startActivity(i);
         }
         if(view.getId() == R.id.btn_back){
-            //Intent i = new Intent(CreateLobbyActivity.this, LobbyDecisionActivity.class);
-            //startActivity(i);
-            finish();
+            if(decision){
+                Network.setCtx(this);
+                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(CreateLobbyActivity.this);
+                builder.setTitle("Attention!");
+                builder.setMessage("If you leave the Lobby now, you will have to create a new one.");
+                builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Network.leaveLobby(user, getGameID());
+                        finish();
+                    }
+                });
+
+                builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create();
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }else{
+                Network.setCtx(this);
+                Network.leaveLobby(user, getGameID());
+                finish();
+            }
+
         }
     }
 
+    /**
+     * gets the game id for the current game
+     * @return String with id
+     */
     public String getGameID() {
         if(decision){
+            game_id = getIntent().getExtras().getString("game_id");
+            return game_id;
             //Schnittstelle mit dem Netzwerk um die id zu bekommen.
-            String id = "12345";//Nur zum sehen ob es geht
-            return id;
         }else{
             Intent intent = getIntent();
             String id_from_joinlobby = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -111,25 +223,49 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    /**
+     * Removes the duplicates of an Arraylist
+     * @param list List of Arrays
+     * @return list without duplicates
+     */
+    public static <T> ArrayList<T> removeDuplicates(ArrayList<T> list)
+    {
+        // Create a new ArrayList
+        ArrayList<T> newList = new ArrayList<T>();
+
+        // Traverse through the first list
+        for (T element : list) {
+
+            // If this element is not present in newList
+            // then add it
+            if (!newList.contains(element) || element != null) {
+                newList.add(element);
+            }
+        }
+
+        // return the new list
+        return newList;
+    }
+
+    public void network(){
+        //Adds the player according to the database
+        //Also checks the number of player and only allows up to six and at least three.
+    }
+
+    /**
+     * Adds the player string to the list
+     * @param view the view with list
+     */
     public void addPlayer(View view) {
-        playerItems.add("Player "+playerCounter++);
+        playerItems.add(playerCounter++ + " " + c.name());
         adapter.notifyDataSetChanged();
+        vibrate(500);
     }
 
-    public void checkCreateOrJoin(boolean decision){
-        new AlertDialog.Builder(CreateLobbyActivity.this)
-                .setTitle("Did it work?")
-                .setMessage("Join = false, Create = true: " + decision)
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).show();
-        vibrate(300);
-    }
-
+    /**
+     * lets the phone vibrate for the time of the duration
+     * @param duration seconds you want it to vibrate
+     */
     public void vibrate(int duration){
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(duration);

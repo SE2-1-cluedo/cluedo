@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 
 import at.moritzmusel.cluedo.AllTheCards;
 import at.moritzmusel.cluedo.Card;
-import at.moritzmusel.cluedo.communication.GameplayCommunicator;
+import at.moritzmusel.cluedo.communication.Communicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
@@ -36,11 +36,12 @@ public class GameState {
     DatabaseReference dbRef;
     private final NetworkCommunicator communicator = NetworkCommunicator.getInstance();
 
+
     private static final GameState OBJ = new GameState();
 
     private GameState(){
         //initQuestionCardsStack(Network.getCtx());
-        //dbRef = Network.getCurrentGame();
+        dbRef = Network.getCurrentGame();
     }
 
     public static GameState getInstance() {
@@ -178,8 +179,6 @@ public class GameState {
         if(!database) {
             communicator.setQuestionChanged(true);
             communicator.notifyList();
-            GameplayCommunicator.getInstance().setSuspicion(true);
-            GameplayCommunicator.getInstance().notifyList();
         }
         else if(askQuestion == null)
             dbRef.child("turn-flag").child("question").setValue("");

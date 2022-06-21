@@ -10,10 +10,11 @@ import android.content.Intent;
 import android.content.res.Configuration;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Looper;
+import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,6 +36,11 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.IntStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+
 
 import at.moritzmusel.cluedo.communication.GameplayCommunicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
@@ -51,7 +57,7 @@ public class BoardActivity extends AppCompatActivity {
 
     private View decorView, diceView, playerCardsView;
     private AllTheCards allCards;
-    private float x1;
+    private float x1,x2,y1,y2;
     private GameState gameState;
     private SuspicionCommunicator susCommunicator;
     private GameplayCommunicator gameplayCommunicator;
@@ -66,6 +72,8 @@ public class BoardActivity extends AppCompatActivity {
     private final ArrayList<ImageView> allWeapons = new ArrayList<>();
     private final ArrayList<String> weaponNames = new ArrayList<>(Arrays.asList("dagger","candlestick","revolver","rope", "pipe","wrench"));
     private EvidenceCards evidenceCards;
+    private ImageView image;
+    private View dice_layout;
 
     private SensorManager mSensorManager;
     private Sensor accel;
@@ -75,6 +83,7 @@ public class BoardActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +174,7 @@ public class BoardActivity extends AppCompatActivity {
         });
 
         allCards = new AllTheCards();
+        allCards.getGameCards();
 
         evidenceCards = new EvidenceCards();
 
@@ -174,7 +184,7 @@ public class BoardActivity extends AppCompatActivity {
 //            gameplayCommunicator.notifyList();
 //        });
 
-        ImageView image = new ImageView(this);
+        image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -184,7 +194,11 @@ public class BoardActivity extends AppCompatActivity {
         callDice();
     }
 
-    private void rolledMagnifyingGlass(Dice dice) {
+    /**
+     * Creates an AlertDialog which informs the player that a card is owned by somebody or the murderer
+     * uses the methods of the EvidenceCards-Class
+     */
+    private void rolledMagnifyingGlass() {
         if(dice.getNumberRolled() == 4){
             AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
             builder.setTitle("What is going on?");
@@ -193,7 +207,12 @@ public class BoardActivity extends AppCompatActivity {
                     + "It is revealed that the Card: " + evidenceCards.getDrawnCard().getDesignation() + "\n"
                     + "is owned by: " + evidenceCards.getPlayer());
 
-            builder.setNeutralButton("OK", (dialog, which) -> dialog.dismiss());
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
             builder.create();
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
@@ -216,33 +235,54 @@ public class BoardActivity extends AppCompatActivity {
         }
     }
 
+
+
+
+    /**
+     * Creates an alert with a dice action, which is shakeable and clickable.
+     */
     @SuppressLint("InflateParams")
-    private void callDice(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+    private void callDice() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BoardActivity.this, R.style.AlertDialogStyle);
         builder.setTitle("Throw Dice");
-        
+
         LayoutInflater inflater = getLayoutInflater();
-        View dice_layout = inflater.inflate(R.layout.custom_dialog, null);
+        dice_layout = inflater.inflate(R.layout.custom_dialog, null);
         builder.setView(dice_layout);
 
         diceView = dice_layout.findViewById(R.id.dialogDice);
         dice = new Dice((ImageView) diceView);
 
-        diceView.setOnClickListener(view -> {
-            dice.throwDice();
-            diceRolled();
-        });
+        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
 
-        shakeDetector.setOnShakeListener(count -> {
-            if(count < 2){
-                dice.throwDice();
-                diceRolled();
+        builder.setCancelable(false);
+
+        /*builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });*/
+
+        android.app.AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+        shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+            @Override
+            public void onShake(int count) {
+                if (count < 2) {
+                    dice.throwDice();
+                    diceRolled();
+                    final Timer timer2 = new Timer();
+                    timer2.schedule(new TimerTask() {
+                        public void run() {
+                            alertDialog.dismiss();
+                            timer2.cancel(); //this will cancel the timer of the system
+                        }
+                    }, 2000);
+                }
             }
         });
-        
-        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
-        AlertDialog alert = builder.create();
-        alert.show();
     }
 
     @Override
@@ -257,7 +297,7 @@ public class BoardActivity extends AppCompatActivity {
             else
             builder.setMessage("You suspected: ");
 
-            setPlayerCardImages();
+            setPlayerCardImagesOLD();
             builder.setView(playerCardsView);
 
             builder.setPositiveButton("Yes, proceed", (dialog, which) -> {
@@ -324,7 +364,7 @@ public class BoardActivity extends AppCompatActivity {
      * sets the Images used in the builders by calling the image_show_cards.xml
      */
     @SuppressLint("InflateParams")
-    private void setPlayerCardImages() {
+    private void setPlayerCardImagesOLD() {
         LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
         playerCardsView = factory.inflate(R.layout.image_show_cards, null);
         LinearLayout linear = playerCardsView.findViewById(R.id.linearLayout);
@@ -338,7 +378,6 @@ public class BoardActivity extends AppCompatActivity {
             //card_ids = gp1.findPlayerByUserId(Network.getCurrentUser().getUid()).getPlayerOwnedCards();
             //here we need the cards from the hand (given by network)
             card_ids = new ArrayList<>(Arrays.asList(0,10,18));
-
         for(int i = 0; i < linear.getChildCount(); i++) {
             setPlayerCard((ImageView) linear.getChildAt(i),card_ids.get(i));
         }
@@ -420,12 +459,12 @@ public class BoardActivity extends AppCompatActivity {
     }
 
     /**
-     * Called when dice gets rolled. Removes dice clickListener, resets stepsTaken in Gameplay
+     * Called when dice gets rolled. Removes dice clickListener, resets stepsTaken in Gameplay, creates a alert for the magnifying glass method
      * and calls the move methode
      */
     public void diceRolled() {
-        diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
-        rolledMagnifyingGlass(dice);
+        //diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
+        rolledMagnifyingGlass();
         gp1.setStepsTaken(0);
         movePlayerWithArrows();
     }
@@ -514,7 +553,7 @@ public class BoardActivity extends AppCompatActivity {
                 destination = findViewById(createRoomDestination(character,2));
                     moveAnimation(mover, destination);
                     break;
-                    
+
             case "lounge_btn_down":
             case "billiard_btn_up":
 
@@ -805,7 +844,7 @@ public class BoardActivity extends AppCompatActivity {
      */
     public void onCardViewClick() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this,R.style.AlertDialogStyle);
         if(gameplayCommunicator.isSuspicion())
             builder.setTitle(gameState.getAskQuestion().getAskPerson()+" suspected");
         else
@@ -839,14 +878,76 @@ public class BoardActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * sets the layout for the card alert
+     * initialises the ImageViews of the cards and sets
+     * the right image for the views.
+     */
+    private void setPlayerCardImages() {
+        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
+        playerCardsView = factory.inflate(R.layout.image_show_cards, null);
+
+        ImageView card1 = playerCardsView.findViewById(R.id.myCard1);
+        ImageView card2 = playerCardsView.findViewById(R.id.myCard2);
+        ImageView card3 = playerCardsView.findViewById(R.id.myCard3);
+        ImageView card4 = playerCardsView.findViewById(R.id.myCard4);
+        ImageView card5 = playerCardsView.findViewById(R.id.myCard5);
+        ImageView card6 = playerCardsView.findViewById(R.id.myCard6);
+
+        ArrayList<ImageView> card_list = new ArrayList<>();
+        card_list.add(card1);
+        card_list.add(card2);
+        card_list.add(card3);
+        card_list.add(card4);
+        card_list.add(card5);
+        card_list.add(card6);
+
+        int[] card_ids = getPlayerCardIds();
+
+        if(card_ids.length <= 6){
+            for(int i = 0; i < card_ids.length;i++){
+                setPlayerCard(card_list.get(i), card_ids[i]);
+            }
+            for(int i = card_ids.length; i < card_list.size();i++){
+                card_list.get(i).setVisibility(View.GONE);
+            }
+        }
+        else{
+            for(int i = 0; i < 6;i++){
+                setPlayerCard(card_list.get(i), card_ids[i]);
+            }
+        }
+
+
+    }
+
+    /**
+     * Connects with the network to get the cardids for the images
+     * @return Array with three to six ids for the images
+     */
+    private int[] getPlayerCardIds(){
+        int[] id;
+        //Hier mit Netzwerk verknüpfen
+        id = new int[]{
+                allCards.getGameCards().get(0).getId(),
+                allCards.getGameCards().get(7).getId(),
+                allCards.getGameCards().get(8).getId(),
+                allCards.getGameCards().get(20).getId(),
+                allCards.getGameCards().get(10).getId(),
+                allCards.getGameCards().get(18).getId()};
+        return id;
+    }
+
+    /**
+     * starts the Notepad Activity for the swipe motion
+     */
     public void startNotepad(){
         Intent intent = new Intent(this, NotepadActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
     }
-
     /**
-     * starts a new Activity to call an accusation or suspicion
+     * starts the Suspicion Activity for the swipe motion
      */
     public void startSuspicion(){
         Intent intent = new Intent(this, SuspicionActivity.class);
@@ -854,30 +955,33 @@ public class BoardActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
-    //EventListener für Swipe-Event
+    /**
+     * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert
+     */
     @Override
     public boolean onTouchEvent (MotionEvent touchEvent){
+
         switch(touchEvent.getAction()){
             case MotionEvent.ACTION_DOWN:
                 x1 = touchEvent.getX();
-                float y1 = touchEvent.getY();
+                y1 = touchEvent.getY();
                 break;
 
             case MotionEvent.ACTION_UP:
-                float x2 = touchEvent.getX();
-                float y2 = touchEvent.getY();
-                float swipeRight = x2 -x1,
-                        swipeLeft = x1- x2;
+                x2 = touchEvent.getX();
+                y2 = touchEvent.getY();
+                float swipeRight = x2-x1, swipeLeft = x1-x2, swipe = y1-y2;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
                     startSuspicion();
-                }else{
+                }else if (swipe > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
                 }
                 break;
         }
         return false;
     }
+
 }
