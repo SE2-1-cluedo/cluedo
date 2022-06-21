@@ -265,19 +265,20 @@ public class BoardActivity extends AppCompatActivity {
         alertDialog.show();
 
         shakeDetector.setOnShakeListener(count -> {
-            if (count < 2) {
-                dice.throwDice();
-                diceRolled();
-                final Timer timer2 = new Timer();
-                timer2.schedule(new TimerTask() {
-                    public void run() {
-                        alertDialog.dismiss();
-                        timer2.cancel(); //this will cancel the timer of the system
+            if(count < 2)
+            new Thread(){
+                public void run() {
+                    try {
+                        Thread.sleep(2000);
+                        runOnUiThread(alertDialog::cancel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                }, 2000);
-            }
-        });
+                }
+            }.start();
+    });
     }
+
 
     @Override
     public void onRestart() {
