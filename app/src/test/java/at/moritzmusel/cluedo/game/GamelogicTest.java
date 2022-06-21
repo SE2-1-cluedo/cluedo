@@ -1,18 +1,21 @@
 package at.moritzmusel.cluedo.game;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.mockito.Mockito.*;
-
-import static org.mockito.internal.util.MockUtil.createMock;
-import static org.powermock.api.support.SuppressCode.suppressConstructor;
-import static org.powermock.core.MockRepository.*;
-import org.easymock.*;
-
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static at.moritzmusel.cluedo.entities.Character.COLONEL_MUSTARD;
 import static at.moritzmusel.cluedo.entities.Character.DR_ORCHID;
 import static at.moritzmusel.cluedo.entities.Character.MISS_SCARLETT;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +25,9 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.robolectric.util.ReflectionHelpers;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,11 +42,23 @@ import at.moritzmusel.cluedo.network.pojo.GameState;
 public class GamelogicTest {
     String[] turnOrder = {"1","2","3"};
 
-    Gameplay gameOdd;
-    GameState gameState;
     Player player1 = new Player("1"),player2= new Player("2"),player3= new Player("3");
     ArrayList<Integer> cards1 = new ArrayList<>(),cards2 = new ArrayList<>(),cards3 = new ArrayList<>();
     ArrayList<Player> playersGameOdd = new ArrayList<>(3);
+
+    @Mock
+    private GameState gameState;
+    @Mock
+    private GameplayCommunicator gameCommunicator;
+    @Mock
+    private NetworkCommunicator netCommunicator;
+
+
+    private Gameplay gameOdd;
+
+    private GameState originalGameState;
+    private GameplayCommunicator originalGameCommunicator;
+    private NetworkCommunicator originalNetCommuicator;
 
     @Before
     public void setUp() throws Exception {
@@ -54,42 +71,47 @@ public class GamelogicTest {
         player3.setPlayerCharacterName(COLONEL_MUSTARD);player3.setPositionOnBoard(7);player3.setPlayerOwnedCards(cards3);
         playersGameOdd.add(player1);playersGameOdd.add(player2);playersGameOdd.add(player3);
 
+        originalGameState = GameState.getInstance();
+        originalGameCommunicator = GameplayCommunicator.getInstance();
+        originalNetCommuicator = NetworkCommunicator.getInstance();
+
+        when(gameState.getPlayerTurn()).thenReturn("1");
+        when(gameState.getPlayerState()).thenReturn(playersGameOdd);
+        when(gameState.getTurnOrder()).thenReturn(turnOrder);
+        when(gameState.getWeaponPositions()).thenReturn(new int[]{1,5,6,8,4,3});
+
+
+        doNothing().when(gameState).setAskQuestion(any(),anyBoolean());
+        doNothing().when(gameState).setPlayerState(anyList(),anyBoolean());
+        doNothing().when(gameState).setPlayerTurn(anyString(),anyBoolean());
+        doNothing().when(gameState).setTurnOrder(any());
+        doNothing().when(gameCommunicator).setTurnChange(anyBoolean());
+        doNothing().when(gameCommunicator).notifyList();
+
+        // Now set the instance with your mockSingleton using reflection
+        ReflectionHelpers.setStaticField(GameState.class, "OBJ", gameState);
+        ReflectionHelpers.setStaticField(GameplayCommunicator.class, "OBJ", gameCommunicator);
+        ReflectionHelpers.setStaticField(NetworkCommunicator.class, "OBJ", netCommunicator);
+
+        gameOdd = Gameplay.getInstance();
     }
+
+    /**
+     * Remove the mocked instance from the class. It is important to clean up the class, because other tests will be confused with the mocked instance.
+     * @throws Exception if the instance could not be accessible
+     */
+    @After
+    public void resetSingleton() throws Exception {
+        ReflectionHelpers.setStaticField(GameState.class, "OBJ", null);
+        ReflectionHelpers.setStaticField(GameplayCommunicator.class, "OBJ", null);
+        ReflectionHelpers.setStaticField(NetworkCommunicator.class, "OBJ", null);
+        gameOdd = null;
+    }
+
 
     @Test
     public void endTurnTest(){
-        /*************mocking singleton******************/
-        //Tell powermock to not to invoke constructor
-        //import import static org.powermock.api.easymock.PowerMock.suppressConstructor;
-        suppressConstructor(GameState.class);
-        suppressConstructor(Gameplay.class);
-        //mock static
-        mockStatic(GameState.class);
-        mockStatic(Gameplay.class);
-        //create mock for Singleton
-        GameState mockGameState = createMock(GameState.class);
-        Gameplay mockGameplay = createMock(Gameplay.class);
-        //set expectation for getInstance()
-        expect(mockGameState.getInstance()).andReturn(mockGameState).anyTimes();
-        expect(mockGameplay.getInstance()).andReturn(mockGameplay).anyTimes();
-        //set expectation for getHostName()
-        expect(mockGameplay.get);
-        replay(Singleton.class);
-        replay(mockSingleton);
-        /*******************************/
-        //create mock for data access
-        DaoService mockService = createMock(DaoService.class);
-        try {
-            expect(
-                    mockService.getHostLocationFromDB((String) EasyMock
-                            .anyObject())).andReturn(new ArrayList<string>());
-            ClassUsingSingleton classUsingSingleton = new ClassUsingSingleton(
-                    mockService);
-            replay(mockService);
-            classUsingSingleton.getHostLocationFromDB();
-        } catch (Exception e) {
-            Assert.fail("Unexpected Exception");
-            e.printStackTrace();
-        }
+        gameOdd.endTurn();
+        Assert.assertEquals(DR_ORCHID,gameOdd.getCurrentPlayer());
     }
 }

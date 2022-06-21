@@ -45,6 +45,13 @@ public class Gameplay {
     private Gameplay() {
         startGame();
     }
+    public Gameplay(List<Player> players, String[] turnOrderGame, GameState gameState){
+        this.gameState = gameState;
+        gameCommunicator = GameplayCommunicator.getInstance();
+        this.players = players;
+        this.turnOrderGame = turnOrderGame;
+        this.weaponsPos = new int[]{1,7,8,4,9,2};
+    }
 
     public void startGame(){
         gameState = GameState.getInstance();
@@ -118,7 +125,6 @@ public class Gameplay {
             for (int j = 0; j < 3; j++){
                 if(p.getPlayerOwnedCards().contains(cards[j]))
                     return p.getPlayerCharacterName().name();
-
             }
         }
         return "nobody";
@@ -203,7 +209,7 @@ public class Gameplay {
      * Decides which Player/Character is able to move first
      */
     public void decidePlayerWhoMovesFirst() {
-        String playerID = gameState.getTurnOrder()[0];
+        String playerID = turnOrderGame[0];
         currentPlayer = getCharacterByPlayerID(playerID);
     }
 
