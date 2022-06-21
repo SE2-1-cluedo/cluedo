@@ -40,18 +40,12 @@ public class Gameplay {
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponsPos;
 
-    private static final Gameplay OBJ = new Gameplay();
+    private static Gameplay OBJ;
 
     private Gameplay() {
         startGame();
     }
-    public Gameplay(List<Player> players, String[] turnOrderGame, GameState gameState){
-        this.gameState = gameState;
-        gameCommunicator = GameplayCommunicator.getInstance();
-        this.players = players;
-        this.turnOrderGame = turnOrderGame;
-        this.weaponsPos = new int[]{1,7,8,4,9,2};
-    }
+
 
     public void startGame(){
         gameState = GameState.getInstance();
@@ -105,7 +99,9 @@ public class Gameplay {
         players.add(p4);*/
     }
     public static Gameplay getInstance(){
-        return OBJ;
+        if(OBJ == null){
+            OBJ = new Gameplay();
+        }return OBJ;
     }
 
     /**
@@ -155,11 +151,7 @@ public class Gameplay {
     }
 
 
-    /**
-     * Called when a player left the game without finishing it
-     * and sending the cards of said player to the other active players
-     * @param player player who quit game
-     */
+   /*
     //Noch mit frontend und backend über das schicken und verteilen reden
     public void quitGame(Player player){
         List<Integer> cards = new ArrayList<>();
@@ -172,7 +164,7 @@ public class Gameplay {
         distributeCardsEquallyToPlayers(cards);
         gameState.setPlayerState(players,true);
         //send all cards to other players
-    }
+    }*/
 
     /**
      * Method to ask other Players a Question
@@ -227,27 +219,17 @@ public class Gameplay {
             }
         }
         gameCommunicator.notifyList();
-        return "?nobody? :^)";
+        return "nobody";
     }
 
-    /**
-     * Fill a List with numbers from min to max and then randomize it through Collection.shuffle
-     * which randomly permutes elements in a given list.
-     * @param min
-     * smallest Card in deck
-     * @param max
-     * biggest Card in deck
-     * @return
-     * a sorted integer List with the numbers min to max
-     */
-    private ArrayList<Integer> generateRandomCards(int min, int max){
+    /*    private ArrayList<Integer> generateRandomCards(int min, int max){
         ArrayList<Integer> cards = new ArrayList<>();
         for(int i = min;i <= max;i++){
             cards.add(i);
         }
         Collections.shuffle(cards);
         return cards;
-    }
+    }*/
 
 
     /**
@@ -269,7 +251,7 @@ public class Gameplay {
     }
 
 
-    private void distributeCardsEquallyToPlayers(List<Integer> cards){
+/*    private void distributeCardsEquallyToPlayers(List<Integer> cards){
         int i = 0;
         int j = 0;
         while(i < cards.size()){
@@ -280,7 +262,7 @@ public class Gameplay {
             i++;
             j++;
         }
-    }
+    }*/
 
     public Character getCharacterByPlayerID(String playerID){
         for(int i = 0; i < players.size(); i++){
@@ -291,7 +273,7 @@ public class Gameplay {
         return currentPlayer;
     }
 
-    private void checkWhatChangedInPlayer(List<Player> newPlayers){
+    protected void checkWhatChangedInPlayer(List<Player> newPlayers){
         for(int i = 0; i < players.size(); i++){
             if(!(newPlayers.get(i).getPositionOnBoard() == players.get(i).getPositionOnBoard())){
                 players = newPlayers;
@@ -301,11 +283,11 @@ public class Gameplay {
         }
     }
 
-    private void questionChanged(Question newQuestion) {
+  /*  protected void questionChanged(Question newQuestion) {
         //if(!newQuestion.equals())
-    }
+    }*/
 
-    private void checkWeaponChanged(int[] newWeapon) {
+    protected void checkWeaponChanged(int[] newWeapon) {
         if(!(Arrays.equals(newWeapon, weaponsPos))){
             weaponsPos = newWeapon;
             gameCommunicator.setMoved(true);
@@ -313,7 +295,7 @@ public class Gameplay {
         }
     }
 
-    private void checkTurnChanged(String newTurn){
+    protected void checkTurnChanged(String newTurn){
         if(!currentPlayer.name().equals(newTurn)){
             gameCommunicator.setTurnChange(true);
             gameCommunicator.notifyList();
@@ -405,5 +387,9 @@ public class Gameplay {
 
     public void setTurnOrderGame(String[] turnOrderGame) {
         this.turnOrderGame = turnOrderGame;
+    }
+
+    public int[] getWeaponsPos() {
+        return weaponsPos;
     }
 }
