@@ -34,6 +34,7 @@ public class Gameplay {
     private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
     private String[] turnOrderGame;
+    private GameState gameState;
     private GameplayCommunicator gameCommunicator;
     private NetworkCommunicator netCommunicator;
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
@@ -46,26 +47,28 @@ public class Gameplay {
     }
 
     public void startGame(){
-        /*turnOrderGame = GameState.getInstance().getTurnOrder();
-        players = GameState.getInstance().getPlayerState();
-        decidePlayerWhoMovesFirst();*/
-        weaponsPos = GameState.getInstance().getWeaponPositions();
+        gameState = GameState.getInstance();
+        turnOrderGame = gameState.getTurnOrder();
+        players = gameState.getPlayerState();
+        decidePlayerWhoMovesFirst();
+        weaponsPos = gameState.getWeaponPositions();
+
         gameCommunicator = GameplayCommunicator.getInstance();
         netCommunicator = NetworkCommunicator.getInstance();
 
         netCommunicator.register(()->{
             if(netCommunicator.isPlayerChanged()){
-                checkWhatChangedInPlayer(GameState.getInstance().getPlayerState());
+                checkWhatChangedInPlayer(gameState.getPlayerState());
             }
             if(netCommunicator.isQuestionChanged()){
                 gameCommunicator.setSuspicion(true);
                 gameCommunicator.notifyList();
             }
             if(netCommunicator.isTurnChanged()){
-                checkTurnChanged(GameState.getInstance().getPlayerTurn());
+                checkTurnChanged(gameState.getPlayerTurn());
             }
             if(netCommunicator.isWeaponsChanged()){
-                checkWeaponChanged(GameState.getInstance().getWeaponPositions());
+                checkWeaponChanged(gameState.getWeaponPositions());
             }
             if(netCommunicator.isHasWon()){
                 gameCommunicator.setWinner(true);
@@ -81,7 +84,7 @@ public class Gameplay {
             }
         });
 
-        Player p1 = new Player("1");
+       /* Player p1 = new Player("1");
         p1.setPlayerCharacterName(MISS_SCARLETT);
         Player p2 = new Player("2");
         p2.setPlayerCharacterName(DR_ORCHID);
@@ -92,7 +95,7 @@ public class Gameplay {
         players.add(p1);
         players.add(p2);
         players.add(p3);
-        players.add(p4);
+        players.add(p4);*/
     }
     public static Gameplay getInstance(){
         return OBJ;
@@ -104,7 +107,7 @@ public class Gameplay {
     public Character endTurn() {
         String playerID = getPlayerIDOfNextPlayerInTurnOrder();
         currentPlayer = getCharacterByPlayerID(playerID);
-        GameState.getInstance().setPlayerTurn(getPlayerIDOfNextPlayerInTurnOrder(), true);
+        gameState.setPlayerTurn(getPlayerIDOfNextPlayerInTurnOrder(), true);
         gameCommunicator.setTurnChange(true);
         gameCommunicator.notifyList();
         return currentPlayer;
@@ -132,7 +135,7 @@ public class Gameplay {
     public void updatePlayerPosition(int position) {
         Player player = findPlayerByCharacterName(currentPlayer);
         player.setPositionOnBoard(position);
-        GameState.getInstance().setPlayerState(players,true);
+        gameState.setPlayerState(players,true);
     }
 
     /**
@@ -161,7 +164,7 @@ public class Gameplay {
         }
         players.remove(player);
         distributeCardsEquallyToPlayers(cards);
-        GameState.getInstance().setPlayerState(players,true);
+        gameState.setPlayerState(players,true);
         //send all cards to other players
     }
 
@@ -172,16 +175,16 @@ public class Gameplay {
     public void askPlayerAQuestion(int[] cardsForQuestion){
         String playerCharacterName = getCurrentPlayer().name();
         Question question = new Question(playerCharacterName,cardsForQuestion);
-        GameState.getInstance().setAskQuestion(question,true);
+        gameState.setAskQuestion(question,true);
     }
 
     public void notifyDatabase(int[] array){
         weaponsPos = array;
-        GameState.getInstance().setWeaponPositions(array,true);
+        gameState.setWeaponPositions(array,true);
     }
 
     public boolean accusation(int[] cards) {
-        int[] killerCards = GameState.getInstance().getKiller();
+        int[] killerCards = gameState.getKiller();
         return Arrays.equals(cards,killerCards);
     }
 
@@ -200,7 +203,7 @@ public class Gameplay {
      * Decides which Player/Character is able to move first
      */
     public void decidePlayerWhoMovesFirst() {
-        String playerID = GameState.getInstance().getTurnOrder()[0];
+        String playerID = gameState.getTurnOrder()[0];
         currentPlayer = getCharacterByPlayerID(playerID);
     }
 
@@ -335,7 +338,7 @@ public class Gameplay {
     private String getPlayerIDOfNextPlayerInTurnOrder(){
         String playerID = "";
         for (int i = 0; i < turnOrderGame.length;i++) {
-            if (turnOrderGame[i].equals(GameState.getInstance().getPlayerTurn())) {
+            if (turnOrderGame[i].equals(gameState.getPlayerTurn())) {
                 if(i+1 == turnOrderGame.length){
                     i = 0;
                 }else {
@@ -390,4 +393,11 @@ public class Gameplay {
         return cardDrawn;
     }
 
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    public void setTurnOrderGame(String[] turnOrderGame) {
+        this.turnOrderGame = turnOrderGame;
+    }
 }
