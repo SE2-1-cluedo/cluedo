@@ -45,6 +45,13 @@ public class Network {
     private static ValueEventListener listener = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
+            //start Game
+            String start = (String) snapshot.child("turn-flag").child("startGame").getValue();
+            assert start != null;
+            if(start.equals("start")) {
+                NetworkCommunicator.getInstance().setStartGame(true);
+                NetworkCommunicator.getInstance().notifyList();
+            }
             //get PlayerTurn
             getGameState().setPlayerTurn((String)snapshot.child("turn-flag").child("player-turn").getValue(),false);
 
@@ -143,12 +150,12 @@ public class Network {
         game.child("timestamp").setValue(formated.format(current));
 
         //add Turn Flag path
-
         gameState = GameState.getInstance();
         DatabaseReference turnFlag = game.child("turn-flag");
         turnFlag.child("question").setValue("");
         turnFlag.child("player-turn").setValue(getCurrentUser().getUid());
         turnFlag.child("magnify").setValue("");
+        turnFlag.child("startGame").setValue("waiting");
 
         //add result path
         DatabaseReference result = game.child("result");
@@ -289,6 +296,9 @@ public class Network {
                 gameState.setTurnOrder(turnOrder);
                 for (Player p : list)
                     p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(task.getResult().child("players").child(p.getPlayerId()).child("position").getValue())));
+
+                //start Game for other players
+                game.child("turn-flag").child("startGame").setValue("start");
 
                 gameState.setPlayerState(list,true);
                 gameState.setWeaponPositions(gameState.getWeaponPositions(),true);

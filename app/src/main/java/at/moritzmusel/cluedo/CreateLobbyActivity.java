@@ -106,7 +106,10 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                 }
                 networkCommunicator.setPlayerChanged(false);
             }
-
+            if(networkCommunicator.isStartGame()){
+                Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
+                startActivity(i);
+            }
         });
 
         if(decision) {
@@ -170,6 +173,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         }
         if(view.getId() == R.id.btn_lobby_start){
             //select the character screen
+            Network.startGame(getGameID(),player_list);
             Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
             startActivity(i);
         }

@@ -155,7 +155,7 @@ public class BoardActivity extends AppCompatActivity {
                 gameplayCommunicator.setMoved(false);
             }
             if(gameplayCommunicator.isSuspicion()){
-                onCardViewClick();
+                //onCardViewClick();
             }
             if(gameplayCommunicator.isTurnChange()){
                 notifyCurrentPlayer();
@@ -191,7 +191,7 @@ public class BoardActivity extends AppCompatActivity {
         accel = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         shakeDetector = new ShakeDetector();
 
-        callDice();
+        //callDice();
     }
 
     /**
@@ -257,12 +257,12 @@ public class BoardActivity extends AppCompatActivity {
 
         builder.setCancelable(false);
 
-        /*builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
-        });*/
+        });
 
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -297,7 +297,7 @@ public class BoardActivity extends AppCompatActivity {
             else
             builder.setMessage("You suspected: ");
 
-            setPlayerCardImagesOLD();
+            setPlayerCardImages();
             builder.setView(playerCardsView);
 
             builder.setPositiveButton("Yes, proceed", (dialog, which) -> {
@@ -361,26 +361,60 @@ public class BoardActivity extends AppCompatActivity {
         }
 
     /**
-     * sets the Images used in the builders by calling the image_show_cards.xml
+     * sets the layout for the card alert
+     * initialises the ImageViews of the cards and sets
+     * the right image for the views.
      */
     @SuppressLint("InflateParams")
-    private void setPlayerCardImagesOLD() {
+    private void setPlayerCardImages() {
         LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
         playerCardsView = factory.inflate(R.layout.image_show_cards, null);
-        LinearLayout linear = playerCardsView.findViewById(R.id.linearLayout);
-        ArrayList<Integer> card_ids;
+        LinearLayout linearH0 = playerCardsView.findViewById(R.id.linearH0);
+        LinearLayout linearH1 = playerCardsView.findViewById(R.id.linearH1);
+        ArrayList<ImageView> card_list = new ArrayList<>();
 
+        for(int i = 0; i < linearH0.getChildCount()*2; i++){
+            if(i < 3)
+            card_list.add((ImageView) linearH0.getChildAt(i));
+            else
+            card_list.add((ImageView) linearH1.getChildAt(i-3));
+        }
+
+        ArrayList<Integer> card_ids = getPlayerCardIds();
+
+        if(card_ids.size() <= 6){
+            for(int i = 0; i < card_ids.size();i++){
+                setPlayerCard(card_list.get(i), card_ids.get(i));
+            }
+            for(int i = card_ids.size(); i < card_list.size();i++){
+                card_list.get(i).setVisibility(View.GONE);
+            }
+        }
+        else{
+            for(int i = 0; i < 6;i++){
+                setPlayerCard(card_list.get(i), card_ids.get(i));
+            }
+        }
+
+
+    }
+
+    /**
+     * Connects with the network to get the cardids for the images
+     * @return Array with three to six ids for the images
+     */
+    private ArrayList<Integer> getPlayerCardIds(){
+        ArrayList<Integer> card_ids;
         if(susCommunicator.getHasSuspected() || susCommunicator.getHasAccused())
             card_ids = new ArrayList<>(Arrays.asList(allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),newPosition+11));
         else if(gameplayCommunicator.isSuspicion())
             card_ids = new ArrayList<>(Arrays.asList(gameState.getAskQuestion().getCards()[0],gameState.getAskQuestion().getCards()[1],gameState.getAskQuestion().getCards()[2]));
-            else
+        else
             //card_ids = gp1.findPlayerByUserId(Network.getCurrentUser().getUid()).getPlayerOwnedCards();
             //here we need the cards from the hand (given by network)
             card_ids = new ArrayList<>(Arrays.asList(0,10,18));
-        for(int i = 0; i < linear.getChildCount(); i++) {
-            setPlayerCard((ImageView) linear.getChildAt(i),card_ids.get(i));
-        }
+
+        return card_ids;
     }
 
     /**
@@ -876,66 +910,6 @@ public class BoardActivity extends AppCompatActivity {
                 }
             }.start();
         }
-    }
-
-    /**
-     * sets the layout for the card alert
-     * initialises the ImageViews of the cards and sets
-     * the right image for the views.
-     */
-    private void setPlayerCardImages() {
-        LayoutInflater factory = LayoutInflater.from(BoardActivity.this);
-        playerCardsView = factory.inflate(R.layout.image_show_cards, null);
-
-        ImageView card1 = playerCardsView.findViewById(R.id.myCard1);
-        ImageView card2 = playerCardsView.findViewById(R.id.myCard2);
-        ImageView card3 = playerCardsView.findViewById(R.id.myCard3);
-        ImageView card4 = playerCardsView.findViewById(R.id.myCard4);
-        ImageView card5 = playerCardsView.findViewById(R.id.myCard5);
-        ImageView card6 = playerCardsView.findViewById(R.id.myCard6);
-
-        ArrayList<ImageView> card_list = new ArrayList<>();
-        card_list.add(card1);
-        card_list.add(card2);
-        card_list.add(card3);
-        card_list.add(card4);
-        card_list.add(card5);
-        card_list.add(card6);
-
-        int[] card_ids = getPlayerCardIds();
-
-        if(card_ids.length <= 6){
-            for(int i = 0; i < card_ids.length;i++){
-                setPlayerCard(card_list.get(i), card_ids[i]);
-            }
-            for(int i = card_ids.length; i < card_list.size();i++){
-                card_list.get(i).setVisibility(View.GONE);
-            }
-        }
-        else{
-            for(int i = 0; i < 6;i++){
-                setPlayerCard(card_list.get(i), card_ids[i]);
-            }
-        }
-
-
-    }
-
-    /**
-     * Connects with the network to get the cardids for the images
-     * @return Array with three to six ids for the images
-     */
-    private int[] getPlayerCardIds(){
-        int[] id;
-        //Hier mit Netzwerk verknüpfen
-        id = new int[]{
-                allCards.getGameCards().get(0).getId(),
-                allCards.getGameCards().get(7).getId(),
-                allCards.getGameCards().get(8).getId(),
-                allCards.getGameCards().get(20).getId(),
-                allCards.getGameCards().get(10).getId(),
-                allCards.getGameCards().get(18).getId()};
-        return id;
     }
 
     /**
