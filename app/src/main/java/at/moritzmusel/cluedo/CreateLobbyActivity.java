@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
@@ -82,12 +83,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, playerItems);
         list_playerlist.setAdapter(adapter);
 
-        /*for (Player p : game_state.getPlayerState()) {
-            if(p.getPlayerId().equals(user.getUid())){
-                addPlayer(list_playerlist);
-            }
-        }*/
-
         character_name = findViewById(R.id.txt_character_name);
         character_picture = findViewById(R.id.img_character);
         //addPlayer(list_playerlist);
@@ -96,23 +91,22 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         networkCommunicator.register(() -> {
             if(networkCommunicator.isPlayerChanged()){
                 player_list = gamestate.getPlayerState();
-                System.out.println(player_list);
-                for (Player p : gamestate.getPlayerState()) {
+                for (Player p : player_list) {
                     if(p.getPlayerId().equals(user.getUid())){
                         c = p.getPlayerCharacterName();
                         character_name.setText(c.name());
                         setImage();
                     }
-                    playerItems.add(playerCounter++ + " " + p.getPlayerCharacterName());
-                    //c.getNextCharacter();
+                    playerItems.add(p.getPlayerCharacterName().toString());
                     adapter.notifyDataSetChanged();
                     vibrate(500);
-
                 }
             }
+            //c.getNextCharacter();
+
         });
 
-        //setCharacter();
+        //removeDuplicates(playerItems);
 
 
         if(decision) {
@@ -180,27 +174,34 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             startActivity(i);
         }
         if(view.getId() == R.id.btn_back){
-            Network.setCtx(this);
-            androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(CreateLobbyActivity.this);
-            builder.setTitle("Attention!");
-            builder.setMessage("If you leave the Lobby now, you will have to create a new one.");
-            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Network.leaveLobby(user, game_id);
-                    finish();
-                }
-            });
+            if(decision){
+                Network.setCtx(this);
+                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(CreateLobbyActivity.this);
+                builder.setTitle("Attention!");
+                builder.setMessage("If you leave the Lobby now, you will have to create a new one.");
+                builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Network.leaveLobby(user, getGameID());
+                        finish();
+                    }
+                });
 
-            builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.create();
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
+                builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create();
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }else{
+                Network.setCtx(this);
+                Network.leaveLobby(user, getGameID());
+                finish();
+            }
+
         }
     }
 
@@ -220,6 +221,30 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             //game_id.setText(id_from_joinlobby);
         }
 
+    }
+
+    /**
+     * Removes the duplicates of an Arraylist
+     * @param list List of Arrays
+     * @return list without duplicates
+     */
+    public static <T> ArrayList<T> removeDuplicates(ArrayList<T> list)
+    {
+        // Create a new ArrayList
+        ArrayList<T> newList = new ArrayList<T>();
+
+        // Traverse through the first list
+        for (T element : list) {
+
+            // If this element is not present in newList
+            // then add it
+            if (!newList.contains(element) || element != null) {
+                newList.add(element);
+            }
+        }
+
+        // return the new list
+        return newList;
     }
 
     public void network(){
