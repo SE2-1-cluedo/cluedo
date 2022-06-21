@@ -211,13 +211,17 @@ public class Network {
     public static void joinLobby(FirebaseUser user, String gameID) {
         setCurrentGameID(gameID);
         setCurrentUser(user);
+        ArrayList<String> joinedCharacters = new ArrayList<>();
         getCurrentGame().get().addOnCompleteListener(task -> {
             if (!task.isSuccessful())
                 Log.e("firebase", "Error getting data", task.getException());
             else {
-                for(DataSnapshot snap: task.getResult().child("players").getChildren())
-                    if(Objects.equals((String)snap.child("character").getValue(),currentCharacter.name()))
-                        currentCharacter = currentCharacter.getNextCharacter();
+                for(DataSnapshot snap: task.getResult().child("players").getChildren()) {
+                    joinedCharacters.add((String) snap.child("character").getValue());
+                }
+                do {
+                    currentCharacter = currentCharacter.getNextCharacter();
+                } while (joinedCharacters.contains(currentCharacter.name()));
 
                     DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
                     p.child("character").setValue(currentCharacter.name());

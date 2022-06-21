@@ -257,30 +257,22 @@ public class BoardActivity extends AppCompatActivity {
 
         builder.setCancelable(false);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
 
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
 
-        shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
-            @Override
-            public void onShake(int count) {
-                if (count < 2) {
-                    dice.throwDice();
-                    diceRolled();
-                    final Timer timer2 = new Timer();
-                    timer2.schedule(new TimerTask() {
-                        public void run() {
-                            alertDialog.dismiss();
-                            timer2.cancel(); //this will cancel the timer of the system
-                        }
-                    }, 2000);
-                }
+        shakeDetector.setOnShakeListener(count -> {
+            if (count < 2) {
+                dice.throwDice();
+                diceRolled();
+                final Timer timer2 = new Timer();
+                timer2.schedule(new TimerTask() {
+                    public void run() {
+                        alertDialog.dismiss();
+                        timer2.cancel(); //this will cancel the timer of the system
+                    }
+                }, 2000);
             }
         });
     }
