@@ -266,6 +266,7 @@ public class Network {
                 if (dataSnapshot!= null && dataSnapshot.exists() && getCurrentGameID() != null && user != null){
                     player.removeValue();
                     setCurrentGameID(null);
+                    gameState.reset();
                     setGameState(null);
                 }
             }

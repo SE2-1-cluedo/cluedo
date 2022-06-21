@@ -83,11 +83,16 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         character_name = findViewById(R.id.txt_character_name);
         character_picture = findViewById(R.id.img_character);
 
+        getNetworkPlayerList();
 
         networkCommunicator.register(() -> {
+            //playerlist genau gleiche viele wie in der Gamestate
+            playerItems.clear();
             if(networkCommunicator.isPlayerChanged()) {
+                System.out.println("Player changed");
                 player_list = gamestate.getPlayerState();
                 if (networkCommunicator.isCharacterChanged()) {
+                    System.out.println("Character changed");
                     for (Player p : player_list) {
                         if (p.getPlayerId().equals(user.getUid())) {
                             c = p.getPlayerCharacterName();
@@ -105,12 +110,14 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                 }
                 networkCommunicator.setPlayerChanged(false);
             }
+
             if(networkCommunicator.isStartGame()){
                 Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
                 startActivity(i);
             }
+
             if(decision){
-                if(playerItems.size() < 3 || playerItems.size() > 6){
+                if(playerItems.size() < 2 || playerItems.size() > 6){
                     start.setClickable(false);
                     start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
                 }
@@ -130,6 +137,60 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
            send_link.setVisibility(View.INVISIBLE);
            lobby_title.setText(R.string.lobby);
         }
+    }
+
+    public void onBackPressed(){
+        back();
+    }
+
+    /**
+     * Sets the players in the list
+     * Starts the game for everyone
+     * Disable button until three player joined
+     */
+    public void getNetworkPlayerList(){
+        networkCommunicator.register(() -> {
+            //playerlist genau gleiche viele wie in der Gamestate
+            playerItems.clear();
+            if(networkCommunicator.isPlayerChanged()) {
+                System.out.println("Player changed");
+                player_list = gamestate.getPlayerState();
+                if (networkCommunicator.isCharacterChanged()) {
+                    System.out.println("Character changed");
+                    for (Player p : player_list) {
+                        if (p.getPlayerId().equals(user.getUid())) {
+                            c = p.getPlayerCharacterName();
+                            character_name.setText(c.name());
+                            setImage();
+                        }
+                        if (!playerItems.contains(p.getPlayerCharacterName().name())) {
+                            playerCounter++;
+                            playerItems.add(p.getPlayerCharacterName().name());
+                            adapter.notifyDataSetChanged();
+                            vibrate(500);
+                        }
+                    }
+                    networkCommunicator.setCharacterChanged(false);
+                }
+                networkCommunicator.setPlayerChanged(false);
+            }
+
+            if(networkCommunicator.isStartGame()){
+                Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
+                startActivity(i);
+            }
+
+            if(decision){
+                if(playerItems.size() < 2 || playerItems.size() > 6){
+                    start.setClickable(false);
+                    start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
+                }
+                else{
+                    start.setClickable(true);
+                    start.setBackground(getResources().getDrawable(R.drawable.custom_button));
+                }
+            }
+        });
     }
 
     /**
@@ -186,25 +247,32 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             startActivity(i);
         }
         if(view.getId() == R.id.btn_back){
-            if(decision){
-                Network.setCtx(this);
-                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(CreateLobbyActivity.this);
-                builder.setTitle("Attention!");
-                builder.setMessage("If you leave the Lobby now, you will have to create a new one.");
-                builder.setNeutralButton("OK", (dialog, which) -> {
-                    Network.leaveLobby(user, getGameID());
-                    finish();
-                });
-                builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
-                builder.create();
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-            }else{
-                Network.setCtx(this);
+            back();
+        }
+    }
+
+    public void back(){
+        if(decision){
+            Network.setCtx(this);
+            androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(CreateLobbyActivity.this);
+            builder.setTitle("Attention!");
+            builder.setMessage("If you leave the Lobby now, you will have to create a new one.");
+            builder.setNeutralButton("OK", (dialog, which) -> {
                 Network.leaveLobby(user, getGameID());
                 finish();
-            }
+            });
+            builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
+            builder.create();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }else{
+            Network.setCtx(this);
+            //playerliste löscht player
+            //Gamestate player finden removen und dann sollte er weg sein
+            //playerItems.remove()
 
+            Network.leaveLobby(user, getGameID());
+            finish();
         }
     }
 

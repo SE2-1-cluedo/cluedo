@@ -66,33 +66,36 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
             enter = getEnterId();
             Network.getDatabaseReference().get().addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) Log.e("firebase", "Error getting data", task.getException());
-                else right_game_id = task.getResult().child(enter).exists();
-            });
-            //Checken ob die überhaupt exisitert
-            if(right_game_id && !enter.isEmpty()){
-                new AlertDialog.Builder(JoinLobbyActivity.this)
-                        .setTitle("ERROR")
-                        .setMessage("The ENTER ID is false/empty: " + right_game_id + enter)
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                else {
+                    right_game_id = task.getResult().child(enter).exists();
+                    //Checken ob die überhaupt exisitert
+                    if(!right_game_id && !enter.isEmpty()){
+                        new AlertDialog.Builder(JoinLobbyActivity.this)
+                                .setTitle("ERROR")
+                                .setMessage("The ENTER ID is false/empty: " + right_game_id + enter)
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        }).show();
-            }
-            else{
-                Network.setCtx(this);
-                Network.joinLobby(user, enter);
-                Intent i = new Intent(JoinLobbyActivity.this, CreateLobbyActivity.class);
-                i.putExtra("decision",false);
-                //i.putExtra("game_id",game_id);
-                i.putExtra("user",user);
-                i.putExtra(Intent.EXTRA_TEXT, enter);
-                //false = join
-                //true = create
-                startActivity(i);
-            }
+                                    }
+                                }).show();
+                    }
+                    else{
+                        Network.setCtx(this);
+                        Network.joinLobby(user, enter);
+                        Intent i = new Intent(JoinLobbyActivity.this, CreateLobbyActivity.class);
+                        i.putExtra("decision",false);
+                        //i.putExtra("game_id",game_id);
+                        i.putExtra("user",user);
+                        i.putExtra(Intent.EXTRA_TEXT, enter);
+                        //false = join
+                        //true = create
+                        startActivity(i);
+                    }
+                }
+            });
+
         }
     }
 
