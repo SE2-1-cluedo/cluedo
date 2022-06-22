@@ -34,7 +34,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private final ArrayList<String> playerItems = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     private int playerCounter = 1;
-    private Button send_link;
     private TextView lobby_title;
     private Button start;
     private Button back;
@@ -66,7 +65,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         decision = getIntent().getExtras().getBoolean("decision");
         user = (FirebaseUser) getIntent().getExtras().get("user");
 
-        send_link = findViewById(R.id.btn_send_link);
+        Button send_link = findViewById(R.id.btn_send_link);
         send_link.setOnClickListener(this);
 
         start = findViewById(R.id.btn_lobby_start);
