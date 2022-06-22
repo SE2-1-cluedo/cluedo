@@ -2,9 +2,6 @@ package at.moritzmusel.cluedo.game;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,7 +44,6 @@ public class GamelogicTest {
     private NetworkCommunicator netCommunicator;
 
 
-
     private Gameplay gameOdd;
 
     private GameState originalGameState;
@@ -75,20 +71,13 @@ public class GamelogicTest {
         when(gameState.getWeaponPositions()).thenReturn(new int[]{1,5,6,8,4,3});
         when(gameState.getKiller()).thenReturn(new int[]{2,11,20});
 
-
-        /*doNothing().when(gameState).setAskQuestion(any(Question.class),anyBoolean());
-        doNothing().when(gameState).setPlayerState(anyList(),anyBoolean());
-        doNothing().when(gameState).setPlayerTurn(anyString(),anyBoolean());
-        doNothing().when(gameState).setTurnOrder(turnOrder);
-        doNothing().when(gameCommunicator).setTurnChange(anyBoolean());
-        doNothing().when(gameCommunicator).notifyList();*/
-
         // Now set the instance with your mockSingleton using reflection
         ReflectionHelpers.setStaticField(GameState.class, "OBJ", gameState);
         ReflectionHelpers.setStaticField(GameplayCommunicator.class, "OBJ", gameCommunicator);
         ReflectionHelpers.setStaticField(NetworkCommunicator.class, "OBJ", netCommunicator);
 
         gameOdd = Gameplay.getInstance();
+
     }
 
     /**
