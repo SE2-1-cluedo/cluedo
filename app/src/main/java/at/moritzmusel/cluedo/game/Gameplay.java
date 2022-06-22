@@ -62,10 +62,12 @@ public class Gameplay {
             if(netCommunicator.isPlayerChanged()){
                 System.out.println("Notification from Gamestate");
                 checkWhatChangedInPlayer(gameState.getPlayerState());
+                netCommunicator.setPlayerChanged(false);
             }
             if(netCommunicator.isQuestionChanged()){
                 gameCommunicator.setSuspicion(true);
                 gameCommunicator.notifyList();
+                netCommunicator.setQuestionChanged(false);
             }
             if(netCommunicator.isTurnChanged()){
                 checkTurnChanged(gameState.getPlayerTurn());
@@ -76,6 +78,7 @@ public class Gameplay {
             if (netCommunicator.isMagnify()){
                 gameCommunicator.setMagnifying(true);
                 gameCommunicator.notifyList();
+                netCommunicator.setMagnify(false);
             }
         });
     }
@@ -319,6 +322,7 @@ public class Gameplay {
     private void checkWeaponChanged(int[] newWeapon) {
         if(!(Arrays.equals(newWeapon, weaponsPos))){
             weaponsPos = newWeapon;
+            netCommunicator.setWeaponsChanged(false);
             gameCommunicator.setMoved(true);
             gameCommunicator.notifyList();
         }
@@ -327,6 +331,7 @@ public class Gameplay {
     private void checkTurnChanged(String newTurn){
         if(!findPlayerByCharacterName(currentPlayer).getPlayerId().equals(newTurn)){
             currentPlayer = findPlayerById(newTurn).getPlayerCharacterName();
+            netCommunicator.setTurnChanged(false);
             gameCommunicator.setTurnChange(true);
             gameCommunicator.notifyList();
         }

@@ -145,7 +145,7 @@ public class BoardActivity extends AppCompatActivity {
         gameplayCommunicator.register(() -> {
             if(gameplayCommunicator.isMoved()){
                 System.out.println("Now we refreshed");
-                refreshBoard();
+               // refreshBoard();
                 gameplayCommunicator.setMoved(false);
             }
             if(gameplayCommunicator.isSuspicion()){

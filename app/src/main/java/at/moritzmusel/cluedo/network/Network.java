@@ -268,28 +268,7 @@ public class Network {
 
         //check if FB user and game exists
         Log.i(TAG, ("joinLobby() called params:"+ user +" "+ (getCurrentGameID() == null)));
-       /*
-       OnDataRetreive onDataRetreive = new OnDataRetreive() {
-            @Override
-            public void onSuccess(DataSnapshot dataSnapshot) {
-                Log.i(TAG, "onSuccess()");
-                if(dataSnapshot.exists()){
-                    if (user != null && getCurrentGameID() == null) {
 
-                        //TODO: SET GAMESTATE
-                    } else {
-                        throw new IllegalStateException("Make sure you are not already in a game when joining, or the game exists!");
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Object error) {
-                Log.e(TAG, ((Exception)error).getMessage());
-            }
-        };
-        checkIfGameExists(gameID, onDataRetreive);
-        */
     }
 
 
@@ -323,26 +302,20 @@ public class Network {
     public static void startGame(String gameID, List<Player> list) {
         DatabaseReference game = games.child(gameID);
         StringBuilder sbTurnOrder = new StringBuilder();
-
+        String[] turnOrder = new String[list.size()];
         //set turnOrder
-        for(Player p: list)
-            sbTurnOrder.append(p.getPlayerId()).append(" ");
+        for(int i = 0; i < list.size(); i++){
+            sbTurnOrder.append(list.get(i).getPlayerId()).append(" ");
+            turnOrder[i] = list.get(i).getPlayerId();
+        }
 
         game.child("turn-order").setValue(sbTurnOrder.toString().trim());
+        gameState.setTurnOrder(turnOrder,false);
 
-        game.get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful())
-                Log.e("firebase", "Error getting data", task.getException());
-            else {
-                String[] turnOrder = String.valueOf(task.getResult().child("turn-order").getValue()).split(" ");
-                gameState.setTurnOrder(turnOrder,false);
-                //start Game for other players
-                game.child("turn-flag").child("startGame").setValue("start");
+        game.child("turn-flag").child("startGame").setValue("start");
 
-                setGameState(gameState);
-                gameState.assignCards();
-            }
-        });
+        gameState.setPlayerState(list,false);
+        gameState.assignCards();
     }
 
     //Für Karten zum Ausscheiden hinzu

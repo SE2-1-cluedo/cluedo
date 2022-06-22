@@ -38,7 +38,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private TextView lobby_title;
     private Button start;
     private Button back;
-    private boolean decision;
+    private boolean decision, started;
     private Character c;
     private TextView character_name;
     private ImageView character_picture;
@@ -130,9 +130,11 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             }
 
             //checks if the game starts so the board can be called
-            if(networkCommunicator.isStartGame()){
+            if(networkCommunicator.isStartGame() && !started){
+                started = true;
                 Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
                 startActivity(i);
+                finish();
             }
         });
 
@@ -204,6 +206,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         }
         if(view.getId() == R.id.btn_lobby_start){
             //select the character screen
+            started = true;
             Network.startGame(getGameID(),player_list);
             Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
             startActivity(i);
@@ -216,8 +219,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onPause() {
         super.onPause();
-        gamestate.reset();
-        networkCommunicator.reset();
+        if (!started) {
+            networkCommunicator.reset();
+        }
     }
 
     public void back(){
