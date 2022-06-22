@@ -39,8 +39,6 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
         checkAdapter = new CheckboxAdapter(this, list, notepadData);
         listView.setAdapter(checkAdapter);
 
-        //setPlayersOwnedCards();
-        //setQuitPlayersCards();
 
         Button btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
         btn_closeNotepad.setOnClickListener(this);
@@ -64,42 +62,6 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-
-/*     //TODO autamtic setChecked QuitPlayersCards
-       public void setQuitPlayersCards() {
-           int [] cards = new int[];
-           cards = Methode von Konstantin
-           for (int i = 0; i < checkAdapter.checkboxItems.size(); i++) {
-               for (int j = 0; j < cards.length; j++) {
-                   if (Integer.valueOf(checkAdapter.checkboxItems.get(i)).equals(cards[j])) {
-                       checkAdapter.cb1.setChecked(true);
-                       checkAdapter.cb2.setChecked(true);
-                       checkAdapter.cb3.setChecked(true);
-                       checkAdapter.cb4.setChecked(true);
-                       checkAdapter.cb5.setChecked(true);
-                       checkAdapter.cb6.setChecked(true);
-                   }
-               }
-           }
-       }
-  */
-    //TODO autamtic setChecked PlayerOwnedCards
-    public void setPlayersOwnedCards() {
-        ArrayList<Integer> cards = new ArrayList<>();
-        //cards = Methode von Robert
-        for (int x = 0; x < checkAdapter.checkboxItems.size(); x++) {
-            for (int j = 0; j < cards.size(); j++) {
-                if (Integer.valueOf(checkAdapter.checkboxItems.get(x)).equals(cards.get(j))) {
-                    checkAdapter.cb1.setChecked(true);
-                    checkAdapter.cb2.setChecked(true);
-                    checkAdapter.cb3.setChecked(true);
-                    checkAdapter.cb4.setChecked(true);
-                    checkAdapter.cb5.setChecked(true);
-                    checkAdapter.cb6.setChecked(true);
-                }
-            }
-        }
-    }
 
     /**
      * With a swipe to the left you get back to the main board.
@@ -144,6 +106,15 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
                 checkboxStatecb4 = new ArrayList<Boolean>();
                 checkboxStatecb5 = new ArrayList<Boolean>();
                 checkboxStatecb6 = new ArrayList<Boolean>();
+
+                for (int i = 0; i < 21; i++) {
+                    checkboxStatecb1.add(i, false);
+                    checkboxStatecb2.add(i, false);
+                    checkboxStatecb3.add(i, false);
+                    checkboxStatecb4.add(i, false);
+                    checkboxStatecb5.add(i, false);
+                    checkboxStatecb6.add(i, false);
+                }
                 this.active = true;
             }
         }
@@ -194,6 +165,15 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
 
         public void setCheckboxStatecb6(List<Boolean> checkboxStatecb6) {
             this.checkboxStatecb6 = checkboxStatecb6;
+        }
+
+        public void setAllCheckBoxInLine(int i) {
+            getCheckboxStatecb1().set(i, true);
+            getCheckboxStatecb2().set(i, true);
+            getCheckboxStatecb3().set(i, true);
+            getCheckboxStatecb4().set(i, true);
+            getCheckboxStatecb5().set(i, true);
+            getCheckboxStatecb6().set(i, true);
         }
     }
 
