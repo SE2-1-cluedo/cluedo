@@ -35,14 +35,18 @@ public class GameState {
     DatabaseReference dbRef;
     private final NetworkCommunicator communicator = NetworkCommunicator.getInstance();
 
-    private static final GameState OBJ = new GameState();
+    private static GameState OBJ;
 
     private GameState(){
-        initQuestionCardsStack(Network.getCtx());
+        //initQuestionCardsStack(Network.getCtx());
         dbRef = Network.getCurrentGame();
     }
 
     public static GameState getInstance() {
+        if(OBJ == null){
+            OBJ = new GameState();
+            return OBJ;
+        }
         return OBJ;
     }
 
