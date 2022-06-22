@@ -93,12 +93,10 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
         networkCommunicator.register(() -> {
             //playerlist genau gleiche viele wie in der Gamestate
-            playerItems.clear();
             if(networkCommunicator.isPlayerChanged()) {
-                System.out.println("Player changed");
                 player_list = gamestate.getPlayerState();
                 if (networkCommunicator.isCharacterChanged()) {
-                    System.out.println("Character changed");
+                    playerItems.clear();
                     for (Player p : player_list) {
                         if (p.getPlayerId().equals(user.getUid())) {
                             c = p.getPlayerCharacterName();

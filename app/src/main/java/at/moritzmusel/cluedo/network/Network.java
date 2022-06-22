@@ -138,9 +138,7 @@ public class Network {
                             p.setCardsKnownThroughQuestions((ArrayList<Integer>) Arrays.stream(Stream.of(knownCards)
                                     .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
                         }
-
                     playerList.add(p);
-                    System.out.println("added a Player");
                 }
                 if (playerChanged)
                     getGameState().setPlayerState(playerList, false);
@@ -301,6 +299,7 @@ public class Network {
         getCurrentGame().child("turn-flag").removeEventListener(turnFlagListener);
         getCurrentGame().child("result").removeEventListener(resultListener);
 
+        currentCharacter = Character.MISS_SCARLETT;
         OnDataRetreive onDataRetreive = new OnDataRetreive() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
