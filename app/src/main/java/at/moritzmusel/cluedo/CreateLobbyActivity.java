@@ -94,9 +94,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                         if (p.getPlayerId().equals(user.getUid())) {
                             setCharacter(p);
                             setLobby();
-                            checkNumberOfPlayers();
                         }
                         addPlayerWithoutDuplicates(p);
+                        checkNumberOfPlayers();
                     }
                     networkCommunicator.setCharacterChanged(false);
                 }
@@ -118,7 +118,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      */
     private void checkNumberOfPlayers(){
         if(c == Character.MISS_SCARLETT){
-            if(playerItems.size() < 2 || playerItems.size() > 6){
+            if(playerItems.size() < 3 || playerItems.size() > 6){
                 start.setClickable(false);
                 start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
             }
@@ -237,6 +237,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         if(view.getId() == R.id.btn_lobby_start){
             //select the character screen
             started = true;
+            networkCommunicator.setPositionChanged(false);
             Network.startGame(getGameID(),player_list);
             Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
             startActivity(i);

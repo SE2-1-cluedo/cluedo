@@ -1,17 +1,11 @@
 package at.moritzmusel.cluedo.game;
 
-import static at.moritzmusel.cluedo.entities.Character.DR_ORCHID;
-import static at.moritzmusel.cluedo.entities.Character.MISS_SCARLETT;
-import static at.moritzmusel.cluedo.entities.Character.PROFESSOR_PLUM;
-import static at.moritzmusel.cluedo.entities.Character.REVEREND_GREEN;
-
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.communication.GameplayCommunicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Character;
@@ -31,15 +25,12 @@ public class Gameplay {
     private Character currentPlayer;
     private List<Player> players = new ArrayList<>();
     private ArrayList<Integer> clueCards = new ArrayList<>();
-    private final SecureRandom rand = new SecureRandom();
-    private int cardDrawn;
-    private String[] turnOrderGame;
+    private final String[] turnOrderGame;
     private GameplayCommunicator gameCommunicator;
     private NetworkCommunicator netCommunicator;
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponsPos;
-    private GameState gameState;
-    int counter = 0;
+    private final GameState gameState;
 
     private static final Gameplay OBJ = new Gameplay();
 
@@ -49,6 +40,7 @@ public class Gameplay {
         players = gameState.getPlayerState();
         weaponsPos = gameState.getWeaponPositions();
 //        decidePlayerWhoMovesFirst();
+        startGame();
         currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
         findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
     }
@@ -59,10 +51,11 @@ public class Gameplay {
         netCommunicator = NetworkCommunicator.getInstance();
 
         netCommunicator.register(()->{
-            if(netCommunicator.isPlayerChanged()){
+            if(netCommunicator.isPositionChanged()){
                 System.out.println("Notification from Gamestate");
-                checkWhatChangedInPlayer(gameState.getPlayerState());
-                netCommunicator.setPlayerChanged(false);
+                //checkWhatChangedInPlayer(gameState.getPlayerState());
+                gameCommunicator.setMoved(true);
+                gameCommunicator.notifyList();
             }
             if(netCommunicator.isQuestionChanged()){
                 gameCommunicator.setSuspicion(true);
@@ -415,9 +408,6 @@ public class Gameplay {
 
     public List<Player> getPlayers() {
         return players;
-    }
-    public int getCardDrawn() {
-        return cardDrawn;
     }
 
     public int[] getWeaponsPos() {

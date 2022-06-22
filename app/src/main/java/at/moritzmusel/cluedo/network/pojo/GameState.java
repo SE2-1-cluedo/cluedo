@@ -145,10 +145,15 @@ public class GameState {
     public void setPlayerState(List<Player> playerState, boolean database) {
         this.playerState = playerState;
         if(!database) {
+            System.out.println("Player changed");
             if(!communicator.isPlayerChanged()){
                 communicator.setPlayerChanged(true);
                 communicator.notifyList();
-                System.out.println("Changed Player");
+            }
+            if(!communicator.isPositionChanged()){
+                System.out.println("Now position was called");
+                communicator.setPositionChanged(true);
+                communicator.notifyList();
             }
         }
         else if(playerState == null){

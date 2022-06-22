@@ -14,7 +14,6 @@ import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,13 +32,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.stream.IntStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 
 import at.moritzmusel.cluedo.communication.GameplayCommunicator;
@@ -48,16 +41,17 @@ import at.moritzmusel.cluedo.communication.SuspicionCommunicator;
 import at.moritzmusel.cluedo.game.Dice;
 import at.moritzmusel.cluedo.network.Network;
 import at.moritzmusel.cluedo.network.pojo.GameState;
-import at.moritzmusel.cluedo.network.pojo.Question;
 import at.moritzmusel.cluedo.sensor.ShakeDetector;
 import at.moritzmusel.cluedo.game.Gameplay;
 import at.moritzmusel.cluedo.entities.Character;
 
 public class BoardActivity extends AppCompatActivity {
 
-    private View decorView, diceView, playerCardsView;
+    private View decorView;
+    private View playerCardsView;
     private AllTheCards allCards;
-    private float x1,x2,y1,y2;
+    private float x1;
+    private float y1;
     private GameState gameState;
     private SuspicionCommunicator susCommunicator;
     private GameplayCommunicator gameplayCommunicator;
@@ -72,8 +66,6 @@ public class BoardActivity extends AppCompatActivity {
     private final ArrayList<ImageView> allWeapons = new ArrayList<>();
     private final ArrayList<String> weaponNames = new ArrayList<>(Arrays.asList("dagger","candlestick","revolver","rope", "pipe","wrench"));
     private EvidenceCards evidenceCards;
-    private ImageView image;
-    private View dice_layout;
 
     private SensorManager mSensorManager;
     private Sensor accel;
@@ -93,7 +85,6 @@ public class BoardActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         gp1 = Gameplay.getInstance();
-        gp1.startGame();
 
         setContentView(R.layout.test_board2);
         ConstraintLayout constraint = findViewById(R.id.constraintLayout);
@@ -145,8 +136,9 @@ public class BoardActivity extends AppCompatActivity {
         gameplayCommunicator.register(() -> {
             if(gameplayCommunicator.isMoved()){
                 System.out.println("Now we refreshed");
-               // refreshBoard();
+//                refreshBoard();
                 gameplayCommunicator.setMoved(false);
+                netCommunicator.setPositionChanged(false);
             }
             if(gameplayCommunicator.isSuspicion()){
                 //onCardViewClick();
@@ -160,6 +152,7 @@ public class BoardActivity extends AppCompatActivity {
         });
 
         netCommunicator = NetworkCommunicator.getInstance();
+        netCommunicator.setPositionChanged(false);
         netCommunicator.register(() -> {
            if(netCommunicator.isHasLost()) {
                 //call loser dialog
@@ -170,7 +163,7 @@ public class BoardActivity extends AppCompatActivity {
         });
 
         allCards = new AllTheCards();
-        allCards.getGameCards();
+        allGameCards = allCards.getGameCards();
 
         evidenceCards = new EvidenceCards();
 
@@ -180,7 +173,7 @@ public class BoardActivity extends AppCompatActivity {
 //            gameplayCommunicator.notifyList();
 //        });
 
-        image = new ImageView(this);
+        ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -247,10 +240,10 @@ public class BoardActivity extends AppCompatActivity {
         builder.setTitle("Throw Dice");
 
         LayoutInflater inflater = getLayoutInflater();
-        dice_layout = inflater.inflate(R.layout.custom_dialog, null);
+        View dice_layout = inflater.inflate(R.layout.custom_dialog, null);
         builder.setView(dice_layout);
 
-        diceView = dice_layout.findViewById(R.id.dialogDice);
+        View diceView = dice_layout.findViewById(R.id.dialogDice);
         dice = new Dice((ImageView) diceView);
         diceView.setOnClickListener(v -> {
             dice.throwDice();
@@ -937,9 +930,9 @@ public class BoardActivity extends AppCompatActivity {
                 break;
 
             case MotionEvent.ACTION_UP:
-                x2 = touchEvent.getX();
-                y2 = touchEvent.getY();
-                float swipeRight = x2-x1, swipeLeft = x1-x2, swipe = y1-y2;
+                float x2 = touchEvent.getX();
+                float y2 = touchEvent.getY();
+                float swipeRight = x2 -x1, swipeLeft = x1- x2, swipe = y1- y2;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
