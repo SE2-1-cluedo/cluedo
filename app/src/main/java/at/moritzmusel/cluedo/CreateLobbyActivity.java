@@ -85,32 +85,32 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         character_name = findViewById(R.id.txt_character_name);
         character_picture = findViewById(R.id.img_character);
 
+        managePlayerList();
+
         /*if(decision) {
             createUI();
         }else{
             joinUI();
         }*/
 
+    }
+
+    /**
+     * If a player creates, leaves or joins lobby it will update the list
+     */
+    public void managePlayerList(){
         networkCommunicator.register(() -> {
             //playerlist genau gleiche viele wie in der Gamestate
             playerItems.clear();
             if(networkCommunicator.isPlayerChanged()) {
-                System.out.println("Player changed");
                 player_list = gamestate.getPlayerState();
                 if (networkCommunicator.isCharacterChanged()) {
-                    System.out.println("Character changed");
                     for (Player p : player_list) {
                         if (p.getPlayerId().equals(user.getUid())) {
-                            c = p.getPlayerCharacterName();
-                            character_name.setText(c.name());
-                            setImage();
+                            setCharacter(p);
+                            setLobby();
                             if(c == Character.MISS_SCARLETT){
-                                createUI();
-                            }else{
-                                joinUI();
-                            }
-                            if(c == Character.MISS_SCARLETT){
-                                if(playerItems.size() < 1 || playerItems.size() > 6){
+                                if(playerItems.size() < 3 || playerItems.size() > 6){
                                     start.setClickable(false);
                                     start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
                                 }
@@ -140,6 +140,21 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    /**
+     * Because the characters for the players will be automatically assign by the network
+     * and if your are Miss Scarlett then you are the host that can start the game.
+     */
+    private void setLobby() {
+        if(c == Character.MISS_SCARLETT){
+            createUI();
+        }else{
+            joinUI();
+        }
+    }
+
+    /**
+     * If somebody enters through the join lobby the Activity will change to the Lobby
+     */
     public void joinUI(){
         start.setClickable(false);
         start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
@@ -147,6 +162,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         lobby_title.setText(R.string.lobby);
     }
 
+    /**
+     * If somebody enters through the create lobby the Activity will change to the Lobby that can start the game
+     */
     public void createUI(){
         start.setClickable(true);
         start.setBackground(getResources().getDrawable(R.drawable.custom_button));
@@ -161,7 +179,8 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     /**
      * Sets the character for the player in the lobby
      */
-    private void setCharacter() {
+    private void setCharacter(Player p) {
+        c = p.getPlayerCharacterName();
         character_name.setText(c.name());
         setImage();
     }
