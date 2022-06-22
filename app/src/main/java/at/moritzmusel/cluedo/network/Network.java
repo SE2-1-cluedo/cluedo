@@ -276,6 +276,7 @@ public class Network {
                 if (dataSnapshot!= null && dataSnapshot.exists() && getCurrentGameID() != null && user != null){
                     player.removeValue();
                     setCurrentGameID(null);
+                    gameState.reset();
                     setGameState(null);
                 }
             }
@@ -350,11 +351,11 @@ public class Network {
                 int nmbr = (int) tmp[i] + (int) tmp[i + 1] - 94;
                 char t;
                 if (nmbr <= 26) {
-                    t = (char) (nmbr + 64);
+                    t = (char) (nmbr + 65);
                     rt.append(t);
                     i += 2;
                 } else {
-                    t = (char) (tmp[i] + 64);
+                    t = (char) (tmp[i] + 65);
                     rt.append(t);
                     i++;
                 }
