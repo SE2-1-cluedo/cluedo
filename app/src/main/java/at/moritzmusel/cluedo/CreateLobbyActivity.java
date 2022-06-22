@@ -1,12 +1,9 @@
 package at.moritzmusel.cluedo;
 
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -20,7 +17,6 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
@@ -33,16 +29,14 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
     private final ArrayList<String> playerItems = new ArrayList<>();
     private ArrayAdapter<String> adapter;
-    private int playerCounter = 1;
     private TextView lobby_title;
     private Button start;
-    private Button back;
     private boolean decision;
     private Character c;
     private TextView character_name;
     private ImageView character_picture;
-    private String game_id;
     private List<Player> player_list;
+    private Character host;
     FirebaseUser user;
     NetworkCommunicator networkCommunicator;
     private GameState gamestate;
@@ -71,7 +65,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         start = findViewById(R.id.btn_lobby_start);
         start.setOnClickListener(this);
 
-        back = findViewById(R.id.btn_back);
+        Button back = findViewById(R.id.btn_back);
         back.setOnClickListener(this);
 
         TextView join_id = findViewById(R.id.txt_lobbyid);
@@ -92,11 +86,10 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      */
     public void managePlayerList(){
         networkCommunicator.register(() -> {
-            //playerlist genau gleiche viele wie in der Gamestate
-            playerItems.clear();
             if(networkCommunicator.isPlayerChanged()) {
                 player_list = gamestate.getPlayerState();
                 if (networkCommunicator.isCharacterChanged()) {
+                    playerItems.clear();
                     for (Player p : player_list) {
                         if (p.getPlayerId().equals(user.getUid())) {
                             setCharacter(p);
@@ -124,7 +117,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      */
     private void checkNumberOfPlayers(){
         if(c == Character.MISS_SCARLETT){
-            if(playerItems.size() < 3 || playerItems.size() > 6){
+            if(playerItems.size() < 2 || playerItems.size() > 6){
                 start.setClickable(false);
                 start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
             }
@@ -149,7 +142,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
     /**
      * Because the characters for the players will be automatically assign by the network
-     * and if your are Miss Scarlett then you are the host that can start the game.
+     * and if your are Miss Scarlett then you are the host that can start the game. c == Character.MISS_SCARLETT ||
      */
     private void setLobby() {
         if(c == Character.MISS_SCARLETT){
@@ -256,7 +249,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onPause() {
         super.onPause();
-        gamestate.reset();
+        //gamestate.reset();
         networkCommunicator.reset();
     }
 
@@ -266,7 +259,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      * that informs him that he leaves the lobby
      */
     public void back(){
-        if(decision){
+        if(player_list.size() == 1){
             Network.setCtx(this);
             androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(CreateLobbyActivity.this);
             builder.setTitle("Attention!");
@@ -292,8 +285,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      */
     public String getGameID() {
         if(decision){
-            game_id = getIntent().getExtras().getString("game_id");
-            return game_id;
+            return getIntent().getExtras().getString("game_id");
         }else{
             Intent intent = getIntent();
             return intent.getStringExtra(Intent.EXTRA_TEXT);

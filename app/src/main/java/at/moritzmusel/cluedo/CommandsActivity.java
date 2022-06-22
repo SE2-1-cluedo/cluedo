@@ -7,15 +7,13 @@ import android.view.View;
 import android.widget.Button;
 
 public class CommandsActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_commands);
-        back = findViewById(R.id.btn_back_commands);
+        Button back = findViewById(R.id.btn_back_commands);
         back.setOnClickListener(this);
-
     }
 
     @Override
