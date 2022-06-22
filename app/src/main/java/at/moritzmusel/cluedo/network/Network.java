@@ -42,89 +42,113 @@ public class Network {
     private static Character currentCharacter = Character.getFirstCharacter();
     private static GameState gameState;
     private static FirebaseUser currentUser;
-    private static ValueEventListener listener = new ValueEventListener() {
+    private static final int[] killer = new int[3];
+    private static final ValueEventListener turnFlagListener = new ValueEventListener() {
+
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
-            //get TurnOrder
-            String[] turnOrder = ((String) Objects.requireNonNull(snapshot.child("turn-order").getValue())).split(" ");
-            gameState.setTurnOrder(turnOrder,false);
-
             //start Game
-            String start = (String) snapshot.child("turn-flag").child("startGame").getValue();
+            String start = (String) snapshot.child("startGame").getValue();
             assert start != null;
             if(start.equals("start")) {
                 NetworkCommunicator.getInstance().setStartGame(true);
                 NetworkCommunicator.getInstance().notifyList();
             }
             //get PlayerTurn
-            getGameState().setPlayerTurn((String)snapshot.child("turn-flag").child("player-turn").getValue(),false);
+            getGameState().setPlayerTurn((String)snapshot.child("player-turn").getValue(),false);
 
             //getMagnify
-            String[] magnify = ((String) Objects.requireNonNull(snapshot.child("turn-flag").child("magnify").getValue())).split(" ");
+            String[] magnify = ((String) Objects.requireNonNull(snapshot.child("magnify").getValue())).split(" ");
+            if(magnify.length > 1)
             getGameState().setMagnify(magnify,false);
 
             //get Question
-            String[] question = ((String) Objects.requireNonNull(snapshot.child("turn-flag").child("question").getValue())).split(" ");
+            String[] question = ((String) Objects.requireNonNull(snapshot.child("question").getValue())).split(" ");
             if(question.length == 4) {
                 int[] numbers = new int[]{Integer.parseInt(question[1]), Integer.parseInt(question[2]), Integer.parseInt(question[3])};
                 getGameState().setAskQuestion(new Question(question[0],numbers),false);
             }
+        }
 
-            //get Winner/Loser
-            getGameState().setWinner((String) Objects.requireNonNull(snapshot.child("result").child("winner").getValue()),false);
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {}
+    };
+    private static final ValueEventListener weaponsListener = new ValueEventListener() {
 
-            getGameState().setLoser((String) Objects.requireNonNull(snapshot.child("result").child("loser").getValue()),false);
-
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
             //get weapons
-            String[] weapons = ((String) Objects.requireNonNull(snapshot.child("weapon-positions").getValue())).split(" ");
+            String[] weapons = ((String) Objects.requireNonNull(snapshot.getValue())).split(" ");
             int[] weaponPositions = Stream.of(weapons)
                     .mapToInt(Integer::parseInt).toArray();
             getGameState().setWeaponPositions(weaponPositions,false);
+        }
 
-            //get Players
-            ArrayList<Player> playerList = new ArrayList<>();
-            boolean playerChanged = false;
-            for (DataSnapshot snap: snapshot.child("players").getChildren()){
-                Player p = new Player(snap.getKey());
-                //set character
-                if(snap.child("character").exists()) {
-                    playerChanged = true;
-                    NetworkCommunicator.getInstance().setCharacterChanged(true);
-                    p.setPlayerCharacterName(Character.valueOf((String) Objects.requireNonNull(snap.child("character").getValue())));
-                }
-                //set position
-                if(snap.child("position").exists()) {
-                    playerChanged = true;
-                    p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(snap.child("position").getValue())));
-                }
-                //set owned Cards
-                if(snap.child("cards").exists()) {
-                    String[] ownedCards = ((String) (Objects.requireNonNull(snap.child("cards").getValue()))).split(" ");
-                    if (!Objects.equals(ownedCards[0], "")) {
-                        playerChanged = true;
-                        p.setPlayerOwnedCards((ArrayList<Integer>) Arrays.stream(Stream.of(ownedCards)
-                                .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
-                    }
-                }
-                //set known Cards
-                if(snap.child("cards-eliminated").exists()) {
-                    String[] knownCards = ((String) Objects.requireNonNull(snap.child("cards-eliminated").getValue())).split(" ");
-                    if (!Objects.equals(knownCards[0], "")) {
-                        playerChanged = true;
-                        p.setCardsKnownThroughQuestions((ArrayList<Integer>) Arrays.stream(Stream.of(knownCards)
-                                .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
-                    }
-                }
-                playerList.add(p);
-            }
-            if(playerChanged)
-                getGameState().setPlayerState(playerList,false);
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {}
+    };
+    private static final ValueEventListener resultListener = new ValueEventListener() {
+
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            //get Winner/Loser
+            String winner = (String) Objects.requireNonNull(snapshot.child("winner").getValue());
+            if(winner.length() > 0)
+            getGameState().setWinner(winner,false);
+
+            String loser = (String) Objects.requireNonNull(snapshot.child("loser").getValue());
+            if(loser.length() > 0)
+            getGameState().setLoser(loser,false);
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
 
         }
+    };
+    private static final ValueEventListener playerListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            //get Players
+            ArrayList<Player> playerList = new ArrayList<>();
+            boolean playerChanged = false;
+            for (DataSnapshot snap : snapshot.getChildren()) {
+                if (snap.child("character").exists() && snap.child("position").exists() && snap.child("cards").exists() && snap.child("cards-eliminated").exists()) {
+                        Player p = new Player(snap.getKey());
+                        playerChanged = true;
+
+                        //set character
+                        NetworkCommunicator.getInstance().setCharacterChanged(true);
+                        p.setPlayerCharacterName(Character.valueOf((String) Objects.requireNonNull(snap.child("character").getValue())));
+
+                       //setPosition
+                        p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(snap.child("position").getValue())));
+
+                        //set owned Cards
+                        String[] ownedCards = ((String) (Objects.requireNonNull(snap.child("cards").getValue()))).split(" ");
+                        if (!Objects.equals(ownedCards[0], "")) {
+
+                            p.setPlayerOwnedCards((ArrayList<Integer>) Arrays.stream(Stream.of(ownedCards)
+                                    .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
+                        }
+
+                        //set known Cards
+                        String[] knownCards = ((String) Objects.requireNonNull(snap.child("cards-eliminated").getValue())).split(" ");
+                        if (!Objects.equals(knownCards[0], "")) {
+                            p.setCardsKnownThroughQuestions((ArrayList<Integer>) Arrays.stream(Stream.of(knownCards)
+                                    .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
+                        }
+
+                    playerList.add(p);
+                    System.out.println("added a Player");
+                }
+                if (playerChanged)
+                    getGameState().setPlayerState(playerList, false);
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {}
     };
 
     public static DatabaseReference getDatabaseReference(){
@@ -160,33 +184,35 @@ public class Network {
         turnFlag.child("player-turn").setValue(getCurrentUser().getUid());
         turnFlag.child("magnify").setValue("");
         turnFlag.child("startGame").setValue("waiting");
+        turnFlag.addValueEventListener(turnFlagListener);
 
         //add result path
         DatabaseReference result = game.child("result");
         result.child("winner").setValue("");
         result.child("loser").setValue("");
+        result.addValueEventListener(resultListener);
 
         gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
 
-        //add players path
+        //set killer
         gameState.setKiller(createKiller());
-        gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
+
         game.child("turn-order").setValue("");
+        //add players path
         game.child("killer").setValue(gameState.getKillerAsString());
         DatabaseReference p = game.child("players").child(user.getUid());
         p.child("cards").setValue("");
         p.child("cards-eliminated").setValue("");
-
         p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
         p.child("character").setValue(getCurrentCharacter().name());
 
-        gamestate_databaseListener();
+        game.child("weapon-positions").addValueEventListener(weaponsListener);
+        game.child("players").addValueEventListener(playerListener);
 
         return gameID;
     }
 
     private static int[] createKiller(){
-        int[] killer = new int[3];
         int counter = 0;
         for(int i = 0; i < 3; i++){
             if(i == 2)
@@ -203,11 +229,6 @@ public class Network {
         return currentCharacter;
     }
 
-    private static void gamestate_databaseListener(){
-        games.child(getCurrentGameID()).addValueEventListener(listener);
-    }
-
-
     public static DatabaseReference getCurrentGame(){
         return games.child(getCurrentGameID());
     }
@@ -217,6 +238,7 @@ public class Network {
     public static void joinLobby(FirebaseUser user, String gameID) {
         setCurrentGameID(gameID);
         setCurrentUser(user);
+
         ArrayList<String> joinedCharacters = new ArrayList<>();
         getCurrentGame().get().addOnCompleteListener(task -> {
             if (!task.isSuccessful())
@@ -234,8 +256,14 @@ public class Network {
                     p.child("cards").setValue("");
                     p.child("cards-eliminated").setValue("");
                     p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
+
                     gameState = GameState.getInstance();
-                    gamestate_databaseListener();
+                    gameState.setKiller(killer);
+
+                    getCurrentGame().child("players").addValueEventListener(playerListener);
+                    getCurrentGame().child("weapon-positions").addValueEventListener(weaponsListener);
+                    getCurrentGame().child("turn-flag").addValueEventListener(turnFlagListener);
+                    getCurrentGame().child("result").addValueEventListener(resultListener);
             }
         });
 
@@ -268,7 +296,11 @@ public class Network {
 
 
     public static void leaveLobby(FirebaseUser user, String gameID) {
-        games.child(getCurrentGameID()).removeEventListener(listener);
+        getCurrentGame().child("players").removeEventListener(playerListener);
+        getCurrentGame().child("weapon-positions").removeEventListener(weaponsListener);
+        getCurrentGame().child("turn-flag").removeEventListener(turnFlagListener);
+        getCurrentGame().child("result").removeEventListener(resultListener);
+
         OnDataRetreive onDataRetreive = new OnDataRetreive() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
@@ -305,9 +337,6 @@ public class Network {
             else {
                 String[] turnOrder = String.valueOf(task.getResult().child("turn-order").getValue()).split(" ");
                 gameState.setTurnOrder(turnOrder,false);
-//                for (Player p : list)
-//                    p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(task.getResult().child("players").child(p.getPlayerId()).child("position").getValue())));
-
                 //start Game for other players
                 game.child("turn-flag").child("startGame").setValue("start");
 
