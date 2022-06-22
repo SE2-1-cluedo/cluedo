@@ -35,6 +35,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private ArrayAdapter<String> adapter;
     private int playerCounter = 1;
     private Button send_link;
+    private TextView lobby_title;
     private Button start;
     private Button back;
     private boolean decision;
@@ -60,7 +61,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         gamestate = GameState.getInstance();
         networkCommunicator = NetworkCommunicator.getInstance();
 
-        TextView lobby_title = findViewById(R.id.txt_create_lobby);
+        lobby_title = findViewById(R.id.txt_create_lobby);
 
         decision = getIntent().getExtras().getBoolean("decision");
         user = (FirebaseUser) getIntent().getExtras().get("user");
@@ -84,6 +85,12 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         character_name = findViewById(R.id.txt_character_name);
         character_picture = findViewById(R.id.img_character);
 
+        if(decision) {
+            createUI();
+        }else{
+            joinUI();
+        }
+
         networkCommunicator.register(() -> {
             //playerlist genau gleiche viele wie in der Gamestate
             playerItems.clear();
@@ -97,13 +104,18 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                             c = p.getPlayerCharacterName();
                             character_name.setText(c.name());
                             setImage();
+                            if(c == Character.MISS_SCARLETT){
+                                createUI();
+                            }else{
+                                joinUI();
+                            }
                         }
                         if (!playerItems.contains(p.getPlayerCharacterName().name())) {
-                            playerCounter++;
                             playerItems.add(p.getPlayerCharacterName().name());
                             adapter.notifyDataSetChanged();
                             vibrate(500);
                         }
+
                     }
                     networkCommunicator.setCharacterChanged(false);
                 }
@@ -127,13 +139,20 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        if(!decision) {
-           start.setClickable(false);
-           start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
-           start.setText(R.string.waiting);
-           send_link.setVisibility(View.INVISIBLE);
-           lobby_title.setText(R.string.lobby);
-        }
+    }
+
+    public void joinUI(){
+        start.setClickable(false);
+        start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
+        start.setText(R.string.waiting);
+        lobby_title.setText(R.string.lobby);
+    }
+
+    public void createUI(){
+        start.setClickable(true);
+        start.setBackground(getResources().getDrawable(R.drawable.custom_button));
+        start.setText(R.string.start);
+        lobby_title.setText(R.string.create_lobby);
     }
 
     public void onBackPressed(){
@@ -203,8 +222,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         super.onPause();
         gamestate.reset();
         networkCommunicator.reset();
-        //Dialogs d = new Dialogs();
-        //d.testDialog(CreateLobbyActivity.this,"Test");
     }
 
     public void back(){
