@@ -1,7 +1,5 @@
 package at.moritzmusel.cluedo;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,20 +13,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import at.moritzmusel.cluedo.entities.Character;
+
 import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.game.Gameplay;
+import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class NotepadActivity extends AppCompatActivity implements View.OnClickListener {
 
     CheckboxAdapter checkAdapter;
-    boolean checked;
-    at.moritzmusel.cluedo.Card card;
     float x1, x2;
     static final int MIN_SWIPE_DISTANCE = 150;
-    Player player;
     NotepadData notepadData = new NotepadData();
-
-    private Button btn_closeNotepad;
+    Gameplay gpl = Gameplay.getInstance();
 
 
     @Override
@@ -43,13 +39,18 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
         checkAdapter = new CheckboxAdapter(this, list, notepadData);
         listView.setAdapter(checkAdapter);
 
+
         Button btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
         btn_closeNotepad.setOnClickListener(this);
 
+
     }
-    public void onStart () {
+
+    public void onStart() {
         super.onStart();
         checkAdapter.loadState();
+
+
     }
 
 
@@ -62,13 +63,11 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-
-
     /**
      * With a swipe to the left you get back to the main board.
      */
     @Override
-    public boolean onTouchEvent (MotionEvent touchEvent){
+    public boolean onTouchEvent(MotionEvent touchEvent) {
         switch (touchEvent.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
@@ -100,13 +99,22 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
 
         public NotepadData() {
             super();
-            if (!active){
+            if (!active) {
                 checkboxStatecb1 = new ArrayList<Boolean>();
                 checkboxStatecb2 = new ArrayList<Boolean>();
                 checkboxStatecb3 = new ArrayList<Boolean>();
                 checkboxStatecb4 = new ArrayList<Boolean>();
                 checkboxStatecb5 = new ArrayList<Boolean>();
                 checkboxStatecb6 = new ArrayList<Boolean>();
+
+                for (int i = 0; i < 21; i++) {
+                    checkboxStatecb1.add(i, false);
+                    checkboxStatecb2.add(i, false);
+                    checkboxStatecb3.add(i, false);
+                    checkboxStatecb4.add(i, false);
+                    checkboxStatecb5.add(i, false);
+                    checkboxStatecb6.add(i, false);
+                }
                 this.active = true;
             }
         }
@@ -157,6 +165,15 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
 
         public void setCheckboxStatecb6(List<Boolean> checkboxStatecb6) {
             this.checkboxStatecb6 = checkboxStatecb6;
+        }
+
+        public void setAllCheckBoxInLine(int i) {
+            getCheckboxStatecb1().set(i, true);
+            getCheckboxStatecb2().set(i, true);
+            getCheckboxStatecb3().set(i, true);
+            getCheckboxStatecb4().set(i, true);
+            getCheckboxStatecb5().set(i, true);
+            getCheckboxStatecb6().set(i, true);
         }
     }
 

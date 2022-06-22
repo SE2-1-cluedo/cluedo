@@ -79,6 +79,19 @@ public class CheckboxAdapter extends ArrayAdapter {
             holder.cb4 = convertView.findViewById(R.id.checkbox4);
             holder.cb5 = convertView.findViewById(R.id.checkbox5);
             holder.cb6 = convertView.findViewById(R.id.checkbox6);
+
+            if (!gpl.getCardsOfPlayerOwn().isEmpty()) {
+                int count = 0;
+                for (int x = 0; x < checkboxItems.size(); x++) {
+                    for (int j = 0; j < gpl.getCardsOfPlayerOwn().size(); j++) {
+                        if (x == gpl.getCardsOfPlayerOwn().get(j)) {
+                            notepadData.setAllCheckBoxInLine(gpl.getCardsOfPlayerOwn().get(j));
+                        }
+                    }
+                    count++;
+                }
+            }
+
             convertView.setTag(holder);
         } else {
             holder = (CheckHolder)convertView.getTag();
@@ -209,22 +222,7 @@ public class CheckboxAdapter extends ArrayAdapter {
         }
     }
 
-/*
-    public void setPlayersOwnedCards() {
-        for (int i = 0; i < checkboxItems.size(); i++) {
-            for (int j = 0; j < player.getPlayerOwnedCards().size(); j++) {
-                if (Integer.valueOf(checkboxItems.get(i)).equals(player.getPlayerOwnedCards().get(j))) {
-                    cb1.setChecked(true);
-                    cb2.setChecked(true);
-                    cb3.setChecked(true);
-                    cb4.setChecked(true);
-                    cb5.setChecked(true);
-                    cb6.setChecked(true);
-                }
-            }
-        }
-    }
-*/
+
 
 static class CheckHolder {
 
