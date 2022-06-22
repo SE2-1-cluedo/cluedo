@@ -2,18 +2,28 @@ package at.moritzmusel.cluedo.communication;
 
 import java.util.ArrayList;
 
+import at.moritzmusel.cluedo.network.pojo.GameState;
+
 public class NetworkCommunicator implements Communicator {
     private final ArrayList<ChangeListener> listenerArray;
     private boolean turnChanged, playerChanged, questionChanged, weaponsChanged, hasWon, hasLost, magnify, characterChanged, startGame;
 
-    private static final NetworkCommunicator OBJ = new NetworkCommunicator();
+    private static NetworkCommunicator OBJ = new NetworkCommunicator();
 
     private NetworkCommunicator(){
         listenerArray = new ArrayList<>();
     }
 
     public static NetworkCommunicator getInstance(){
+        if(OBJ == null){
+            OBJ = new NetworkCommunicator();
+            return OBJ;
+        }
         return OBJ;
+    }
+
+    public void reset(){
+        OBJ = null;
     }
 
     @Override

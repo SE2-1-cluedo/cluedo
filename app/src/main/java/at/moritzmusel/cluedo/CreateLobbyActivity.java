@@ -44,7 +44,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private String game_id;
     private List<Player> player_list;
     FirebaseUser user;
-    NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
+    NetworkCommunicator networkCommunicator;
     private GameState gamestate;
 
     /**
@@ -58,6 +58,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_lobby);
         gamestate = GameState.getInstance();
+        networkCommunicator = NetworkCommunicator.getInstance();
 
         TextView lobby_title = findViewById(R.id.txt_create_lobby);
 
@@ -83,8 +84,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         character_name = findViewById(R.id.txt_character_name);
         character_picture = findViewById(R.id.img_character);
 
-        getNetworkPlayerList();
-
         networkCommunicator.register(() -> {
             //playerlist genau gleiche viele wie in der Gamestate
             playerItems.clear();
@@ -128,9 +127,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        if(decision) {
-            //if the player entered through the creation button
-        }else{
+        if(!decision) {
            start.setClickable(false);
            start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
            start.setText(R.string.waiting);
@@ -140,57 +137,8 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     }
 
     public void onBackPressed(){
+        super.onBackPressed();
         back();
-    }
-
-    /**
-     * Sets the players in the list
-     * Starts the game for everyone
-     * Disable button until three player joined
-     */
-    public void getNetworkPlayerList(){
-        networkCommunicator.register(() -> {
-            //playerlist genau gleiche viele wie in der Gamestate
-            playerItems.clear();
-            if(networkCommunicator.isPlayerChanged()) {
-                System.out.println("Player changed");
-                player_list = gamestate.getPlayerState();
-                if (networkCommunicator.isCharacterChanged()) {
-                    System.out.println("Character changed");
-                    for (Player p : player_list) {
-                        if (p.getPlayerId().equals(user.getUid())) {
-                            c = p.getPlayerCharacterName();
-                            character_name.setText(c.name());
-                            setImage();
-                        }
-                        if (!playerItems.contains(p.getPlayerCharacterName().name())) {
-                            playerCounter++;
-                            playerItems.add(p.getPlayerCharacterName().name());
-                            adapter.notifyDataSetChanged();
-                            vibrate(500);
-                        }
-                    }
-                    networkCommunicator.setCharacterChanged(false);
-                }
-                networkCommunicator.setPlayerChanged(false);
-            }
-
-            if(networkCommunicator.isStartGame()){
-                Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
-                startActivity(i);
-            }
-
-            if(decision){
-                if(playerItems.size() < 2 || playerItems.size() > 6){
-                    start.setClickable(false);
-                    start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
-                }
-                else{
-                    start.setClickable(true);
-                    start.setBackground(getResources().getDrawable(R.drawable.custom_button));
-                }
-            }
-        });
     }
 
     /**
@@ -199,7 +147,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private void setCharacter() {
         character_name.setText(c.name());
         setImage();
-        c = c.getNextCharacter();
     }
 
     /**
@@ -251,6 +198,15 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gamestate.reset();
+        networkCommunicator.reset();
+        //Dialogs d = new Dialogs();
+        //d.testDialog(CreateLobbyActivity.this,"Test");
+    }
+
     public void back(){
         if(decision){
             Network.setCtx(this);
@@ -270,7 +226,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             //playerliste löscht player
             //Gamestate player finden removen und dann sollte er weg sein
             //playerItems.remove()
-
             Network.leaveLobby(user, getGameID());
             finish();
         }
@@ -287,8 +242,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             //Schnittstelle mit dem Netzwerk um die id zu bekommen.
         }else{
             Intent intent = getIntent();
-            String id_from_joinlobby = intent.getStringExtra(Intent.EXTRA_TEXT);
-            return id_from_joinlobby;
+            return intent.getStringExtra(Intent.EXTRA_TEXT);
             //game_id.setText(id_from_joinlobby);
         }
 
