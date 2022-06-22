@@ -166,6 +166,8 @@ public class Network {
         result.child("winner").setValue("");
         result.child("loser").setValue("");
 
+        gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
+
         //add players path
         gameState.setKiller(createKiller());
         gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
@@ -302,14 +304,12 @@ public class Network {
             else {
                 String[] turnOrder = String.valueOf(task.getResult().child("turn-order").getValue()).split(" ");
                 gameState.setTurnOrder(turnOrder,false);
-                for (Player p : list)
-                    p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(task.getResult().child("players").child(p.getPlayerId()).child("position").getValue())));
+//                for (Player p : list)
+//                    p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(task.getResult().child("players").child(p.getPlayerId()).child("position").getValue())));
 
                 //start Game for other players
                 game.child("turn-flag").child("startGame").setValue("start");
 
-                gameState.setPlayerState(list,true);
-                gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
                 setGameState(gameState);
                 gameState.assignCards();
             }

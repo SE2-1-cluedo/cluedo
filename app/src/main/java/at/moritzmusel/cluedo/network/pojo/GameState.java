@@ -129,6 +129,7 @@ public class GameState {
     public void setPlayerState(List<Player> playerState, boolean database) {
         this.playerState = playerState;
         if(!database) {
+            System.out.println("Changed Player");
             communicator.setPlayerChanged(true);
             communicator.notifyList();
         }

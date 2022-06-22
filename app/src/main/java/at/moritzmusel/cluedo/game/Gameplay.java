@@ -299,6 +299,19 @@ public class Gameplay {
         }
     }
 
+    public Player returnPlayerThatChanged(List<Player> newPlayers){
+        //irgendwann noch ob player gegangen ist
+        for(int i = 0; i < players.size(); i++){
+            if(players.get(i).getPlayerId().equals(newPlayers.get(i).getPlayerId())){
+                if(players.get(i).getPositionOnBoard() != newPlayers.get(i).getPositionOnBoard()){
+                    players = newPlayers;
+                    return newPlayers.get(i);
+                }
+            }
+        }
+        return null;
+    }
+
     private void questionChanged(Question newQuestion) {
         //if(!newQuestion.equals())
     }
