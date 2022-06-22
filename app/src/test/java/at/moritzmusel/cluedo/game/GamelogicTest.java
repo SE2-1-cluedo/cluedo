@@ -2,6 +2,7 @@ package at.moritzmusel.cluedo.game;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,6 +22,7 @@ import org.robolectric.util.ReflectionHelpers;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import at.moritzmusel.cluedo.communication.GameplayCommunicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
@@ -46,12 +48,11 @@ public class GamelogicTest {
 
     private Gameplay gameOdd;
 
-    private GameState originalGameState;
     private GameplayCommunicator originalGameCommunicator;
     private NetworkCommunicator originalNetCommuicator;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
         cards1.add(3);cards1.add(7);cards1.add(17);
         cards2.add(5);cards2.add(9);cards2.add(19);
         cards3.add(10);cards3.add(4);cards3.add(15);
@@ -60,8 +61,12 @@ public class GamelogicTest {
         player2.setPlayerCharacterName(DR_ORCHID);player2.setPositionOnBoard(4);player2.setPlayerOwnedCards(cards2);
         player3.setPlayerCharacterName(COLONEL_MUSTARD);player3.setPositionOnBoard(7);player3.setPlayerOwnedCards(cards3);
         playersGameOdd.add(player1);playersGameOdd.add(player2);playersGameOdd.add(player3);
+        Field instanceGameState;
 
-        originalGameState = GameState.getInstance();
+        instanceGameState = GameState.class.getDeclaredField("OBJ");
+        Objects.requireNonNull(instanceGameState).setAccessible(true);
+        instanceGameState.set(null,null);
+
         originalGameCommunicator = GameplayCommunicator.getInstance();
         originalNetCommuicator = NetworkCommunicator.getInstance();
 
@@ -115,6 +120,14 @@ public class GamelogicTest {
     public void testUpdatePlayerPosition() {
         gameOdd.updatePlayerPosition(5);
         Assert.assertEquals(5,gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getPositionOnBoard());
+    }
+
+    @Test
+    public void testCanMove(){
+        Gameplay.rollDiceForPlayer(1);
+        gameOdd.setStepsTaken(1);
+        gameOdd.canMove();
+        Assert.assertFalse(gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getIsAbleToMove());
     }
 
     @Test

@@ -242,11 +242,8 @@ public class Gameplay {
             for (int i = 0; i < players.size(); i++) {
                 if (players.get(i).getPlayerCharacterName() == character) {
                     return players.get(i);
-                } else if (countCharacters > 6) {
-                    return null;
                 }
             }
-            countCharacters++;
         }
     }
 
@@ -265,12 +262,13 @@ public class Gameplay {
     }*/
 
     public Character getCharacterByPlayerID(String playerID){
-        for(int i = 0; i < players.size(); i++){
+        int i = 0;
+        for(; i < players.size(); i++){
             if(players.get(i).getPlayerId().equals(playerID)){
-                return players.get(i).getPlayerCharacterName();
+                break;
             }
         }
-        return currentPlayer;
+        return players.get(i).getPlayerCharacterName();
     }
 
     protected void checkWhatChangedInPlayer(List<Player> newPlayers){
