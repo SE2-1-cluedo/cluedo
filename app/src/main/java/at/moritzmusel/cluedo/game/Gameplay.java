@@ -14,6 +14,8 @@ import java.util.List;
 import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.communication.GameplayCommunicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
+import at.moritzmusel.cluedo.communication.GameplayCommunicator;
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
@@ -43,27 +45,32 @@ public class Gameplay {
     private static Gameplay OBJ;
 
     private Gameplay() {
-        startGame();
-    }
-
-
-    public void startGame(){
         gameState = GameState.getInstance();
         turnOrderGame = gameState.getTurnOrder();
         players = gameState.getPlayerState();
-        decidePlayerWhoMovesFirst();
         weaponsPos = gameState.getWeaponPositions();
+//        decidePlayerWhoMovesFirst();
+        startGame();
+        currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
+        findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
+    }
+
+    public void startGame(){
 
         gameCommunicator = GameplayCommunicator.getInstance();
         netCommunicator = NetworkCommunicator.getInstance();
 
         netCommunicator.register(()->{
-            if(netCommunicator.isPlayerChanged()){
-                checkWhatChangedInPlayer(gameState.getPlayerState());
+            if(netCommunicator.isPositionChanged()){
+                System.out.println("Notification from Gamestate");
+                //checkWhatChangedInPlayer(gameState.getPlayerState());
+                gameCommunicator.setMoved(true);
+                gameCommunicator.notifyList();
             }
             if(netCommunicator.isQuestionChanged()){
                 gameCommunicator.setSuspicion(true);
                 gameCommunicator.notifyList();
+                netCommunicator.setQuestionChanged(false);
             }
             if(netCommunicator.isTurnChanged()){
                 checkTurnChanged(gameState.getPlayerTurn());
@@ -71,32 +78,12 @@ public class Gameplay {
             if(netCommunicator.isWeaponsChanged()){
                 checkWeaponChanged(gameState.getWeaponPositions());
             }
-            if(netCommunicator.isHasWon()){
-                gameCommunicator.setWinner(true);
-                gameCommunicator.notifyList();
-            }
-            if(netCommunicator.isHasLost()){
-                gameCommunicator.setLoser(true);
-                gameCommunicator.notifyList();
-            }
             if (netCommunicator.isMagnify()){
                 gameCommunicator.setMagnifying(true);
                 gameCommunicator.notifyList();
+                netCommunicator.setMagnify(false);
             }
         });
-
-       /* Player p1 = new Player("1");
-        p1.setPlayerCharacterName(MISS_SCARLETT);
-        Player p2 = new Player("2");
-        p2.setPlayerCharacterName(DR_ORCHID);
-        Player p3 = new Player("3");
-        p3.setPlayerCharacterName(PROFESSOR_PLUM);
-        Player p4 = new Player("4");
-        p4.setPlayerCharacterName(REVEREND_GREEN);
-        players.add(p1);
-        players.add(p2);
-        players.add(p3);
-        players.add(p4);*/
     }
     public static Gameplay getInstance(){
         if(OBJ == null){
@@ -114,6 +101,26 @@ public class Gameplay {
         gameCommunicator.setTurnChange(true);
         gameCommunicator.notifyList();
         return currentPlayer;
+    }
+
+    public String[] getPlayerForSuspectedCards(int[] cards){
+        for(Player p : players) {
+            for (int j = 0; j < 3; j++) {
+                if (p.getPlayerOwnedCards().contains(cards[j]) && !p.getPlayerId().equals(Network.getCurrentUser().getUid())) {
+                    if (p.getPlayerOwnedCards().contains(cards[j])) {
+                        return new String[]{p.getPlayerCharacterName().name(), String.valueOf(cards[j])};
+                    }
+                }
+            }
+        }
+        return new String[]{"nobody"};
+    }
+
+    public String[] getPlayerForSuspectedCardsDEMO(int[] cards){
+        if(new SecureRandom().nextBoolean())
+            return new String[]{"COLONEL_MUSTARD","5"};
+        else
+        return new String[]{"nobody"};
     }
 
     public String getPlayerForSuspectedCards(int[] cards){
@@ -147,8 +154,10 @@ public class Gameplay {
         stepsTaken++;
         if(stepsTaken == numDice) {
             findPlayerByCharacterName(currentPlayer).setAbleToMove(false);
+            endTurn();
         }
     }
+
 
 
    /*
@@ -219,17 +228,27 @@ public class Gameplay {
             }
         }
         gameCommunicator.notifyList();
-        return "nobody";
+        return "?nobody? :^)";
     }
 
-    /*    private ArrayList<Integer> generateRandomCards(int min, int max){
+     /**
+     * Fill a List with numbers from min to max and then randomize it through Collection.shuffle
+     * which randomly permutes elements in a given list.
+     * @param min
+     * smallest Card in deck
+     * @param max
+     * biggest Card in deck
+     * @return
+     * a sorted integer List with the numbers min to max
+     */
+    private ArrayList<Integer> generateRandomCards(int min, int max){
         ArrayList<Integer> cards = new ArrayList<>();
         for(int i = min;i <= max;i++){
             cards.add(i);
         }
         Collections.shuffle(cards);
         return cards;
-    }*/
+    }
 
 
     /**
@@ -247,6 +266,13 @@ public class Gameplay {
         }
     }
 
+
+    public Player findPlayerById(String id){
+        for(Player p: players)
+            if(p.getPlayerId().equals(id))
+                return p;
+            return null;
+    }
 
 /*    private void distributeCardsEquallyToPlayers(List<Integer> cards){
         int i = 0;
@@ -375,8 +401,14 @@ public class Gameplay {
     public List<Player> getPlayers() {
         return players;
     }
-    public int getCardDrawn() {
-        return cardDrawn;
+
+    public int[] getWeaponsPos() {
+        return weaponsPos;
+    }
+
+    public void setWeaponsPos(int[] weaponsPos) {
+        this.weaponsPos = weaponsPos;
+        notifyDatabase(weaponsPos);
     }
 
     public void setPlayers(List<Player> players) {

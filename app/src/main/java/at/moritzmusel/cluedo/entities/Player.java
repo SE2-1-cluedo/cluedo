@@ -77,7 +77,7 @@ public class Player {
         this.playerCharacterName = playerCharacterName;
     }
 
-    public List<Integer> getPlayerOwnedCards() {
+    public ArrayList<Integer> getPlayerOwnedCards() {
         return playerOwnedCards;
     }
 

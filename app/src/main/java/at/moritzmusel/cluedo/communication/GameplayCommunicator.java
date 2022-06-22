@@ -3,7 +3,7 @@ package at.moritzmusel.cluedo.communication;
 import java.util.ArrayList;
 
 public class GameplayCommunicator implements Communicator{
-    private boolean moved, suspicion, winner, loser, turnChange, magnifying;
+    private boolean moved, suspicion, turnChange, magnifying;
     private final ArrayList<ChangeListener> listenerArray;
 
     private static final GameplayCommunicator OBJ = new GameplayCommunicator();
@@ -41,22 +41,6 @@ public class GameplayCommunicator implements Communicator{
 
     public void setSuspicion(boolean suspicion) {
         this.suspicion = suspicion;
-    }
-
-    public boolean isWinner() {
-        return winner;
-    }
-
-    public void setWinner(boolean winner) {
-        this.winner = winner;
-    }
-
-    public boolean isLoser() {
-        return loser;
-    }
-
-    public void setLoser(boolean loser) {
-        this.loser = loser;
     }
 
     public boolean isTurnChange() {

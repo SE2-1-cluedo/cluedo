@@ -52,7 +52,7 @@
         android:layout_marginTop="50dp"
         android:ems="10"
         android:hint="@string/enter_id"
-        android:inputType="text"
+        android:inputType="text|textCapCharacters"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_create_lobby2" />

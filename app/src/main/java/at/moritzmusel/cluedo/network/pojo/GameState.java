@@ -3,6 +3,7 @@ package at.moritzmusel.cluedo.network.pojo;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.stream.IntStream;
 
 import at.moritzmusel.cluedo.AllTheCards;
 import at.moritzmusel.cluedo.Card;
+import at.moritzmusel.cluedo.communication.Communicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
@@ -35,6 +37,7 @@ public class GameState {
     DatabaseReference dbRef;
     private final NetworkCommunicator communicator = NetworkCommunicator.getInstance();
 
+
     private static GameState OBJ;
 
     private GameState(){
@@ -50,6 +53,10 @@ public class GameState {
         return OBJ;
     }
 
+    public void reset(){
+        OBJ = null;
+    }
+
     public List<Integer> getCardState() {
         return cardState;
     }
@@ -59,7 +66,6 @@ public class GameState {
         if(!database) {
             communicator.notifyList();
         }
-
         else if (cardState == null)
             dbRef.child("players").child(Network.getCurrentUser().getUid()).child("cards").setValue("");
 
@@ -83,9 +89,16 @@ public class GameState {
     public void setWinner(String winner, boolean database){
         this.winner = winner;
         if(!database){
-            communicator.setHasWon(true);
-            communicator.notifyList();
-        }
+            if(!communicator.isHasWon()){
+                communicator.setHasWon(true);
+                communicator.notifyList();
+                System.out.println("has won");
+            }
+        } else if(winner == null)
+            dbRef.child("result").child("winner").setValue("");
+        else
+            dbRef.child("result").child("winner").setValue(winner);
+
     }
 
     public String getLoser() {
@@ -95,9 +108,15 @@ public class GameState {
     public void setLoser(String loser, boolean database) {
         this.loser = loser;
         if(!database){
-            communicator.setHasLost(true);
-            communicator.notifyList();
-        }
+            if(!communicator.isHasLost()) {
+                communicator.setHasLost(true);
+                communicator.notifyList();
+                System.out.println("lost");
+            }
+        } else if(loser == null)
+            dbRef.child("result").child("loser").setValue("");
+        else
+            dbRef.child("result").child("loser").setValue(loser);
     }
 
     public String[] getMagnify() {
@@ -107,16 +126,35 @@ public class GameState {
     public void setMagnify(String[] magnify, boolean database) {
         this.magnify = magnify;
         if(!database) {
-            communicator.setMagnify(true);
-            communicator.notifyList();
+            if(!communicator.isMagnify()){
+                communicator.setMagnify(true);
+                communicator.notifyList();
+                System.out.println("magnified");
+            }
+        } else if(magnify == null)
+            dbRef.child("turn-flag").child("magnify").setValue("");
+        else {
+            StringBuilder sB = new StringBuilder();
+            for(String s: magnify)
+                sB.append(s).append(" ");
+
+            dbRef.child("turn-flag").child("magnify").setValue(sB.toString().trim());
         }
     }
 
     public void setPlayerState(List<Player> playerState, boolean database) {
         this.playerState = playerState;
         if(!database) {
-            communicator.setPlayerChanged(true);
-            communicator.notifyList();
+            System.out.println("Player changed");
+            if(!communicator.isPlayerChanged()){
+                communicator.setPlayerChanged(true);
+                communicator.notifyList();
+            }
+            if(!communicator.isPositionChanged()){
+                System.out.println("Now position was called");
+                communicator.setPositionChanged(true);
+                communicator.notifyList();
+            }
         }
         else if(playerState == null){
             List<String> players = new ArrayList<>();
@@ -168,7 +206,7 @@ public class GameState {
     private ArrayList<Integer> generateRandomCards(){
         AllTheCards allCards = new AllTheCards();
         ArrayList<Integer> cards = (ArrayList<Integer>) IntStream.range(0, allCards.getGameCards().size()).boxed().collect(Collectors.toList());
-         Collections.shuffle(cards);
+        Collections.shuffle(cards);
         return cards;
     }
 
@@ -179,8 +217,11 @@ public class GameState {
     public void setAskQuestion(Question askQuestion, boolean database) {
         this.askQuestion = askQuestion;
         if(!database) {
-            communicator.setQuestionChanged(true);
-            communicator.notifyList();
+            if(!communicator.isQuestionChanged()){
+                communicator.setQuestionChanged(true);
+                communicator.notifyList();
+                System.out.println("question changed");
+            }
         }
         else if(askQuestion == null)
             dbRef.child("turn-flag").child("question").setValue("");
@@ -216,8 +257,11 @@ public class GameState {
     public void setPlayerTurn(String playerTurn, boolean database) {
         this.playerTurn = playerTurn;
         if(!database) {
-            communicator.setTurnChanged(true);
-            communicator.notifyList();
+            if(!communicator.isPlayerChanged()){
+                communicator.setTurnChanged(true);
+                communicator.notifyList();
+                System.out.println("turn changed");
+            }
         }
         else if(playerTurn == null)
             dbRef.child("turn-flag").child("player-turn").setValue("");
@@ -236,8 +280,11 @@ public class GameState {
     public void setWeaponPositions(int[] weaponPositions, boolean database) {
         this.weaponPositions = weaponPositions;
         if(!database) {
-            communicator.setWeaponsChanged(true);
-            communicator.notifyList();
+            if(!communicator.isWeaponsChanged()){
+                communicator.setWeaponsChanged(true);
+                communicator.notifyList();
+                System.out.println("weapons changed");
+            }
         }
         else if(weaponPositions == null)
             dbRef.child("weapon-positions").setValue("");
@@ -250,8 +297,15 @@ public class GameState {
         }
     }
 
-    public void setTurnOrder(String[] turnOrder){
+    public void setTurnOrder(String[] turnOrder, boolean database){
         this.turnOrder = turnOrder;
+        if(database) {
+            StringBuilder sB = new StringBuilder();
+            for(String s: turnOrder)
+                sB.append(s).append(" ");
+
+            dbRef.child("turn-order").setValue(sB.toString().trim());
+        }
     }
 
     public String[] getTurnOrder(){

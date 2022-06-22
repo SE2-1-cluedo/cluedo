@@ -1,23 +1,21 @@
 package at.moritzmusel.cluedo;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import com.google.firebase.auth.FirebaseUser;
+import at.moritzmusel.cluedo.network.Network;
 
-import org.w3c.dom.Text;
 
 public class JoinLobbyActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText enter_id;
     private String enter;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,49 +25,65 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
         back.setOnClickListener(this);
         final Button join = findViewById(R.id.btn_lobby_join);
         join.setOnClickListener(this);
+
         enter_id = findViewById(R.id.txt_enter_id);
-        enter = getEnterId();
+        user = (FirebaseUser) getIntent().getExtras().get("user");
     }
 
+    /**
+     * back = close the activity
+     * join = checks if the enter is not empty, exists and that the game hasn't started yet.
+     * joins the lobby and send the decision, user and enter text to the next activity
+     * @param view this
+     */
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_back_to_lobbydecision){
-            //Intent i = new Intent(JoinLobbyActivity.this, LobbyDecisionActivity.class);
-            //startActivity(i);
             finish();
         }
         if(view.getId() == R.id.btn_lobby_join){
             enter = getEnterId();
-            //Checken ob die überhaupt exisitert
-            if(enter.isEmpty()){
-                new AlertDialog.Builder(JoinLobbyActivity.this)
-                        .setTitle("ERROR")
-                        .setMessage("The ENTER ID is false/empty")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        }).show();
-            }
-            else{
-                Intent i = new Intent(JoinLobbyActivity.this, CreateLobbyActivity.class);
-                i.putExtra("decision",false);
-                i.putExtra(Intent.EXTRA_TEXT, enter);
-                //false = join
-                //true = create
-                startActivity(i);
-            }
+            Network.getDatabaseReference().get().addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) Log.e("firebase", "Error getting data", task.getException());
+                else {
+                    //Checken ob die überhaupt exisitert
+                    if(enter.isEmpty() || !task.getResult().child(enter).exists()){
+                        showDialog("You're input is either empty or false!");
+                    }
+                    else if(task.getResult().child(enter).child("turn-flag").child("startGame").getValue().equals("start")){
+                        showDialog("The Game already started.");
+                    }
+                    else{
+                        Network.setCtx(this);
+                        Network.joinLobby(user, enter);
+                        Intent i = new Intent(JoinLobbyActivity.this, CreateLobbyActivity.class);
+                        i.putExtra("decision",false);
+                        i.putExtra("user",user);
+                        i.putExtra(Intent.EXTRA_TEXT, enter);
+                        startActivity(i);
+                    }
+                }
+            });
         }
     }
 
-    public String getGameId() {
-        //Muss noch mit Netwerk verknüpt werden.
-        String id = "12345";
-        return id;
+    /**
+     * shows a dialog for an error for the lobby
+     * @param text String Message
+     */
+    public void showDialog(String text){
+        new AlertDialog.Builder(JoinLobbyActivity.this)
+                .setTitle("ERROR")
+                .setMessage(text)
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialog, which) -> {
+                }).show();
     }
 
+    /**
+     * Gets the string that is entered
+     * @return String Gameid
+     */
     public String getEnterId(){
         return enter_id.getText().toString();
     }
