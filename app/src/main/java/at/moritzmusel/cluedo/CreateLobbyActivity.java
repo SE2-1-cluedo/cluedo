@@ -1,12 +1,9 @@
 package at.moritzmusel.cluedo;
 
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -20,7 +17,6 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
@@ -33,8 +29,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
     private final ArrayList<String> playerItems = new ArrayList<>();
     private ArrayAdapter<String> adapter;
-    private int playerCounter = 1;
-    private Button send_link;
     private TextView lobby_title;
     private Button start;
     private Button back;
@@ -42,7 +36,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private Character c;
     private TextView character_name;
     private ImageView character_picture;
-    private String game_id;
     private List<Player> player_list;
     FirebaseUser user;
     NetworkCommunicator networkCommunicator;
@@ -50,7 +43,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
 
     /**
      * Creates and initialises all buttons and lists
-     * Also changes the design according to the decision boolean
+     * Also changes the design according to the Character Miss Scarlett
      * true nothing has to change
      * false to the join lobby where they have to wait for the host
      */
@@ -66,13 +59,13 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         decision = getIntent().getExtras().getBoolean("decision");
         user = (FirebaseUser) getIntent().getExtras().get("user");
 
-        send_link = findViewById(R.id.btn_send_link);
+        Button send_link = findViewById(R.id.btn_send_link);
         send_link.setOnClickListener(this);
 
         start = findViewById(R.id.btn_lobby_start);
         start.setOnClickListener(this);
 
-        back = findViewById(R.id.btn_back);
+        Button back = findViewById(R.id.btn_back);
         back.setOnClickListener(this);
 
         TextView join_id = findViewById(R.id.txt_lobbyid);
@@ -85,50 +78,30 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         character_name = findViewById(R.id.txt_character_name);
         character_picture = findViewById(R.id.img_character);
 
-        /*if(decision) {
-            createUI();
-        }else{
-            joinUI();
-        }*/
+        managePlayerList();
+    }
 
+    /**
+     * If a player creates, leaves or joins lobby it will update the list
+     */
+    public void managePlayerList(){
         networkCommunicator.register(() -> {
-            //playerlist genau gleiche viele wie in der Gamestate
             if(networkCommunicator.isPlayerChanged()) {
                 player_list = gamestate.getPlayerState();
                 if (networkCommunicator.isCharacterChanged()) {
                     playerItems.clear();
                     for (Player p : player_list) {
                         if (p.getPlayerId().equals(user.getUid())) {
-                            c = p.getPlayerCharacterName();
-                            character_name.setText(c.name());
-                            setImage();
-                            if(c == Character.MISS_SCARLETT){
-                                createUI();
-                            }else{
-                                joinUI();
-                            }
-                            if(c == Character.MISS_SCARLETT){
-                                if(playerItems.size() < 1 || playerItems.size() > 6){
-                                    start.setClickable(false);
-                                    start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
-                                }
-                                else{
-                                    start.setClickable(true);
-                                    start.setBackground(getResources().getDrawable(R.drawable.custom_button));
-                                }
-                            }
+                            setCharacter(p);
+                            setLobby();
+                            checkNumberOfPlayers();
                         }
-                        if (!playerItems.contains(p.getPlayerCharacterName().name())) {
-                            playerItems.add(p.getPlayerCharacterName().name());
-                            adapter.notifyDataSetChanged();
-                            vibrate(500);
-                        }
+                        addPlayerWithoutDuplicates(p);
                     }
                     networkCommunicator.setCharacterChanged(false);
                 }
                 networkCommunicator.setPlayerChanged(false);
             }
-
             //checks if the game starts so the board can be called
             if(networkCommunicator.isStartGame() && !started){
                 started = true;
@@ -137,9 +110,53 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                 finish();
             }
         });
-
     }
 
+    /**
+     * If the player is the host (Miss Scarlett) and there are at least three to six
+     * the start button will be clickable
+     */
+    private void checkNumberOfPlayers(){
+        if(c == Character.MISS_SCARLETT){
+            if(playerItems.size() < 2 || playerItems.size() > 6){
+                start.setClickable(false);
+                start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
+            }
+            else{
+                start.setClickable(true);
+                start.setBackground(getResources().getDrawable(R.drawable.custom_button));
+            }
+        }
+    }
+
+    /**
+     * Adds the player if it isn't in the list
+     * @param p the player
+     */
+    private void addPlayerWithoutDuplicates(Player p) {
+        if (!playerItems.contains(p.getPlayerCharacterName().name())) {
+            playerItems.add(p.getPlayerCharacterName().name());
+            adapter.notifyDataSetChanged();
+            vibrate(500);
+        }
+    }
+
+
+    /**
+     * Because the characters for the players will be automatically assign by the network
+     * and if your are Miss Scarlett then you are the host that can start the game. c == Character.MISS_SCARLETT ||
+     */
+    private void setLobby() {
+        if(c == Character.MISS_SCARLETT){
+            createUI();
+        }else{
+            joinUI();
+        }
+    }
+
+    /**
+     * If somebody enters through the join lobby the Activity will change to the Lobby
+     */
     public void joinUI(){
         start.setClickable(false);
         start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
@@ -147,6 +164,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         lobby_title.setText(R.string.lobby);
     }
 
+    /**
+     * If somebody enters through the create lobby the Activity will change to the Lobby that can start the game
+     */
     public void createUI(){
         start.setClickable(true);
         start.setBackground(getResources().getDrawable(R.drawable.custom_button));
@@ -154,6 +174,9 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         lobby_title.setText(R.string.create_lobby);
     }
 
+    /**
+     * Same back for the system and the button
+     */
     public void onBackPressed(){
         back();
     }
@@ -161,7 +184,8 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     /**
      * Sets the character for the player in the lobby
      */
-    private void setCharacter() {
+    private void setCharacter(Player p) {
+        c = p.getPlayerCharacterName();
         character_name.setText(c.name());
         setImage();
     }
@@ -192,6 +216,13 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    /**
+     * Whats happen when you click the buttons
+     * Send link = sending the gameid per text
+     * back = leaves lobby
+     * Start will start the game
+     * @param view this
+     */
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_send_link){
@@ -199,7 +230,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, getGameID());//Hier wird dann der Einladungslink weitergesendet.
             sendIntent.setType("text/plain");
-
             Intent shareIntent = Intent.createChooser(sendIntent, null);
             startActivity(shareIntent);
 
@@ -216,16 +246,26 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    /**
+     * resets the network so the list of players can be properly shown
+     */
     @Override
     protected void onPause() {
         super.onPause();
+        //gamestate.reset();
+        networkCommunicator.reset();
         if (!started) {
             networkCommunicator.reset();
         }
     }
 
+    /**
+     * If you press back you will leave the lobby
+     * If the player is the host an alert shows
+     * that informs him that he leaves the lobby
+     */
     public void back(){
-        if(decision){
+        if(player_list.size() == 1){
             Network.setCtx(this);
             androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(CreateLobbyActivity.this);
             builder.setTitle("Attention!");
@@ -240,9 +280,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             alertDialog.show();
         }else{
             Network.setCtx(this);
-            //playerliste löscht player
-            //Gamestate player finden removen und dann sollte er weg sein
-            //playerItems.remove()
             Network.leaveLobby(user, getGameID());
             finish();
         }
@@ -254,20 +291,12 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      */
     public String getGameID() {
         if(decision){
-            game_id = getIntent().getExtras().getString("game_id");
-            return game_id;
-            //Schnittstelle mit dem Netzwerk um die id zu bekommen.
+            return getIntent().getExtras().getString("game_id");
         }else{
             Intent intent = getIntent();
             return intent.getStringExtra(Intent.EXTRA_TEXT);
-            //game_id.setText(id_from_joinlobby);
         }
 
-    }
-
-    public void network(){
-        //Adds the player according to the database
-        //Also checks the number of player and only allows up to six and at least three.
     }
 
     /**
