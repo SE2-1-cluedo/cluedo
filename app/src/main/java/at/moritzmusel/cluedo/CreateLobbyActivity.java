@@ -85,11 +85,11 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         character_name = findViewById(R.id.txt_character_name);
         character_picture = findViewById(R.id.img_character);
 
-        if(decision) {
+        /*if(decision) {
             createUI();
         }else{
             joinUI();
-        }
+        }*/
 
         networkCommunicator.register(() -> {
             //playerlist genau gleiche viele wie in der Gamestate
@@ -115,20 +115,14 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                             adapter.notifyDataSetChanged();
                             vibrate(500);
                         }
-
                     }
                     networkCommunicator.setCharacterChanged(false);
                 }
                 networkCommunicator.setPlayerChanged(false);
             }
 
-            if(networkCommunicator.isStartGame()){
-                Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
-                startActivity(i);
-            }
-
             if(decision){
-                if(playerItems.size() < 2 || playerItems.size() > 6){
+                if(playerItems.size() < 1 || playerItems.size() > 6){
                     start.setClickable(false);
                     start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
                 }
@@ -136,6 +130,11 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                     start.setClickable(true);
                     start.setBackground(getResources().getDrawable(R.drawable.custom_button));
                 }
+            }
+            //checks if the game starts so the board can be called
+            if(networkCommunicator.isStartGame()){
+                Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
+                startActivity(i);
             }
         });
 
@@ -156,7 +155,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     }
 
     public void onBackPressed(){
-        super.onBackPressed();
         back();
     }
 

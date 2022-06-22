@@ -35,6 +35,9 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
     private String game_id;
     FirebaseUser user;
     private boolean right_game_id;
+    NetworkCommunicator networkCommunicator;
+    private String gameStarted;
+    GameState gameState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,10 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
         enter_id = findViewById(R.id.txt_enter_id);
         //game_id = Network.getCurrentGameID();
         user = (FirebaseUser) getIntent().getExtras().get("user");
+        networkCommunicator = NetworkCommunicator.getInstance();
+        //gameState = GameState.getInstance();
+
+
     }
 
     @Override
@@ -64,21 +71,26 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
 
         if(view.getId() == R.id.btn_lobby_join){
             enter = getEnterId();
+
             Network.getDatabaseReference().get().addOnCompleteListener(task -> {
+
                 if (!task.isSuccessful()) Log.e("firebase", "Error getting data", task.getException());
                 else {
-                    right_game_id = task.getResult().child(enter).exists();
                     //Checken ob die überhaupt exisitert
-                    if(!right_game_id && !enter.isEmpty()){
+                    if(enter.isEmpty() || !task.getResult().child(enter).exists()){
                         new AlertDialog.Builder(JoinLobbyActivity.this)
                                 .setTitle("ERROR")
-                                .setMessage("The ENTER ID is false/empty: " + right_game_id + enter)
+                                .setMessage("You're input is either empty or false!")
                                 .setCancelable(false)
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
+                                .setPositiveButton("OK", (dialog, which) -> {
+                                }).show();
+                    }
+                    else if(task.getResult().child(enter).child("turn-flag").child("startGame").getValue().equals("start")){
+                        new AlertDialog.Builder(JoinLobbyActivity.this)
+                                .setTitle("ERROR")
+                                .setMessage("The Game already started.")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", (dialog, which) -> {
                                 }).show();
                     }
                     else{
@@ -95,7 +107,6 @@ public class JoinLobbyActivity extends AppCompatActivity implements View.OnClick
                     }
                 }
             });
-
         }
     }
 
