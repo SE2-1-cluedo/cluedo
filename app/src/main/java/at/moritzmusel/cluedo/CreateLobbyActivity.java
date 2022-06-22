@@ -109,6 +109,16 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                             }else{
                                 joinUI();
                             }
+                            if(c == Character.MISS_SCARLETT){
+                                if(playerItems.size() < 1 || playerItems.size() > 6){
+                                    start.setClickable(false);
+                                    start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
+                                }
+                                else{
+                                    start.setClickable(true);
+                                    start.setBackground(getResources().getDrawable(R.drawable.custom_button));
+                                }
+                            }
                         }
                         if (!playerItems.contains(p.getPlayerCharacterName().name())) {
                             playerItems.add(p.getPlayerCharacterName().name());
@@ -121,16 +131,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
                 networkCommunicator.setPlayerChanged(false);
             }
 
-            if(decision){
-                if(playerItems.size() < 1 || playerItems.size() > 6){
-                    start.setClickable(false);
-                    start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
-                }
-                else{
-                    start.setClickable(true);
-                    start.setBackground(getResources().getDrawable(R.drawable.custom_button));
-                }
-            }
             //checks if the game starts so the board can be called
             if(networkCommunicator.isStartGame()){
                 Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
