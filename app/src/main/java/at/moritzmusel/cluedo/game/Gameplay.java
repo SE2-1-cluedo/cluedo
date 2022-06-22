@@ -103,7 +103,7 @@ public class Gameplay {
         return currentPlayer;
     }
 
-    public String[] getPlayerForSuspectedCards(int[] cards){
+    public String[] getPlayerForSuspectedCardsArray(int[] cards){
         for(Player p : players) {
             for (int j = 0; j < 3; j++) {
                 if (p.getPlayerOwnedCards().contains(cards[j]) && !p.getPlayerId().equals(Network.getCurrentUser().getUid())) {
@@ -417,9 +417,5 @@ public class Gameplay {
 
     public void setTurnOrderGame(String[] turnOrderGame) {
         this.turnOrderGame = turnOrderGame;
-    }
-
-    public int[] getWeaponsPos() {
-        return weaponsPos;
     }
 }
