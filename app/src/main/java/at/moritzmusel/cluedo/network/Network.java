@@ -45,6 +45,10 @@ public class Network {
     private static ValueEventListener listener = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
+            //get TurnOrder
+            String[] turnOrder = ((String) Objects.requireNonNull(snapshot.child("turn-order").getValue())).split(" ");
+            gameState.setTurnOrder(turnOrder,false);
+
             //start Game
             String start = (String) snapshot.child("turn-flag").child("startGame").getValue();
             assert start != null;
@@ -162,6 +166,8 @@ public class Network {
         result.child("winner").setValue("");
         result.child("loser").setValue("");
 
+        gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
+
         //add players path
         gameState.setKiller(createKiller());
         gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
@@ -211,13 +217,17 @@ public class Network {
     public static void joinLobby(FirebaseUser user, String gameID) {
         setCurrentGameID(gameID);
         setCurrentUser(user);
+        ArrayList<String> joinedCharacters = new ArrayList<>();
         getCurrentGame().get().addOnCompleteListener(task -> {
             if (!task.isSuccessful())
                 Log.e("firebase", "Error getting data", task.getException());
             else {
-                for(DataSnapshot snap: task.getResult().child("players").getChildren())
-                    if(Objects.equals((String)snap.child("character").getValue(),currentCharacter.name()))
-                        currentCharacter = currentCharacter.getNextCharacter();
+                for(DataSnapshot snap: task.getResult().child("players").getChildren()) {
+                    joinedCharacters.add((String) snap.child("character").getValue());
+                }
+                do {
+                    currentCharacter = currentCharacter.getNextCharacter();
+                } while (joinedCharacters.contains(currentCharacter.name()));
 
                     DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
                     p.child("character").setValue(currentCharacter.name());
@@ -294,15 +304,13 @@ public class Network {
                 Log.e("firebase", "Error getting data", task.getException());
             else {
                 String[] turnOrder = String.valueOf(task.getResult().child("turn-order").getValue()).split(" ");
-                gameState.setTurnOrder(turnOrder);
-                for (Player p : list)
-                    p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(task.getResult().child("players").child(p.getPlayerId()).child("position").getValue())));
+                gameState.setTurnOrder(turnOrder,false);
+//                for (Player p : list)
+//                    p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(task.getResult().child("players").child(p.getPlayerId()).child("position").getValue())));
 
                 //start Game for other players
                 game.child("turn-flag").child("startGame").setValue("start");
 
-                gameState.setPlayerState(list,true);
-                gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
                 setGameState(gameState);
                 gameState.assignCards();
             }

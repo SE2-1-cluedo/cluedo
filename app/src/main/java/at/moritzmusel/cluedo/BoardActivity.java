@@ -93,7 +93,7 @@ public class BoardActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         gp1 = Gameplay.getInstance();
-        gp1.decidePlayerWhoMovesFirst();
+        gp1.startGame();
 
         setContentView(R.layout.test_board2);
         ConstraintLayout constraint = findViewById(R.id.constraintLayout);
@@ -137,13 +137,6 @@ public class BoardActivity extends AppCompatActivity {
                     }
                 });
 
-
-        /*diceView = findViewById(R.id.dialogDice);
-        dice = new Dice((ImageView) diceView);
-        diceView.setOnClickListener(v -> {
-            dice.throwDice();
-            diceRolled();
-        });*/
         gameState = GameState.getInstance();
 
         susCommunicator = SuspicionCommunicator.getInstance();
@@ -151,6 +144,7 @@ public class BoardActivity extends AppCompatActivity {
         gameplayCommunicator = GameplayCommunicator.getInstance();
         gameplayCommunicator.register(() -> {
             if(gameplayCommunicator.isMoved()){
+                System.out.println("Now we refreshed");
                 refreshBoard();
                 gameplayCommunicator.setMoved(false);
             }
@@ -159,7 +153,9 @@ public class BoardActivity extends AppCompatActivity {
             }
             if(gameplayCommunicator.isTurnChange()){
                 notifyCurrentPlayer();
+                if(gp1.checkIfPlayerIsOwn())
                 callDice();
+                gameplayCommunicator.setTurnChange(false);
             }
         });
 
@@ -191,7 +187,10 @@ public class BoardActivity extends AppCompatActivity {
         accel = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         shakeDetector = new ShakeDetector();
 
-        callDice();
+        if(gp1.checkIfPlayerIsOwn()){
+            System.out.println("This device");
+            callDice();
+        }
     }
 
     /**
@@ -220,6 +219,7 @@ public class BoardActivity extends AppCompatActivity {
     }
 
     private void refreshBoard() {
+        System.out.println("Should have moved now");
         for (int i = 0; i < gp1.getPlayers().size(); i++) {
             String player = gp1.getPlayers().get(i).getPlayerCharacterName().name().split("[_]")[1].toLowerCase();
             String name = player + "_";
@@ -252,45 +252,38 @@ public class BoardActivity extends AppCompatActivity {
 
         diceView = dice_layout.findViewById(R.id.dialogDice);
         dice = new Dice((ImageView) diceView);
-
-        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
-
-        builder.setCancelable(false);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        android.app.AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-
-        diceView = findViewById(R.id.dialogDice);
-        dice = new Dice((ImageView) diceView);
         diceView.setOnClickListener(v -> {
             dice.throwDice();
             diceRolled();
         });
 
-        shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
-            @Override
-            public void onShake(int count) {
-                if (count < 2) {
-                    dice.throwDice();
-                    diceRolled();
-                    final Timer timer2 = new Timer();
-                    timer2.schedule(new TimerTask() {
-                        public void run() {
-                            alertDialog.dismiss();
-                            timer2.cancel(); //this will cancel the timer of the system
-                        }
-                    }, 2000);
-                }
+        mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
+
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+
+        android.app.AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+        shakeDetector.setOnShakeListener(count -> {
+            if(count < 2){
+                dice.throwDice();
+                diceRolled();
             }
-        });
+//            new Thread(){
+//                public void run() {
+//                    try {
+//                        Thread.sleep(2000);
+//                        runOnUiThread(alertDialog::cancel);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }.start();
+    });
     }
+
 
     @Override
     public void onRestart() {
@@ -298,7 +291,7 @@ public class BoardActivity extends AppCompatActivity {
         if(susCommunicator.getHasSuspected() || susCommunicator.getHasAccused()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setCancelable(false);
-            gameState.setAskQuestion(new Question("TestPlayer",new int[]{2,9,15}),false);
+//            gameState.setAskQuestion(new Question("TestPlayer",new int[]{2,9,15}),false);
             if(susCommunicator.getHasAccused())
                 builder.setMessage("This is your one and only accusation, are you sure about it?");
             else
@@ -417,9 +410,7 @@ public class BoardActivity extends AppCompatActivity {
         else if(gameplayCommunicator.isSuspicion())
             card_ids = new ArrayList<>(Arrays.asList(gameState.getAskQuestion().getCards()[0],gameState.getAskQuestion().getCards()[1],gameState.getAskQuestion().getCards()[2]));
         else
-            //card_ids = gp1.findPlayerByUserId(Network.getCurrentUser().getUid()).getPlayerOwnedCards();
-            //here we need the cards from the hand (given by network)
-            card_ids = new ArrayList<>(Arrays.asList(0,10,18));
+            card_ids = gp1.findPlayerById(Network.getCurrentUser().getUid()).getPlayerOwnedCards();
 
         return card_ids;
     }
@@ -504,7 +495,6 @@ public class BoardActivity extends AppCompatActivity {
      * and calls the move methode
      */
     public void diceRolled() {
-        //diceView.setOnClickListener(v -> Toast.makeText(this,"You already rolled the dice!", Toast.LENGTH_SHORT).show());
         rolledMagnifyingGlass();
         gp1.setStepsTaken(0);
         movePlayerWithArrows();
@@ -785,7 +775,6 @@ public class BoardActivity extends AppCompatActivity {
      */
     private void moveAnimation(View mover, View destination) {
 
-//        gameState.setAskQuestion(new Question("TestPlayer",new int[]{2,9,15}),false);
         mover.setX(destination.getX());
         mover.setY(destination.getY());
 
@@ -802,7 +791,7 @@ public class BoardActivity extends AppCompatActivity {
      *
      */
     private void movePlayerWithArrows() {
-//        if(Network.getCurrentUser().getUid().equals(gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId())) {
+        if (gp1.checkIfPlayerIsOwn()) {
             if (gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getIsAbleToMove()) {
                 activateSecrets();
                 switch (newPosition) {
@@ -875,10 +864,9 @@ public class BoardActivity extends AppCompatActivity {
 
             } else {
                 deactivateSecrets();
-                //notifyCurrentPlayer();
-                // callDice();
             }
         }
+    }
 
     /**
      * if button is clicked or the screen is swiped horizontally, the current cards of the player are shown

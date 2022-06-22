@@ -41,7 +41,7 @@ public class GameState {
     private static GameState OBJ;
 
     private GameState(){
-        initQuestionCardsStack(Network.getCtx());
+        //initQuestionCardsStack(Network.getCtx());
         dbRef = Network.getCurrentGame();
     }
 
@@ -137,6 +137,7 @@ public class GameState {
     public void setPlayerState(List<Player> playerState, boolean database) {
         this.playerState = playerState;
         if(!database) {
+            System.out.println("Changed Player");
             communicator.setPlayerChanged(true);
             communicator.notifyList();
         }
@@ -272,8 +273,15 @@ public class GameState {
         }
     }
 
-    public void setTurnOrder(String[] turnOrder){
+    public void setTurnOrder(String[] turnOrder, boolean database){
         this.turnOrder = turnOrder;
+        if(database) {
+            StringBuilder sB = new StringBuilder();
+            for(String s: turnOrder)
+                sB.append(s).append(" ");
+
+            dbRef.child("turn-order").setValue(sB.toString().trim());
+        }
     }
 
     public String[] getTurnOrder(){
