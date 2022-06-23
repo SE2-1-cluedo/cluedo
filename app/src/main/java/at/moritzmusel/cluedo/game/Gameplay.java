@@ -50,17 +50,10 @@ public class Gameplay {
         players = gameState.getPlayerState();
         weaponsPos = gameState.getWeaponPositions();
 //        decidePlayerWhoMovesFirst();
-        startGame();
-        currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
-        findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
-    }
-
-    public void startGame(){
-
         gameCommunicator = GameplayCommunicator.getInstance();
         netCommunicator = NetworkCommunicator.getInstance();
-
         netCommunicator.register(()->{
+            System.out.println("Communicator called");
             if(netCommunicator.isPositionChanged()){
                 System.out.println("Notification from Gamestate");
                 //checkWhatChangedInPlayer(gameState.getPlayerState());
@@ -76,7 +69,9 @@ public class Gameplay {
                 checkTurnChanged(gameState.getPlayerTurn());
             }
             if(netCommunicator.isWeaponsChanged()){
-                checkWeaponChanged(gameState.getWeaponPositions());
+                System.out.println("Weapons in Gameplay");
+                netCommunicator.setWeaponsChanged(false);
+//                checkWeaponChanged(gameState.getWeaponPositions());
             }
             if (netCommunicator.isMagnify()){
                 gameCommunicator.setMagnifying(true);
@@ -84,6 +79,12 @@ public class Gameplay {
                 netCommunicator.setMagnify(false);
             }
         });
+        currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
+        findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
+    }
+
+    public void startGame(){
+
     }
     public static Gameplay getInstance(){
         if(OBJ == null){

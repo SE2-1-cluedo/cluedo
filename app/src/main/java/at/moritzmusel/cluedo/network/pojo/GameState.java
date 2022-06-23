@@ -35,7 +35,7 @@ public class GameState {
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponPositions = new int[]{5,1,9,3,6,8};
     DatabaseReference dbRef;
-    private final NetworkCommunicator communicator = NetworkCommunicator.getInstance();
+    private final NetworkCommunicator communicator;
 
 
     private static GameState OBJ;
@@ -43,6 +43,7 @@ public class GameState {
     private GameState(){
         //initQuestionCardsStack(Network.getCtx());
         dbRef = Network.getCurrentGame();
+        communicator = NetworkCommunicator.getInstance();
     }
 
     public static GameState getInstance() {
@@ -280,11 +281,9 @@ public class GameState {
     public void setWeaponPositions(int[] weaponPositions, boolean database) {
         this.weaponPositions = weaponPositions;
         if(!database) {
-            if(!communicator.isWeaponsChanged()){
                 communicator.setWeaponsChanged(true);
                 communicator.notifyList();
                 System.out.println("weapons changed");
-            }
         }
         else if(weaponPositions == null)
             dbRef.child("weapon-positions").setValue("");

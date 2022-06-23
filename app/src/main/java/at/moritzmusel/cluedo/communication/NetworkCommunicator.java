@@ -8,7 +8,7 @@ public class NetworkCommunicator implements Communicator {
     private final ArrayList<ChangeListener> listenerArray;
     private boolean turnChanged, playerChanged, positionChanged, questionChanged, weaponsChanged, hasWon, hasLost, magnify, characterChanged, startGame;
 
-    private static NetworkCommunicator OBJ = new NetworkCommunicator();
+    private static NetworkCommunicator OBJ;
 
     private NetworkCommunicator(){
         listenerArray = new ArrayList<>();

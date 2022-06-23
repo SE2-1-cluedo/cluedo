@@ -156,9 +156,11 @@ public class BoardActivity extends AppCompatActivity {
         netCommunicator.register(() -> {
            if(netCommunicator.isHasLost()) {
                 //call loser dialog
+               System.out.println("Someone Won");
            }
            if(netCommunicator.isHasWon()){
                 //call winner dialog
+               System.out.println("Someone lost");
            }
         });
 
