@@ -254,7 +254,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     protected void onPause() {
         super.onPause();
         //gamestate.reset();
-        networkCommunicator.reset();
         if (!started) {
             networkCommunicator.reset();
         }
@@ -273,6 +272,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             builder.setMessage("If you leave the Lobby now, you will have to create a new one.");
             builder.setNeutralButton("OK", (dialog, which) -> {
                 Network.leaveLobby(user, getGameID());
+
                 finish();
             });
             builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());

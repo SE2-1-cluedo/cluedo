@@ -53,9 +53,9 @@ public class Gameplay {
         gameCommunicator = GameplayCommunicator.getInstance();
         netCommunicator = NetworkCommunicator.getInstance();
         netCommunicator.register(()->{
-            System.out.println("Communicator called");
-            if(netCommunicator.isPositionChanged()){
-                System.out.println("Notification from Gamestate");
+            if(netCommunicator.isPositionChanged() || netCommunicator.isWeaponsChanged()){
+                weaponsPos = gameState.getWeaponPositions();
+                players = gameState.getPlayerState();
                 //checkWhatChangedInPlayer(gameState.getPlayerState());
                 gameCommunicator.setMoved(true);
                 gameCommunicator.notifyList();
@@ -66,12 +66,9 @@ public class Gameplay {
                 netCommunicator.setQuestionChanged(false);
             }
             if(netCommunicator.isTurnChanged()){
-                checkTurnChanged(gameState.getPlayerTurn());
-            }
-            if(netCommunicator.isWeaponsChanged()){
-                System.out.println("Weapons in Gameplay");
-                netCommunicator.setWeaponsChanged(false);
-//                checkWeaponChanged(gameState.getWeaponPositions());
+                gameCommunicator.setTurnChange(true);
+                gameCommunicator.notifyList();
+                netCommunicator.setTurnChanged(false);
             }
             if (netCommunicator.isMagnify()){
                 gameCommunicator.setMagnifying(true);

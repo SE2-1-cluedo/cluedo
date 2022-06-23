@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -136,17 +137,18 @@ public class BoardActivity extends AppCompatActivity {
         gameplayCommunicator.register(() -> {
             if(gameplayCommunicator.isMoved()){
                 System.out.println("Now we refreshed");
-//                refreshBoard();
+                refreshBoard();
                 gameplayCommunicator.setMoved(false);
                 netCommunicator.setPositionChanged(false);
+                netCommunicator.setWeaponsChanged(false);
             }
             if(gameplayCommunicator.isSuspicion()){
                 //onCardViewClick();
             }
             if(gameplayCommunicator.isTurnChange()){
                 notifyCurrentPlayer();
-                if(gp1.checkIfPlayerIsOwn())
-                callDice();
+//                if(gp1.checkIfPlayerIsOwn())
+//                callDice();
                 gameplayCommunicator.setTurnChange(false);
             }
         });
@@ -228,6 +230,12 @@ public class BoardActivity extends AppCompatActivity {
             findViewById(getResources().getIdentifier(str,"id",getPackageName())).setX(startPosition.getX());
             findViewById(getResources().getIdentifier(str,"id",getPackageName())).setY(startPosition.getY());
         }
+//        String player = "orchid";
+//        String name = player + "_";
+//
+//        Button startPlace = findViewById(createRoomDestination(name, new SecureRandom().nextInt(9)+1));
+//        findViewById(createPlayer(player)).setX(startPlace.getX());
+//        findViewById(createPlayer(player)).setY(startPlace.getY());
     }
 
 

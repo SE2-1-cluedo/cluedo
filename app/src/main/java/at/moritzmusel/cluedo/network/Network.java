@@ -170,6 +170,7 @@ public class Network {
         Date current = Calendar.getInstance().getTime();
         String gameID = intToChars(current.hashCode());
         setCurrentGameID(gameID);
+
         DatabaseReference game = database.child("games").child(gameID);
         SimpleDateFormat formated = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         formated.setTimeZone(TimeZone.getTimeZone("GMT"));
