@@ -13,7 +13,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
 
 public class CheckboxAdapter extends ArrayAdapter {
@@ -26,27 +25,20 @@ public class CheckboxAdapter extends ArrayAdapter {
     List<Boolean> checkboxStatecb6;
     List<String> checkboxItems;
     NotepadActivity.NotepadData notepadData;
-    Player player;
     Gameplay gpl;
-    CheckBox cb1;
-    CheckBox cb2;
-    CheckBox cb3;
-    CheckBox cb4;
-    CheckBox cb5;
-    CheckBox cb6;
-    TextView textView;
+
 
     public CheckboxAdapter(Context context, List<String> resource, NotepadActivity.NotepadData notepadData) {
         super(context, R.layout.list_row, resource);
 
         this.context = context;
         this.checkboxItems = resource;
-        this.checkboxStatecb1 = new ArrayList<Boolean>();
-        this.checkboxStatecb2 = new ArrayList<Boolean>();
-        this.checkboxStatecb3 = new ArrayList<Boolean>();
-        this.checkboxStatecb4 = new ArrayList<Boolean>();
-        this.checkboxStatecb5 = new ArrayList<Boolean>();
-        this.checkboxStatecb6 = new ArrayList<Boolean>();
+        this.checkboxStatecb1 = new ArrayList<>();
+        this.checkboxStatecb2 = new ArrayList<>();
+        this.checkboxStatecb3 = new ArrayList<>();
+        this.checkboxStatecb4 = new ArrayList<>();
+        this.checkboxStatecb5 = new ArrayList<>();
+        this.checkboxStatecb6 = new ArrayList<>();
 
         for (int i = 0; i < this.getCount(); i++) {
             this.checkboxStatecb1.add(i, false);
@@ -59,7 +51,6 @@ public class CheckboxAdapter extends ArrayAdapter {
 
         this.notepadData = notepadData;
 
-        //this.checkboxStatecb1 = new ArrayList<Boolean>(Collections.nCopies(resource.size(), true));
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -79,6 +70,8 @@ public class CheckboxAdapter extends ArrayAdapter {
             holder.cb4 = convertView.findViewById(R.id.checkbox4);
             holder.cb5 = convertView.findViewById(R.id.checkbox5);
             holder.cb6 = convertView.findViewById(R.id.checkbox6);
+
+            gpl = Gameplay.getInstance();
 
             if (!gpl.getCardsOfPlayerOwn().isEmpty()) {
                 int count = 0;
