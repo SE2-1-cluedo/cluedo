@@ -158,10 +158,19 @@ public class BoardActivity extends AppCompatActivity {
         netCommunicator.register(() -> {
            if(netCommunicator.isHasLost()) {
                 //call loser dialog
+               //vielleicht aus turnorder entfernen
                System.out.println("Someone Won");
            }
            if(netCommunicator.isHasWon()){
                 //call winner dialog
+               //check ob eigenes Gerät gewonnen
+               //wenn ja alles schließen (MainActivity Winner Screen)
+               //wenn nein alles schließen (MainActivity Loser Screen)
+               if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
+                   //winner activity
+               }else{
+                   //loser activity
+               }
                System.out.println("Someone lost");
            }
         });
