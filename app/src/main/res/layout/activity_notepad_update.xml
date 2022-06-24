@@ -15,9 +15,11 @@
         android:layout_height="48dp"
         android:layout_marginStart="600dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="14dp"
         android:background="@drawable/custom_button"
         android:text="@string/back_to_map"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/tableHeaderScrollContent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.586"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,8 +31,8 @@
         android:layout_width="876dp"
         android:layout_height="58dp"
 
-        android:layout_marginTop="14dp"
-        android:layout_marginBottom="250dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="259dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,9 +53,8 @@
 
         <TextView
             android:id="@+id/col"
-            android:layout_width="30dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:text="Miss Scarlett"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#689F38"
@@ -63,9 +64,8 @@
 
         <TextView
             android:id="@+id/col3"
-            android:layout_width="24dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:text="Col. Mustard"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#689F38"
@@ -75,9 +75,8 @@
 
         <TextView
             android:id="@+id/col4"
-            android:layout_width="23dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:text="Dr. Orchid"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#689F38"
@@ -87,7 +86,7 @@
 
         <TextView
             android:id="@+id/col1"
-            android:layout_width="113dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:text="Revd. Green"
             android:textAlignment="textStart"
@@ -99,7 +98,7 @@
 
         <TextView
             android:id="@+id/col0"
-            android:layout_width="117dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:text="Mrs. Peacock"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -110,9 +109,8 @@
 
         <TextView
             android:id="@+id/col5"
-            android:layout_width="103dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:text="Prof. Plum"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#689F38"
@@ -126,12 +124,13 @@
         android:id="@+id/listviewNotepad"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tableHeaderScrollContent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="0.234">
 
     </ListView>
 
@@ -139,12 +138,13 @@
         android:id="@+id/listviewNotepadCheckbox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tableHeaderScrollContent"
-        app:layout_constraintVertical_bias="0.148">
+        app:layout_constraintVertical_bias="0.234">
 
     </ListView>
 
