@@ -71,6 +71,7 @@ public class BoardActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
     private Sensor accel;
     private ShakeDetector shakeDetector;
+    Dialogs d;
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -83,6 +84,7 @@ public class BoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         decorView = getWindow().getDecorView();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        d = new Dialogs();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         gp1 = Gameplay.getInstance();
@@ -166,9 +168,12 @@ public class BoardActivity extends AppCompatActivity {
                //check ob eigenes Gerät gewonnen
                //wenn ja alles schließen (MainActivity Winner Screen)
                //wenn nein alles schließen (MainActivity Loser Screen)
+
                if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
+                   d.callWinDialog(BoardActivity.this,Network.getCurrentUser().getDisplayName());
                    //winner activity
                }else{
+                   d.callLoseDialog(BoardActivity.this);
                    //loser activity
                }
                System.out.println("Someone lost");

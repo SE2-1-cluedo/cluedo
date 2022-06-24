@@ -2,6 +2,7 @@ package at.moritzmusel.cluedo;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
@@ -31,7 +32,10 @@ public class Dialogs {
         TextView txt_winner = dialog.findViewById(R.id.txt_win);
         txt_winner.setText("The Winner is: " + winner);
         img_close.setOnClickListener(v -> dialog.dismiss());
-        btn_winner.setOnClickListener(v -> dialog.dismiss());
+        btn_winner.setOnClickListener(v -> {
+            ac.finish();
+            dialog.dismiss();
+        });
         dialog.show();
     }
 
