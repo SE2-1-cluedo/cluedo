@@ -246,10 +246,9 @@ public class Network {
                 for(DataSnapshot snap: task.getResult().child("players").getChildren()) {
                     joinedCharacters.add((String) snap.child("character").getValue());
                 }
-                do {
+                while(joinedCharacters.contains(currentCharacter.name())){
                     currentCharacter = currentCharacter.getNextCharacter();
-                } while (joinedCharacters.contains(currentCharacter.name()));
-
+                }
                     DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
                     p.child("character").setValue(currentCharacter.name());
                     p.child("cards").setValue("");

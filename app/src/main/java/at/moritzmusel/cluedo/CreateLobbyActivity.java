@@ -253,10 +253,10 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onPause() {
         super.onPause();
-        //gamestate.reset();
-        if (!started) {
-            networkCommunicator.reset();
-        }
+//        gamestate.reset();
+//        if (!started) {
+//            networkCommunicator.reset();
+//        }
     }
 
     /**
