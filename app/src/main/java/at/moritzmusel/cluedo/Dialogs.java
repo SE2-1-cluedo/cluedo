@@ -1,7 +1,11 @@
 package at.moritzmusel.cluedo;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -14,12 +18,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.network.Network;
 
 public class Dialogs {
+    private static final int LED_NOTIFICATION_ID = 0;
     Dialog dialog;
 
     public Dialogs() {
@@ -93,50 +100,49 @@ public class Dialogs {
         ac.startActivity(intent);
     }
 
-    public void callCheatDialog(Activity ac, List<Player> players){
-        final String[] framed = {""};
-
+    public void callFrameDialog(Activity ac, List<Player> players, Player framer){
         dialog = new Dialog(ac);
         dialog.setContentView(R.layout.cheat_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
+        TextView txt_frame = dialog.findViewById(R.id.txt_cheat_title);
+        txt_frame.setText("Frame:");
+        TextView txt_frame_name = dialog.findViewById(R.id.txt_frame_player_name);
         ImageView img_close = dialog.findViewById(R.id.img_close);
         Button btn_frame = dialog.findViewById(R.id.btn_frame);
+        ArrayList<String> player_characters = new ArrayList<>();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(ac,android.R.layout.simple_list_item_1,player_characters);
+        ListView frameable_players = (ListView)dialog.findViewById(R.id.list_framable_players);
+        frameable_players.setAdapter(adapter);
+        dialog.show();
 
-        String[] player_characters = null;
-        int i = 0;
-        for(Player p:players){
-            player_characters[i] = p.getPlayerCharacterName().name();
-            i++;
+        for(Player p: players){
+            player_characters.add(p.getPlayerCharacterName().name());
+            if(p.getPlayerId() == framer.getPlayerId()){
+                player_characters.remove(framer.getPlayerCharacterName().name());
+            }
+            adapter.notifyDataSetChanged();
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(ac,android.R.layout.simple_list_item_1,player_characters);
-
-        ListView framable_players = (ListView)dialog.findViewById(R.id.list_framable_players);
-
-        framable_players.setAdapter(adapter);
-
-        framable_players.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        frameable_players.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //framed[0] = player_characters[position];
-                Toast.makeText(ac, "You framed " + player_characters[position], Toast.LENGTH_LONG).show();
+                //Toast.makeText(ac, "You framed " + player_characters.get(position), Toast.LENGTH_LONG).show();
+                txt_frame_name.setText(player_characters.get(position));
             }
         });
-
-        TextView txt_frame = dialog.findViewById(R.id.txt_cheat_title);
-        //txt_frame.setText("Frame: " + framed[0]);
 
         img_close.setOnClickListener(v -> {
             dialog.dismiss();
         });
 
         btn_frame.setOnClickListener(v -> {
-            Toast.makeText(ac, "You framed " + framed[0], Toast.LENGTH_LONG).show();
+            //gameplay methode die den wert auf gewählte ändert.
+            //return txt_frame.getText();
             dialog.dismiss();
         });
-        dialog.show();
+
     }
+
 
 
 

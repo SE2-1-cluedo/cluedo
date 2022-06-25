@@ -4,13 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.NotificationCompat;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Configuration;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -33,12 +39,14 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 
 import at.moritzmusel.cluedo.communication.GameplayCommunicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.communication.SuspicionCommunicator;
+import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Dice;
 import at.moritzmusel.cluedo.network.Network;
 import at.moritzmusel.cluedo.network.pojo.GameState;
@@ -48,6 +56,7 @@ import at.moritzmusel.cluedo.entities.Character;
 
 public class BoardActivity extends AppCompatActivity {
 
+    private static final int LED_NOTIFICATION_ID = 0;
     private View decorView;
     private View playerCardsView;
     private AllTheCards allCards;
@@ -947,6 +956,16 @@ public class BoardActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
+    public void onCheatViewClick(){
+        SecureRandom r = new SecureRandom();
+        int i = r.nextInt(100);
+        for(Player p:gameState.getPlayerState()){
+            if(p.getPositionOnBoard() == i){
+                d.callFrameDialog(BoardActivity.this,gp1.getPlayers(), gp1.findPlayerById(Network.getCurrentUser().getUid()));
+            }
+        }
+    }
+
     /**
      * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert
      */
@@ -962,14 +981,16 @@ public class BoardActivity extends AppCompatActivity {
             case MotionEvent.ACTION_UP:
                 x2 = touchEvent.getX();
                 y2 = touchEvent.getY();
-                float swipeRight = x2 -x1, swipeLeft = x1- x2, swipe = y1- y2;
+                float swipeRight = x2 -x1, swipeLeft = x1- x2, swipeUp = y1- y2, swipeDown = y2 - y1;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
                     startSuspicion();
-                }else if (swipe > MIN_SWIPE_DISTANCE){
+                }else if (swipeUp > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
+                }else if(swipeDown > MIN_SWIPE_DISTANCE){
+                    onCheatViewClick();
                 }
                 break;
         }

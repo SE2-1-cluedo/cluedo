@@ -19,7 +19,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="350dp">
+                android:layout_height="300dp">
 
                 <ImageView
                     android:id="@+id/img_close"
@@ -32,7 +32,7 @@
                 <ListView
                     android:id="@+id/list_framable_players"
                     android:layout_width="250dp"
-                    android:layout_height="200dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -54,9 +54,19 @@
                     android:id="@+id/btn_frame"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
                     android:background="@drawable/custom_button"
-                    android:text="@string/frame"
+                    android:text="@android:string/ok"
+                    android:textColor="#FFFFFF"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/txt_frame_player_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
                     android:textColor="#FFFFFF"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
