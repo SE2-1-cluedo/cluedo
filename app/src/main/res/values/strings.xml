@@ -91,27 +91,27 @@
     </string-array>
 
     <string-array name="all">
+        <item>Miss Scarlett</item>
         <item>Professor Plum</item>
         <item>Reverend Green</item>
-        <item>Miss Scarlett</item>
         <item>Mrs Peacock</item>
         <item>Colonel Mustard</item>
         <item>Dr. Orchid</item>
         <item>Dagger</item>
-        <item>Pistole</item>
+        <item>Candlestick</item>
+        <item>Revolver</item>
         <item>Rope</item>
         <item>Pipe</item>
-        <item>Candlestick</item>
         <item>Wrench</item>
         <item>Lounge</item>
+        <item>Conservatory</item>
+        <item>Ball Room</item>
         <item>Dining Room</item>
+        <item>Kitchen</item>
+        <item>Library</item>
         <item>Billiard Room</item>
         <item>Study</item>
         <item>Hall</item>
-        <item>Library</item>
-        <item>Ballroom</item>
-        <item>Conservatory</item>
-        <item>Kitchen</item>
     </string-array>
 
 </resources>
