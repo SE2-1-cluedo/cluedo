@@ -230,7 +230,7 @@ public class GameState {
             StringBuilder sB = new StringBuilder();
             sB.append(askQuestion.getAskPerson()).append(" ");
             for(int i : askQuestion.getCards())
-                sB.append(i).append("");
+                sB.append(i).append(" ");
             dbRef.child("turn-flag").child("question").setValue(sB.toString().trim());
         }
     }

@@ -146,7 +146,7 @@ public class BoardActivity extends AppCompatActivity {
                 //onCardViewClick();
             }
             if(gameplayCommunicator.isTurnChange()){
-                notifyCurrentPlayer();
+//                notifyCurrentPlayer();
 //                if(gp1.checkIfPlayerIsOwn())
 //                callDice();
                 gameplayCommunicator.setTurnChange(false);
@@ -154,8 +154,11 @@ public class BoardActivity extends AppCompatActivity {
         });
 
         netCommunicator = NetworkCommunicator.getInstance();
-        netCommunicator.setPositionChanged(false);
         netCommunicator.register(() -> {
+            if(netCommunicator.isQuestionChanged()){
+                if(!gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId().equals(Network.getCurrentUser().getUid()))
+                    onCardViewClick();
+            }
            if(netCommunicator.isHasLost()) {
                 //call loser dialog
                //vielleicht aus turnorder entfernen
@@ -179,12 +182,6 @@ public class BoardActivity extends AppCompatActivity {
         allGameCards = allCards.getGameCards();
 
         evidenceCards = new EvidenceCards();
-
-//        ImageButton cardView = findViewById(R.id.cardView);
-//        cardView.setOnClickListener(v -> {
-//            gameplayCommunicator.setMoved(true);
-//            gameplayCommunicator.notifyList();
-//        });
 
         ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
@@ -239,12 +236,6 @@ public class BoardActivity extends AppCompatActivity {
             findViewById(getResources().getIdentifier(str,"id",getPackageName())).setX(startPosition.getX());
             findViewById(getResources().getIdentifier(str,"id",getPackageName())).setY(startPosition.getY());
         }
-//        String player = "orchid";
-//        String name = player + "_";
-//
-//        Button startPlace = findViewById(createRoomDestination(name, new SecureRandom().nextInt(9)+1));
-//        findViewById(createPlayer(player)).setX(startPlace.getX());
-//        findViewById(createPlayer(player)).setY(startPlace.getY());
     }
 
 
@@ -303,7 +294,6 @@ public class BoardActivity extends AppCompatActivity {
         if(susCommunicator.getHasSuspected() || susCommunicator.getHasAccused()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setCancelable(false);
-//            gameState.setAskQuestion(new Question("TestPlayer",new int[]{2,9,15}),false);
             if(susCommunicator.getHasAccused())
                 builder.setMessage("This is your one and only accusation, are you sure about it?");
             else
@@ -316,11 +306,23 @@ public class BoardActivity extends AppCompatActivity {
                 switchWeapon(susCommunicator.getWeapon().toLowerCase());
                 moveSuspectedPlayer(susCommunicator.getCharacter());
                 //moveCharacter
-                if(susCommunicator.getHasSuspected())
-                    showSuspicionResult();
+                if(susCommunicator.getHasSuspected()){
+                    gp1.askPlayerAQuestion(new int[]{allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),newPosition+11});
+                    onCardViewClick();
+                }
+
                     //do something to ask the next player about your suspicion
-                else if (susCommunicator.getHasAccused())
+                else if (susCommunicator.getHasAccused()){
                     System.out.println("Accused");
+                    if(gp1.accusation(new int[]{allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),newPosition+11})){
+                        //you won
+                        gameState.setWinner(Network.getCurrentUser().getUid(),true);
+                    } else {
+                        //you lost
+                        gameState.setLoser(Network.getCurrentUser().getUid(),true);
+                    }
+                }
+
                     //check with murder cards either player wins or is out
                 susCommunicator.setHasSuspected(false);
                 susCommunicator.setHasAccused(false);
@@ -340,16 +342,15 @@ public class BoardActivity extends AppCompatActivity {
     private void showSuspicionResult(){
         AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
 
-        String[] playerWithSusCard = gp1.getPlayerForSuspectedCardsDEMO(gameState.getAskQuestion().getCards());
-        //if(gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId().equals(Network.getCurrentUser().getUid())){
-        if(true){
+        String[] playerWithSusCard = gp1.getPlayerForSuspectedCards(gameState.getAskQuestion().getCards());
+        if(gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId().equals(Network.getCurrentUser().getUid())){
             if(playerWithSusCard.length == 1)
                 builder.setMessage("The cards are owned by "+playerWithSusCard[0]);
             else
             builder.setMessage("The Card "+allCards.getGameCards().get(Integer.parseInt(playerWithSusCard[1])).getDesignation()+" is owned by "+playerWithSusCard[0]);
         } else {
             if(playerWithSusCard.length == 1)
-            builder.setMessage("The cards are owned by "+playerWithSusCard[0]);
+                builder.setMessage("The cards are owned by "+playerWithSusCard[0]);
             else {
                 builder.setMessage("One or more cards are owned by "+playerWithSusCard[0]);
             }
@@ -363,7 +364,8 @@ public class BoardActivity extends AppCompatActivity {
                     Thread.sleep(5000);
                     runOnUiThread(() -> {
                         alertDialog.dismiss();
-                        gp1.endTurn();
+                        gameState.setAskQuestion(null,true);
+                        //gp1.endTurn();
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -417,9 +419,10 @@ public class BoardActivity extends AppCompatActivity {
      */
     private ArrayList<Integer> getPlayerCardIds(){
         ArrayList<Integer> card_ids;
-        if(susCommunicator.getHasSuspected() || susCommunicator.getHasAccused())
+        if(susCommunicator.getHasSuspected() || susCommunicator.getHasAccused()){
             card_ids = new ArrayList<>(Arrays.asList(allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),newPosition+11));
-        else if(gameplayCommunicator.isSuspicion())
+        }
+        else if(netCommunicator.isQuestionChanged())
             card_ids = new ArrayList<>(Arrays.asList(gameState.getAskQuestion().getCards()[0],gameState.getAskQuestion().getCards()[1],gameState.getAskQuestion().getCards()[2]));
         else
             card_ids = gp1.findPlayerById(Network.getCurrentUser().getUid()).getPlayerOwnedCards();
@@ -886,7 +889,7 @@ public class BoardActivity extends AppCompatActivity {
     public void onCardViewClick() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this,R.style.AlertDialogStyle);
-        if(gameplayCommunicator.isSuspicion())
+        if(netCommunicator.isQuestionChanged() || susCommunicator.getHasSuspected())
             builder.setTitle(gameState.getAskQuestion().getAskPerson()+" suspected");
         else
         builder.setTitle("My Cards");
@@ -894,7 +897,7 @@ public class BoardActivity extends AppCompatActivity {
         setPlayerCardImages();
         builder.setView(playerCardsView);
 
-        if(!gameplayCommunicator.isSuspicion()) {
+        if(!netCommunicator.isQuestionChanged() && !susCommunicator.getHasSuspected()) {
             builder.setNeutralButton("OK", (dialog, which) -> dialog.cancel());
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
@@ -907,7 +910,7 @@ public class BoardActivity extends AppCompatActivity {
                     try {
                         Thread.sleep(3000);
                         runOnUiThread(() -> {
-                            gameplayCommunicator.setSuspicion(false);
+                            netCommunicator.setQuestionChanged(false);
                             alertDialog.dismiss();
                             showSuspicionResult();
                         });

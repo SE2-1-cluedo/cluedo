@@ -52,6 +52,12 @@ public class Gameplay {
 //        decidePlayerWhoMovesFirst();
         gameCommunicator = GameplayCommunicator.getInstance();
         netCommunicator = NetworkCommunicator.getInstance();
+        netCommunicator.setTurnChanged(false);
+        netCommunicator.setQuestionChanged(false);
+        netCommunicator.setPositionChanged(false);
+        netCommunicator.setMagnify(false);
+        netCommunicator.setWeaponsChanged(false);
+        netCommunicator.setPlayerChanged(false);
         netCommunicator.register(()->{
             if(netCommunicator.isPositionChanged() || netCommunicator.isWeaponsChanged()){
                 weaponsPos = gameState.getWeaponPositions();
@@ -63,11 +69,11 @@ public class Gameplay {
             if(netCommunicator.isQuestionChanged()){
                 gameCommunicator.setSuspicion(true);
                 gameCommunicator.notifyList();
-                netCommunicator.setQuestionChanged(false);
             }
             if(netCommunicator.isTurnChanged()){
                 gameCommunicator.setTurnChange(true);
                 gameCommunicator.notifyList();
+                currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
                 netCommunicator.setTurnChanged(false);
             }
             if (netCommunicator.isMagnify()){
@@ -101,34 +107,16 @@ public class Gameplay {
         return currentPlayer;
     }
 
-    public String[] getPlayerForSuspectedCardsArray(int[] cards){
-        for(Player p : players) {
-            for (int j = 0; j < 3; j++) {
-                if (p.getPlayerOwnedCards().contains(cards[j]) && !p.getPlayerId().equals(Network.getCurrentUser().getUid())) {
-                    if (p.getPlayerOwnedCards().contains(cards[j])) {
-                        return new String[]{p.getPlayerCharacterName().name(), String.valueOf(cards[j])};
-                    }
+    public String[] getPlayerForSuspectedCards(int[] cards){
+        for(Player p : players){
+            for (int card : cards) {
+                if (!p.getPlayerId().equals(findPlayerByCharacterName(currentPlayer).getPlayerId())) {
+                    if (p.getPlayerOwnedCards().contains(card))
+                        return new String[]{p.getPlayerCharacterName().name(), String.valueOf(card)};
                 }
             }
         }
-        return new String[]{"nobody"};
-    }
-
-    public String[] getPlayerForSuspectedCardsDEMO(int[] cards){
-        if(new SecureRandom().nextBoolean())
-            return new String[]{"COLONEL_MUSTARD","5"};
-        else
-        return new String[]{"nobody"};
-    }
-
-    public String getPlayerForSuspectedCards(int[] cards){
-        for(Player p : players){
-            for (int j = 0; j < 3; j++){
-                if(p.getPlayerOwnedCards().contains(cards[j]))
-                    return p.getPlayerCharacterName().name();
-            }
-        }
-        return "nobody";
+        return new String[]{"Nobody"};
     }
 
     /**

@@ -118,7 +118,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      */
     private void checkNumberOfPlayers(){
         if(c == Character.MISS_SCARLETT){
-            if(playerItems.size() < 3 || playerItems.size() > 6){
+            if(playerItems.size() < 2 || playerItems.size() > 6){
                 start.setClickable(false);
                 start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
             }
