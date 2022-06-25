@@ -104,6 +104,7 @@ public class CheckboxAdapter extends ArrayAdapter {
         }
 
     }
+
     });
         holder.cb1.setChecked(checkboxStatecb1.get(position));
 
