@@ -9,6 +9,7 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,7 +27,6 @@ import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
 
 public class Dialogs {
-    private static final int LED_NOTIFICATION_ID = 0;
     Dialog dialog;
 
     public Dialogs() {
@@ -141,6 +141,44 @@ public class Dialogs {
             dialog.dismiss();
         });
 
+    }
+
+    public void callFramedDialog(Activity ac){
+        dialog = new Dialog(ac);
+        dialog.setContentView(R.layout.win_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        //ImageView img_close = dialog.findViewById(R.id.img_close);
+        Button btn_winner = dialog.findViewById(R.id.btn_winner);
+        dialog.setCancelable(false);
+
+        ImageView image = dialog.findViewById(R.id.img_win);
+        image.setVisibility(View.GONE);
+
+        TextView txt_countdown = dialog.findViewById(R.id.txt_win);
+        TextView txt_framed_you = dialog.findViewById(R.id.txt_winner);
+        txt_framed_you.setText("Somebody framed you!");
+        txt_framed_you.setTextSize(24);
+        btn_winner.setText("Deny");
+
+        btn_winner.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        dialog.show();
+
+        new CountDownTimer(11000, 1000) {
+            @Override
+            public void onTick(long l) {
+                txt_countdown.setText("" + l/1000);
+            }
+            @Override
+            public void onFinish() {
+                dialog.dismiss();
+                callLoseDialog(ac);
+                //change to loser
+                //alert.setMessage("end");
+            }
+        }.start();
     }
 
 

@@ -966,6 +966,10 @@ public class BoardActivity extends AppCompatActivity {
         }
     }
 
+    public void onFramedViewClick(){
+        d.callFramedDialog(BoardActivity.this);
+    }
+
     /**
      * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert
      */
@@ -990,7 +994,7 @@ public class BoardActivity extends AppCompatActivity {
                 }else if (swipeUp > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
                 }else if(swipeDown > MIN_SWIPE_DISTANCE){
-                    onCheatViewClick();
+                    onFramedViewClick();
                 }
                 break;
         }

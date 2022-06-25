@@ -48,6 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:text="You Win!"
+                    android:textAlignment="center"
                     android:textColor="@color/colorPrimary"
                     android:textSize="34sp"
                     app:layout_constraintEnd_toEndOf="parent"
