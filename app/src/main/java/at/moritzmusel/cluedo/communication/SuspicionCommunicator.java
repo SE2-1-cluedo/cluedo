@@ -7,13 +7,17 @@ public class SuspicionCommunicator implements Communicator{
     private String weapon,character;
     private boolean hasSuspected, hasAccused;
 
-    private static final SuspicionCommunicator OBJ = new SuspicionCommunicator();
+    private static SuspicionCommunicator OBJ = new SuspicionCommunicator();
 
     private SuspicionCommunicator(){
         listenerArray = new ArrayList<>();
     }
 
     public static SuspicionCommunicator getInstance(){
+        if(OBJ == null){
+            OBJ = new SuspicionCommunicator();
+            return OBJ;
+        }
         return OBJ;
     }
 

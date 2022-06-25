@@ -31,9 +31,13 @@ public class Dialogs {
 
         TextView txt_winner = dialog.findViewById(R.id.txt_win);
         txt_winner.setText("The Winner is: " + winner);
-        img_close.setOnClickListener(v -> dialog.dismiss());
+        img_close.setOnClickListener(v -> {
+            endGame(ac);
+            dialog.dismiss();
+        });
         btn_winner.setOnClickListener(v -> {
-            ac.finish();
+            //ac.finishAffinity();
+            endGame(ac);
             dialog.dismiss();
         });
         dialog.show();
@@ -62,9 +66,24 @@ public class Dialogs {
         txt_lost.setText("You Lost!");
         txt_lost.setTextColor(ac.getResources().getColor(R.color.red));
 
-        img_close.setOnClickListener(v -> dialog.dismiss());
-        btn_loser.setOnClickListener(v -> dialog.dismiss());
+        img_close.setOnClickListener(v -> {
+            endGame(ac);
+            dialog.dismiss();
+        });
+        btn_loser.setOnClickListener(v -> {
+            //ac.finishAffinity();
+            endGame(ac);
+            dialog.dismiss();
+        });
         dialog.show();
     }
+
+    public void endGame(Activity ac){
+        Intent intent = new Intent(ac.getApplicationContext(),MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        ac.startActivity(intent);
+    }
+
+
 
 }

@@ -51,8 +51,8 @@ public class BoardActivity extends AppCompatActivity {
     private View decorView;
     private View playerCardsView;
     private AllTheCards allCards;
-    private float x1;
-    private float y1;
+    private float x1, x2;
+    private float y1, y2;
     private GameState gameState;
     private SuspicionCommunicator susCommunicator;
     private GameplayCommunicator gameplayCommunicator;
@@ -157,11 +157,14 @@ public class BoardActivity extends AppCompatActivity {
 
         netCommunicator = NetworkCommunicator.getInstance();
         netCommunicator.setPositionChanged(false);
+
         netCommunicator.register(() -> {
            if(netCommunicator.isHasLost()) {
-                //call loser dialog
+               //call loser dialog
                //vielleicht aus turnorder entfernen
-               System.out.println("Someone Won");
+               if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
+                   d.callLoseDialog(BoardActivity.this);
+               }
            }
            if(netCommunicator.isHasWon()){
                 //call winner dialog
@@ -170,7 +173,10 @@ public class BoardActivity extends AppCompatActivity {
                //wenn nein alles schließen (MainActivity Loser Screen)
 
                if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
-                   d.callWinDialog(BoardActivity.this,Network.getCurrentUser().getDisplayName());
+                   d.callWinDialog(BoardActivity.this,gp1.findPlayerById(Network.getCurrentUser().getUid()).getPlayerCharacterName().name());
+                   Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                   startActivity(intent);
                    //winner activity
                }else{
                    d.callLoseDialog(BoardActivity.this);
@@ -954,8 +960,8 @@ public class BoardActivity extends AppCompatActivity {
                 break;
 
             case MotionEvent.ACTION_UP:
-                float x2 = touchEvent.getX();
-                float y2 = touchEvent.getY();
+                x2 = touchEvent.getX();
+                y2 = touchEvent.getY();
                 float swipeRight = x2 -x1, swipeLeft = x1- x2, swipe = y1- y2;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
