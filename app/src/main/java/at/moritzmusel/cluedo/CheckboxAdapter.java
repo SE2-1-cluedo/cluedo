@@ -1,8 +1,11 @@
 package at.moritzmusel.cluedo;
 
 import android.app.Activity;
+import android.app.UiModeManager;
 import android.content.Context;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +13,12 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import androidx.core.widget.CompoundButtonCompat;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
 
 public class CheckboxAdapter extends ArrayAdapter {
@@ -83,6 +89,39 @@ public class CheckboxAdapter extends ArrayAdapter {
                     }
                     count++;
                 }
+            }
+
+            List<Player> players = gpl.getPlayers();
+            for (int i = 0; i < checkboxItems.size(); i++) {
+                if(players.size()<4){
+                    checkboxStatecb4.set(i,true);
+                    holder.cb4.setChecked(checkboxStatecb4.get(4));
+                    holder.cb4.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#808080")));
+                    checkboxStatecb5.set(i,true);
+                    holder.cb5.setChecked(checkboxStatecb5.get(5));
+                    holder.cb5.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#808080")));
+                    checkboxStatecb6.set(i,true);
+                    holder.cb6.setChecked(checkboxStatecb6.get(6));
+                    holder.cb6.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#808080")));
+                }
+                if(players.size()<5){
+                    checkboxStatecb5.set(i,true);
+                    holder.cb5.setChecked(checkboxStatecb5.get(5));
+                    holder.cb5.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#808080")));
+                    checkboxStatecb6.set(i,true);
+                    holder.cb6.setChecked(checkboxStatecb6.get(6));
+                    holder.cb6.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#808080")));
+
+                }
+                if(players.size()<6){
+                    checkboxStatecb6.set(i,true);
+                    holder.cb6.setChecked(checkboxStatecb6.get(6));
+                    holder.cb6.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#808080")));
+
+                }
+
+
+
             }
 
             convertView.setTag(holder);

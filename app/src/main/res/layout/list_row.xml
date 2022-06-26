@@ -13,7 +13,6 @@
         android:layout_centerInParent="true"
         android:layout_marginStart="356dp"
         android:buttonTint="@color/colorAccent"
-        android:clickable="true"
         android:focusable="true" />
 
     <CheckBox
@@ -24,7 +23,6 @@
         android:layout_centerInParent="true"
         android:layout_marginStart="263dp"
         android:buttonTint="@color/colorAccent"
-        android:clickable="true"
         android:focusable="true"
         tools:ignore="DuplicateSpeakableTextCheck,DuplicateSpeakableTextCheck" />
 
@@ -37,7 +35,6 @@
         android:layout_marginStart="172dp"
         android:accessibilityTraversalBefore="@id/checkbox2"
         android:buttonTint="@color/colorAccent"
-        android:clickable="true"
         android:duplicateParentState="false"
         android:focusable="true" />
 
@@ -49,7 +46,6 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="536dp"
         android:buttonTint="@color/colorAccent"
-        android:clickable="true"
         android:focusable="true" />
 
     <CheckBox
@@ -60,7 +56,6 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="615dp"
         android:buttonTint="@color/colorAccent"
-        android:clickable="true"
         android:focusable="true"
         android:textAlignment="center"
         android:textAllCaps="true" />
@@ -85,7 +80,6 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="449dp"
         android:buttonTint="@color/colorAccent"
-        android:clickable="true"
         android:focusable="true" />
 
 
