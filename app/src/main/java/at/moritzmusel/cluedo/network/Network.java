@@ -345,12 +345,12 @@ public class Network {
         getGameState().getPlayerState();
     }
 
-    private static String intToChars(int number) {
+    private static String intToChars(long number) {
         StringBuilder rt = new StringBuilder();
-        char[] tmp = (Integer.toString(number) + ThreadLocalRandom.current().nextInt(10000, 99999)).toCharArray();
-        for (int i = 0; i < tmp.length; ) {
+        char[] tmp = (String.valueOf(number) + ThreadLocalRandom.current().nextLong(10000, 99999)).toCharArray();
+        for (int i = 6; i < tmp.length; ) {
             if (i < (tmp.length - 2)) {
-                int nmbr = (int) tmp[i] + (int) tmp[i + 1] - 94;
+                long nmbr = (long) tmp[i] + (long) tmp[i + 1] - 94;
                 char t;
                 if (nmbr <= 26) {
                     t = (char) (nmbr + 65);
