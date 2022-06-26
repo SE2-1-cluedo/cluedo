@@ -201,14 +201,10 @@ public class Gameplay {
      * and delete it from the staple
      */
     public String getPlayerToWhichCardBelongs(int cardDrawn){
-        gameCommunicator.setMagnifying(true);
-        for(Player p : players) {
-            if(p.getPlayerOwnedCards().contains(cardDrawn)){
-                gameCommunicator.notifyList();
+        for(Player p : players)
+            if(p.getPlayerOwnedCards().contains(cardDrawn))
                 return p.getPlayerCharacterName().name();
-            }
-        }
-        gameCommunicator.notifyList();
+
         return "?nobody? :^)";
     }
 
