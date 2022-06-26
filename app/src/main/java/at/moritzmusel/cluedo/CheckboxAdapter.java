@@ -80,6 +80,8 @@ public class CheckboxAdapter extends ArrayAdapter {
             holder.cb5 = convertView.findViewById(R.id.checkbox5);
             holder.cb6 = convertView.findViewById(R.id.checkbox6);
 
+            gpl = Gameplay.getInstance();
+
             if (!gpl.getCardsOfPlayerOwn().isEmpty()) {
                 int count = 0;
                 for (int x = 0; x < checkboxItems.size(); x++) {
@@ -95,12 +97,9 @@ public class CheckboxAdapter extends ArrayAdapter {
             convertView.setTag(holder);
         } else {
             holder = (CheckHolder)convertView.getTag();
-
     }
         holder.textView.setText(checkboxItems.get(position));
-
         holder.cb1.setOnClickListener(new View.OnClickListener()
-
     {
         @Override
         public void onClick (View view){

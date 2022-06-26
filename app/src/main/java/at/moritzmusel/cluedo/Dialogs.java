@@ -57,6 +57,7 @@ public class Dialogs {
             dialog.dismiss();
         });
         dialog.show();
+        dialog.setCancelable(false);
     }
 
     /**
@@ -71,6 +72,7 @@ public class Dialogs {
         ImageView img_close = dialog.findViewById(R.id.img_close);
         Button btn_loser = dialog.findViewById(R.id.btn_winner);
         btn_loser.setBackground(ac.getDrawable(R.drawable.custom_button2));
+        dialog.setCancelable(false);
 
         ImageView image = dialog.findViewById(R.id.img_win);
         image.setImageResource(R.drawable.red_lose);
@@ -161,20 +163,22 @@ public class Dialogs {
         txt_framed_you.setTextSize(24);
         btn_winner.setText("Deny");
 
-        btn_winner.setOnClickListener(v -> {
-            dialog.dismiss();
-        });
         dialog.show();
 
         new CountDownTimer(11000, 1000) {
             @Override
             public void onTick(long l) {
                 txt_countdown.setText("" + l/1000);
+                btn_winner.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    this.cancel();
+                });
             }
             @Override
             public void onFinish() {
                 dialog.dismiss();
                 callLoseDialog(ac);
+
                 //change to loser
                 //alert.setMessage("end");
             }
