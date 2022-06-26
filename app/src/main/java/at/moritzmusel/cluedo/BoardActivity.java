@@ -1,5 +1,4 @@
 package at.moritzmusel.cluedo;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,7 +49,6 @@ import at.moritzmusel.cluedo.game.Gameplay;
 import at.moritzmusel.cluedo.entities.Character;
 
 public class BoardActivity extends AppCompatActivity {
-
     private View decorView;
     private View playerCardsView;
     private AllTheCards allCards;
@@ -74,7 +72,7 @@ public class BoardActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
     private Sensor accel;
     private ShakeDetector shakeDetector;
-    Dialogs d;
+    private Dialogs d;
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -169,18 +167,11 @@ public class BoardActivity extends AppCompatActivity {
                     onCardViewClick();
             }
            if(netCommunicator.isHasLost()) {
-                //call loser dialog
-               //vielleicht aus turnorder entfernen
-               if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
-                   d.callLoseDialog(BoardActivity.this);
+               if(gameState.getLoser().equals(Network.getCurrentUser().getUid())){
+                   d.callLoseDialog(BoardActivity.this, "You made a wrong Accusation!");
                }
            }
            if(netCommunicator.isHasWon()){
-                //call winner dialog
-               //check ob eigenes Gerät gewonnen
-               //wenn ja alles schließen (MainActivity Winner Screen)
-               //wenn nein alles schließen (MainActivity Loser Screen)
-
                if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
                    d.callWinDialog(BoardActivity.this,gp1.findPlayerById(Network.getCurrentUser().getUid()).getPlayerCharacterName().name());
                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
@@ -188,7 +179,7 @@ public class BoardActivity extends AppCompatActivity {
                    startActivity(intent);
                    //winner activity
                }else{
-                   d.callLoseDialog(BoardActivity.this);
+                   d.callLoseDialog(BoardActivity.this, "Somebody else found the murderer.");
                    //loser activity
                }
                System.out.println("Someone lost");
@@ -355,7 +346,6 @@ public class BoardActivity extends AppCompatActivity {
                         gameState.setLoser(Network.getCurrentUser().getUid(),true);
                     }
                 }
-
                     //check with murder cards either player wins or is out
                 susCommunicator.setHasSuspected(false);
                 susCommunicator.setHasAccused(false);

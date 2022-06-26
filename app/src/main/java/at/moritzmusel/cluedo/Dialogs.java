@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +66,7 @@ public class Dialogs {
      * Shows a Dialog with the Information that you lost.
      * @param ac Activity where it will be shown
      */
-    public void callLoseDialog(Activity ac){
+    public void callLoseDialog(Activity ac, String reason){
         dialog = new Dialog(ac);
         dialog.setContentView(R.layout.win_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -78,7 +80,7 @@ public class Dialogs {
         image.setImageResource(R.drawable.red_lose);
 
         TextView txt_loser = dialog.findViewById(R.id.txt_win);
-        txt_loser.setText("You made a" + "\n" + "false Accusation");
+        txt_loser.setText(reason);
 
         TextView txt_lost = dialog.findViewById(R.id.txt_winner);
         txt_lost.setText("You Lost!");
@@ -97,6 +99,7 @@ public class Dialogs {
     }
 
     public void endGame(Activity ac){
+        Network.leaveLobby(Network.getCurrentUser(),Network.getCurrentGameID());
         Intent intent = new Intent(ac.getApplicationContext(),MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ac.startActivity(intent);
@@ -177,8 +180,7 @@ public class Dialogs {
             @Override
             public void onFinish() {
                 dialog.dismiss();
-                callLoseDialog(ac);
-
+                callLoseDialog(ac, "You were framed!");
                 //change to loser
                 //alert.setMessage("end");
             }
