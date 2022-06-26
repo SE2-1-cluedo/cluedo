@@ -107,7 +107,7 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
                 checkboxStatecb5 = new ArrayList<Boolean>();
                 checkboxStatecb6 = new ArrayList<Boolean>();
 
-                for (int i = 0; i < 21; i++) {
+                for (int i = 0; i < 22; i++) {
                     checkboxStatecb1.add(i, false);
                     checkboxStatecb2.add(i, false);
                     checkboxStatecb3.add(i, false);
