@@ -1,11 +1,14 @@
 package at.moritzmusel.cluedo;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+
+import at.moritzmusel.cluedo.entities.Character;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -29,5 +32,12 @@ public class ExampleUnitTest {
             System.out.println(ec.getCards().get(i).toString());
         }
         System.out.println(ec.getCard().getDesignation());
+    }
+
+    @Test
+    public void DialogNameTest(){
+        Dialogs d = new Dialogs();
+        Character c = d.getCharacterWithString("MISS_SCARLETT");
+        Assert.assertEquals(c, Character.MISS_SCARLETT);
     }
 }

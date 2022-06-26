@@ -21,15 +21,23 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 
+import com.google.firebase.database.util.GAuthToken;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.game.Gameplay;
 import at.moritzmusel.cluedo.network.Network;
+import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class Dialogs {
     Dialog dialog;
+    Gameplay gp1 = Gameplay.getInstance();
+    GameState gameState = GameState.getInstance();
+    NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
 
     public Dialogs() {
     }
@@ -118,12 +126,13 @@ public class Dialogs {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(ac,android.R.layout.simple_list_item_1,player_characters);
         ListView frameable_players = (ListView)dialog.findViewById(R.id.list_framable_players);
         frameable_players.setAdapter(adapter);
+        Character framed;
         dialog.show();
 
         for(Player p: players){
             player_characters.add(p.getPlayerCharacterName().name());
             if(p.getPlayerId() == framer.getPlayerId()){
-                player_characters.remove(framer.getPlayerCharacterName().name());
+                //player_characters.remove(framer.getPlayerCharacterName().name());
             }
             adapter.notifyDataSetChanged();
         }
@@ -132,6 +141,7 @@ public class Dialogs {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(ac, "You framed " + player_characters.get(position), Toast.LENGTH_LONG).show();
+                txt_frame_name.setTextColor(Color.BLACK);
                 txt_frame_name.setText(player_characters.get(position));
             }
         });
@@ -142,10 +152,32 @@ public class Dialogs {
 
         btn_frame.setOnClickListener(v -> {
             //gameplay methode die den wert auf gewählte ändert.
-            //return txt_frame.getText();
+            //return txt_frame.getText();gp1.findPlayerByCharacterName(getCharacterWithString(txt_frame.getText().toString())).getPlayerId()
+            //Change to id for the framed player and not the current player
+            gameState.setFramed(Network.getCurrentUser().getUid(),true);
             dialog.dismiss();
         });
+    }
 
+    public Character getCharacterWithString(String name){
+        if(name.equals(Character.MISS_SCARLETT.name())){
+            return Character.MISS_SCARLETT;
+        }
+        else if(name.equals(Character.REVEREND_GREEN.name())){
+            return Character.REVEREND_GREEN;
+        }
+        else if(name.equals(Character.PROFESSOR_PLUM.name())){
+            return Character.PROFESSOR_PLUM;
+        }
+        else if(name.equals(Character.MRS_PEACOCK.name())){
+            return Character.MRS_PEACOCK;
+        }
+        else if(name.equals(Character.COLONEL_MUSTARD.name())){
+            return Character.COLONEL_MUSTARD;
+        }
+        else{
+            return Character.DR_ORCHID;
+        }
     }
 
     public void callFramedDialog(Activity ac){
@@ -175,6 +207,7 @@ public class Dialogs {
                 btn_winner.setOnClickListener(v -> {
                     dialog.dismiss();
                     this.cancel();
+                    gameState.setFramed("",true);
                 });
             }
             @Override

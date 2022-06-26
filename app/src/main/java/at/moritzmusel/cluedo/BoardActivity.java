@@ -181,6 +181,11 @@ public class BoardActivity extends AppCompatActivity {
                }
                System.out.println("Someone lost");
            }
+           if(netCommunicator.isFramed()){
+               //if(gameState.getFramed().equals(Network.getCurrentUser().getUid())){
+                   d.callFramedDialog(BoardActivity.this);
+               //}
+           }
         });
 
         allCards = new AllTheCards();
@@ -999,7 +1004,7 @@ public class BoardActivity extends AppCompatActivity {
                 }else if (swipeUp > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
                 }else if(swipeDown > MIN_SWIPE_DISTANCE){
-                    onFramedViewClick();
+                    onCheatViewClick();
                 }
                 break;
         }

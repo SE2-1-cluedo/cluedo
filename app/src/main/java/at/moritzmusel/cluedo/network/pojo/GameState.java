@@ -28,6 +28,7 @@ public class GameState {
     private List<Integer> cardState;
     private List<Card> questionCardStack;
     private Question askQuestion;
+    private String framed;
     private String winner, loser;
     private int[] killer;
     private String playerTurn;
@@ -102,6 +103,26 @@ public class GameState {
 
     }
 
+    public String getFramed() {
+        return framed;
+    }
+
+    public void setFramed(String framed, boolean database){
+        this.framed = framed;
+        if(!database){
+            if(!communicator.isFramed()){
+                communicator.setFramed(true);
+                communicator.notifyList();
+                System.out.println("is framed");
+            }
+        } else if(framed == null){
+            dbRef.child("result").child("framed").setValue("");
+        }
+        else
+            dbRef.child("result").child("framed").setValue(framed);
+
+    }
+
     public String getLoser() {
         return loser;
     }
@@ -171,7 +192,7 @@ public class GameState {
                     for(String player : players){
                         Map<String,Object> map = new HashMap<>();
                         map.put("cards","");
-                        map.put("cards-eliminated","");
+                        map.put("framed","");
                         map.put("character","");
                         map.put("position","");
                         dbRef.child("players").child(player).updateChildren(map);
@@ -181,7 +202,7 @@ public class GameState {
         } else {
             for (Player p : playerState){
                 dbRef.child("players").child(p.getPlayerId()).child("cards").setValue(p.getOwnedCardsAsString());
-                dbRef.child("players").child(p.getPlayerId()).child("cards-eliminated").setValue(p.getKnownCardsAsString());
+                //dbRef.child("players").child(p.getPlayerId()).child("cards-eliminated").setValue(p.getKnownCardsAsString());
                 dbRef.child("players").child(p.getPlayerId()).child("position").setValue(Integer.toString(p.getPositionOnBoard()));
             }
         }

@@ -6,7 +6,7 @@ import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class NetworkCommunicator implements Communicator {
     private final ArrayList<ChangeListener> listenerArray;
-    private boolean turnChanged, playerChanged, positionChanged, questionChanged, weaponsChanged, hasWon, hasLost, magnify, characterChanged, startGame;
+    private boolean turnChanged, playerChanged, positionChanged, questionChanged, weaponsChanged, hasWon, framed, hasLost, magnify, characterChanged, startGame;
 
     private static NetworkCommunicator OBJ;
 
@@ -71,6 +71,13 @@ public class NetworkCommunicator implements Communicator {
 
     public boolean isHasWon() {
         return hasWon;
+    }
+
+    public boolean isFramed() {
+        return framed;
+    }
+    public void setFramed(boolean framed) {
+        this.framed = framed;
     }
 
     public boolean isHasLost() {
