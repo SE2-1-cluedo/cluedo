@@ -6,13 +6,17 @@ public class GameplayCommunicator implements Communicator{
     private boolean moved, suspicion, turnChange;
     private final ArrayList<ChangeListener> listenerArray;
 
-    private static final GameplayCommunicator OBJ = new GameplayCommunicator();
+    private static GameplayCommunicator OBJ = new GameplayCommunicator();
 
     private GameplayCommunicator(){
         listenerArray = new ArrayList<>();
     }
 
     public static GameplayCommunicator getInstance(){
+        if(OBJ == null){
+            OBJ = new GameplayCommunicator();
+            return OBJ;
+        }
         return OBJ;
     }
 

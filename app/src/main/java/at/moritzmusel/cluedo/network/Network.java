@@ -43,6 +43,7 @@ public class Network {
     private static GameState gameState;
     private static FirebaseUser currentUser;
     private static final int[] killer = new int[3];
+    private static NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
     private static final ValueEventListener turnFlagListener = new ValueEventListener() {
 
         @Override
@@ -288,6 +289,7 @@ public class Network {
                     player.removeValue();
                     setCurrentGameID(null);
                     gameState.reset();
+                    networkCommunicator.reset();
                     setGameState(null);
                 }
             }

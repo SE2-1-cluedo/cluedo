@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -33,12 +34,14 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 
 import at.moritzmusel.cluedo.communication.GameplayCommunicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.communication.SuspicionCommunicator;
+import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Dice;
 import at.moritzmusel.cluedo.network.Network;
 import at.moritzmusel.cluedo.network.pojo.GameState;
@@ -51,8 +54,8 @@ public class BoardActivity extends AppCompatActivity {
     private View decorView;
     private View playerCardsView;
     private AllTheCards allCards;
-    private float x1;
-    private float y1;
+    private float x1, x2;
+    private float y1, y2;
     private GameState gameState;
     private SuspicionCommunicator susCommunicator;
     private GameplayCommunicator gameplayCommunicator;
@@ -71,6 +74,7 @@ public class BoardActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
     private Sensor accel;
     private ShakeDetector shakeDetector;
+    Dialogs d;
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -83,6 +87,7 @@ public class BoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         decorView = getWindow().getDecorView();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        d = new Dialogs();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         gp1 = Gameplay.getInstance();
@@ -166,16 +171,24 @@ public class BoardActivity extends AppCompatActivity {
            if(netCommunicator.isHasLost()) {
                 //call loser dialog
                //vielleicht aus turnorder entfernen
-               System.out.println("Someone Won");
+               if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
+                   d.callLoseDialog(BoardActivity.this);
+               }
            }
            if(netCommunicator.isHasWon()){
                 //call winner dialog
                //check ob eigenes Gerät gewonnen
                //wenn ja alles schließen (MainActivity Winner Screen)
                //wenn nein alles schließen (MainActivity Loser Screen)
+
                if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
+                   d.callWinDialog(BoardActivity.this,gp1.findPlayerById(Network.getCurrentUser().getUid()).getPlayerCharacterName().name());
+                   Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                   startActivity(intent);
                    //winner activity
                }else{
+                   d.callLoseDialog(BoardActivity.this);
                    //loser activity
                }
                System.out.println("Someone lost");
@@ -186,6 +199,12 @@ public class BoardActivity extends AppCompatActivity {
         allGameCards = allCards.getGameCards();
 
         evidenceCards = new EvidenceCards();
+
+//        ImageButton cardView = findViewById(R.id.cardView);
+//        cardView.setOnClickListener(v -> {
+//            gameplayCommunicator.setMoved(true);
+//            gameplayCommunicator.notifyList();
+//        });
 
         ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
@@ -926,7 +945,7 @@ public class BoardActivity extends AppCompatActivity {
                     try {
                         Thread.sleep(3000);
                         runOnUiThread(() -> {
-                            netCommunicator.setQuestionChanged(false);
+                            gameplayCommunicator.setSuspicion(false);
                             alertDialog.dismiss();
                             showSuspicionResult();
                         });
@@ -955,6 +974,20 @@ public class BoardActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
+    public void onCheatViewClick(){
+        SecureRandom r = new SecureRandom();
+        int i = r.nextInt(100);
+        for(Player p:gameState.getPlayerState()){
+            if(p.getPositionOnBoard() == i){
+                d.callFrameDialog(BoardActivity.this,gp1.getPlayers(), gp1.findPlayerById(Network.getCurrentUser().getUid()));
+            }
+        }
+    }
+
+    public void onFramedViewClick(){
+        d.callFramedDialog(BoardActivity.this);
+    }
+
     /**
      * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert
      */
@@ -968,16 +1001,18 @@ public class BoardActivity extends AppCompatActivity {
                 break;
 
             case MotionEvent.ACTION_UP:
-                float x2 = touchEvent.getX();
-                float y2 = touchEvent.getY();
-                float swipeRight = x2 -x1, swipeLeft = x1- x2, swipe = y1- y2;
+                x2 = touchEvent.getX();
+                y2 = touchEvent.getY();
+                float swipeRight = x2 -x1, swipeLeft = x1- x2, swipeUp = y1- y2, swipeDown = y2 - y1;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
                     startSuspicion();
-                }else if (swipe > MIN_SWIPE_DISTANCE){
+                }else if (swipeUp > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
+                }else if(swipeDown > MIN_SWIPE_DISTANCE){
+                    onFramedViewClick();
                 }
                 break;
         }

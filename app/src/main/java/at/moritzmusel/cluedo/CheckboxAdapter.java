@@ -88,12 +88,9 @@ public class CheckboxAdapter extends ArrayAdapter {
             convertView.setTag(holder);
         } else {
             holder = (CheckHolder)convertView.getTag();
-
     }
         holder.textView.setText(checkboxItems.get(position));
-
         holder.cb1.setOnClickListener(new View.OnClickListener()
-
     {
         @Override
         public void onClick (View view){
