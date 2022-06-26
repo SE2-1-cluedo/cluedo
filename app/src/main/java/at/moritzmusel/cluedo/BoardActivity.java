@@ -174,9 +174,6 @@ public class BoardActivity extends AppCompatActivity {
            if(netCommunicator.isHasWon()){
                if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
                    d.callWinDialog(BoardActivity.this,gp1.findPlayerById(Network.getCurrentUser().getUid()).getPlayerCharacterName().name());
-                   Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                   startActivity(intent);
                    //winner activity
                }else{
                    d.callLoseDialog(BoardActivity.this, "Somebody else found the murderer.");
@@ -968,9 +965,9 @@ public class BoardActivity extends AppCompatActivity {
         SecureRandom r = new SecureRandom();
         int i = r.nextInt(100);
         for(Player p:gameState.getPlayerState()){
-            if(p.getPositionOnBoard() == i){
+            //if(p.getPositionOnBoard() == i){
                 d.callFrameDialog(BoardActivity.this,gp1.getPlayers(), gp1.findPlayerById(Network.getCurrentUser().getUid()));
-            }
+            //}
         }
     }
 

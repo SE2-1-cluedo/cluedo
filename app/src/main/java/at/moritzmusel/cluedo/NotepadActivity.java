@@ -18,7 +18,7 @@ import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
 import at.moritzmusel.cluedo.network.pojo.GameState;
 
-public class NotepadActivity extends AppCompatActivity implements View.OnClickListener {
+public class NotepadActivity extends AppCompatActivity{
 
     CheckboxAdapter checkAdapter;
     float x1, x2;
@@ -40,8 +40,8 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
         listView.setAdapter(checkAdapter);
 
 
-        Button btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
-        btn_closeNotepad.setOnClickListener(this);
+        //Button btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
+        //btn_closeNotepad.setOnClickListener(this);
 
 
     }
@@ -54,13 +54,13 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.btn_closeNotepad) {
-            checkAdapter.safeState();
-            finish();
-        }
-    }
+//    @Override
+//    //public void onClick(View view) {
+//        if (view.getId() == R.id.btn_closeNotepad) {
+//            checkAdapter.safeState();
+//            finish();
+//        }
+//    }
 
 
     /**

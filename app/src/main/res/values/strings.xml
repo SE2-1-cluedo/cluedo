@@ -59,6 +59,7 @@
     <string name="choose_the_character_you_want_to_play_with">Choose the character you want to play with</string>
     <string name="back_to_map">Back to map</string>
     <string name="frame">Frame</string>
+    <string name="notepad">Notepad</string>
 
     <string-array name="person_array">
         <item>Professor Plum</item>

@@ -5,66 +5,6 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/row_padding">
 
-    <CheckBox
-        android:id="@+id/checkbox3"
-        android:layout_width="57dp"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="356dp"
-        android:buttonTint="@color/colorAccent"
-        android:clickable="true"
-        android:focusable="true" />
-
-    <CheckBox
-        android:id="@+id/checkbox2"
-        android:layout_width="57dp"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="263dp"
-        android:buttonTint="@color/colorAccent"
-        android:clickable="true"
-        android:focusable="true"
-        tools:ignore="DuplicateSpeakableTextCheck,DuplicateSpeakableTextCheck" />
-
-    <CheckBox
-        android:id="@+id/checkbox1"
-        android:layout_width="57dp"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="172dp"
-        android:accessibilityTraversalBefore="@id/checkbox2"
-        android:buttonTint="@color/colorAccent"
-        android:clickable="true"
-        android:duplicateParentState="false"
-        android:focusable="true" />
-
-    <CheckBox
-        android:id="@+id/checkbox5"
-        android:layout_width="57dp"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="536dp"
-        android:buttonTint="@color/colorAccent"
-        android:clickable="true"
-        android:focusable="true" />
-
-    <CheckBox
-        android:id="@+id/checkbox6"
-        android:layout_width="57dp"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="615dp"
-        android:buttonTint="@color/colorAccent"
-        android:clickable="true"
-        android:focusable="true"
-        android:textAlignment="center"
-        android:textAllCaps="true" />
-
     <TextView
         android:id="@+id/textNotepad"
         android:layout_width="155dp"
@@ -78,15 +18,71 @@
         android:textStyle="bold" />
 
     <CheckBox
+        android:id="@+id/checkbox1"
+        android:layout_width="57dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="177dp"
+        android:accessibilityTraversalBefore="@id/checkbox2"
+        android:buttonTint="@color/colorAccent"
+        android:clickable="true"
+        android:duplicateParentState="false"
+        android:focusable="true" />
+
+    <CheckBox
+        android:id="@+id/checkbox2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="257dp"
+        android:buttonTint="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true"
+        tools:ignore="DuplicateSpeakableTextCheck,DuplicateSpeakableTextCheck" />
+
+    <CheckBox
+        android:id="@+id/checkbox3"
+        android:layout_width="57dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="342dp"
+        android:buttonTint="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <CheckBox
         android:id="@+id/checkbox4"
         android:layout_width="57dp"
         android:layout_height="48dp"
         android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="449dp"
+        android:layout_marginStart="419dp"
         android:buttonTint="@color/colorAccent"
         android:clickable="true"
         android:focusable="true" />
+
+    <CheckBox
+        android:id="@+id/checkbox5"
+        android:layout_width="57dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="507dp"
+        android:buttonTint="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <CheckBox
+        android:id="@+id/checkbox6"
+        android:layout_width="57dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="591dp"
+        android:buttonTint="@color/colorAccent"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAlignment="center"
+        android:textAllCaps="true" />
 
 
 </RelativeLayout>
