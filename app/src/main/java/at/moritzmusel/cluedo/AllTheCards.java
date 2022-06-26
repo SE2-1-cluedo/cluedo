@@ -77,4 +77,11 @@ public class AllTheCards {
             return -1;
     }
 
+    public Card findCardWithId(int id){
+        for(Card c: gameCards)
+            if(c.getId() == id)
+                return c;
+            return null;
+    }
+
 }

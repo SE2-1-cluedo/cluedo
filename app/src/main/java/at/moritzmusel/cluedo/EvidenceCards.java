@@ -5,8 +5,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import at.moritzmusel.cluedo.entities.Player;
+import at.moritzmusel.cluedo.game.Gameplay;
+
 public class EvidenceCards {
     private LinkedList<Card> cards;
+    Gameplay gp1;
 
     /**
      * When created calls getGameCards and shuffles the list randomly.
@@ -14,6 +18,7 @@ public class EvidenceCards {
     public EvidenceCards() {
         this.cards = getGameCards();
         shuffle(getCards());
+        gp1 = Gameplay.getInstance();
     }
 
     /**
@@ -71,10 +76,12 @@ public class EvidenceCards {
     /**
      * Gives player back who has the card.
      */
-    public String getPlayer(){
-        String player = "Nobody";
-        //Hier if mit Netzwerk einfügen um zu überprüfen, wer die Karte in der Hand hält.
-        return player;
+    public String getPlayer(int card){
+        for(Player p : gp1.getPlayers()){
+            if(p.getPlayerOwnedCards().contains(card))
+                return p.getPlayerCharacterName().name();
+        }
+        return "Nobody";
     }
 
     /**

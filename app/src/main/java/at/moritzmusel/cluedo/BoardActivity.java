@@ -155,6 +155,10 @@ public class BoardActivity extends AppCompatActivity {
 
         netCommunicator = NetworkCommunicator.getInstance();
         netCommunicator.register(() -> {
+            if(netCommunicator.isMagnify()){
+                if(!gp1.checkIfPlayerIsOwn())
+                    rolledMagnifyingGlass();
+            }
             if(netCommunicator.isQuestionChanged()){
                 if(!gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId().equals(Network.getCurrentUser().getUid()))
                     onCardViewClick();
@@ -201,24 +205,34 @@ public class BoardActivity extends AppCompatActivity {
      * uses the methods of the EvidenceCards-Class
      */
     private void rolledMagnifyingGlass() {
-        if(dice.getNumberRolled() == 4){
-            AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
-            builder.setTitle("What is going on?");
+        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+        builder.setTitle("What is going on?");
+        int magnifiedCard;
+        String owner;
+        if(gp1.checkIfPlayerIsOwn()){
+            magnifiedCard = evidenceCards.getDrawnCard().getId();
+            owner = evidenceCards.getPlayer(magnifiedCard);
+            gameState.setMagnify(new String[]{String.valueOf(magnifiedCard),owner},true);
+
             builder.setMessage("You rolled the magnifying glass." + "\n"
                     + "A evidence card has been drawn." + "\n"
-                    + "It is revealed that the Card: " + evidenceCards.getDrawnCard().getDesignation() + "\n"
-                    + "is owned by: " + evidenceCards.getPlayer());
+                    + "It is revealed that the Card: " + allCards.findCardWithId(magnifiedCard).getDesignation() + "\n"
+                    + "is owned by: " + owner);
 
-            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.create();
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
+        } else {
+            magnifiedCard = Integer.parseInt(gameState.getMagnify()[0]);
+            owner = gameState.getMagnify()[1];
+            builder.setMessage("Someone rolled the magnifying glass." + "\n"
+                    + "A evidence card has been drawn." + "\n"
+                    + "It is revealed that the Card: " + allCards.findCardWithId(magnifiedCard).getDesignation() + "\n"
+                    + "is owned by: " + owner);
         }
+        netCommunicator.setMagnify(false);
+        gameState.setMagnify(null,true);
+        builder.setNeutralButton("OK", (dialog, which) -> dialog.dismiss());
+        builder.create();
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     private void refreshBoard() {
@@ -510,7 +524,9 @@ public class BoardActivity extends AppCompatActivity {
      * and calls the move methode
      */
     public void diceRolled() {
-        rolledMagnifyingGlass();
+        if(dice.getNumberRolled() == 4)
+            rolledMagnifyingGlass();
+
         gp1.setStepsTaken(0);
         movePlayerWithArrows();
     }

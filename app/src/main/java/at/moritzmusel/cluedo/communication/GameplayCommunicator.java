@@ -3,7 +3,7 @@ package at.moritzmusel.cluedo.communication;
 import java.util.ArrayList;
 
 public class GameplayCommunicator implements Communicator{
-    private boolean moved, suspicion, turnChange, magnifying;
+    private boolean moved, suspicion, turnChange;
     private final ArrayList<ChangeListener> listenerArray;
 
     private static final GameplayCommunicator OBJ = new GameplayCommunicator();
@@ -49,13 +49,5 @@ public class GameplayCommunicator implements Communicator{
 
     public void setTurnChange(boolean turnChange) {
         this.turnChange = turnChange;
-    }
-
-    public boolean isMagnifying() {
-        return magnifying;
-    }
-
-    public void setMagnifying(boolean magnifying) {
-        this.magnifying = magnifying;
     }
 }

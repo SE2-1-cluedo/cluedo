@@ -59,8 +59,8 @@ public class Network {
 
             //getMagnify
             String[] magnify = ((String) Objects.requireNonNull(snapshot.child("magnify").getValue())).split(" ");
-            if(magnify.length > 1)
-            getGameState().setMagnify(magnify,false);
+            if(magnify.length == 2)
+                getGameState().setMagnify(magnify,false);
 
             //get Question
             String[] question = ((String) Objects.requireNonNull(snapshot.child("question").getValue())).split(" ");

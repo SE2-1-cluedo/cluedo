@@ -76,11 +76,6 @@ public class Gameplay {
                 currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
                 netCommunicator.setTurnChanged(false);
             }
-            if (netCommunicator.isMagnify()){
-                gameCommunicator.setMagnifying(true);
-                gameCommunicator.notifyList();
-                netCommunicator.setMagnify(false);
-            }
         });
         currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
         findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
