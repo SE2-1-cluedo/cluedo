@@ -12,8 +12,8 @@
         \n\t2) The Host shares the GameID via the <b>Send Link-Button</b>.
         \n\t3) The other players then have to join via the "Join Lobby" Button
         \n\t4) There they have to enter the GameID.
-        \n\t5) After all the player are assembled the Host can start the Game.
-        \n\t6) Everybody chooses then their character.
+        \n\t5) As soon as somebody enters the Lobby a Character will be assign for every Player.
+        \n\t6) The Host can start the Game, when three to six player are in the lobby.
         \n\t7) Now the game begins to find the murderer.
 
     </string>

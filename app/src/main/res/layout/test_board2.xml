@@ -1162,44 +1162,6 @@
         app:layout_constraintVertical_bias="0.727"
         tools:ignore="TouchTargetSizeCheck" />
 
-    <Button
-        android:id="@+id/median_left"
-        android:layout_width="18dp"
-        android:layout_height="19dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/board_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.162"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.673"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <Button
-        android:id="@+id/median_center"
-        android:layout_width="18dp"
-        android:layout_height="19dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/board_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.673"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <Button
-        android:id="@+id/median_right"
-        android:layout_width="18dp"
-        android:layout_height="19dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/board_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.841"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.673"
-        tools:ignore="TouchTargetSizeCheck" />
-
     <ImageView
         android:id="@+id/green"
         android:layout_width="35dp"
