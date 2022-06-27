@@ -105,6 +105,10 @@ public class Network {
             String framed = (String) Objects.requireNonNull(snapshot.child("framed").getValue());
             if(framed.length() > 0)
                 getGameState().setFramed(framed, false);
+
+            String framer = (String) Objects.requireNonNull(snapshot.child("framer").getValue());
+            if(framed.length() > 0)
+                getGameState().setFramer(framer, false);
         }
 
         @Override
@@ -196,6 +200,7 @@ public class Network {
         result.child("winner").setValue("");
         result.child("loser").setValue("");
         result.child("framed").setValue("");
+        result.child("framer").setValue("");
         result.addValueEventListener(resultListener);
 
         gameState.setWeaponPositions(gameState.getWeaponPositions(),true);

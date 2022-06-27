@@ -122,17 +122,18 @@ public class Dialogs {
         TextView txt_frame_name = dialog.findViewById(R.id.txt_frame_player_name);
         ImageView img_close = dialog.findViewById(R.id.img_close);
         Button btn_frame = dialog.findViewById(R.id.btn_frame);
+        btn_frame.setBackground(ac.getResources().getDrawable(android.R.drawable.progress_horizontal));
         ArrayList<String> player_characters = new ArrayList<>();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(ac,android.R.layout.simple_list_item_1,player_characters);
         ListView frameable_players = (ListView)dialog.findViewById(R.id.list_framable_players);
         frameable_players.setAdapter(adapter);
-        Character framed;
         dialog.show();
 
         for(Player p: players){
             player_characters.add(p.getPlayerCharacterName().name());
             if(p.getPlayerId() == framer.getPlayerId()){
                 //player_characters.remove(framer.getPlayerCharacterName().name());
+                //gameState.setFramer(framer.getPlayerId().toString(), true);
             }
             adapter.notifyDataSetChanged();
         }
@@ -141,7 +142,8 @@ public class Dialogs {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(ac, "You framed " + player_characters.get(position), Toast.LENGTH_LONG).show();
-                txt_frame_name.setTextColor(Color.BLACK);
+                btn_frame.setClickable(true);
+                btn_frame.setBackground(ac.getResources().getDrawable(R.drawable.custom_button));
                 txt_frame_name.setText(player_characters.get(position));
             }
         });
@@ -151,10 +153,12 @@ public class Dialogs {
         });
 
         btn_frame.setOnClickListener(v -> {
-            //gameplay methode die den wert auf gewählte ändert.
-            //return txt_frame.getText();gp1.findPlayerByCharacterName(getCharacterWithString(txt_frame.getText().toString())).getPlayerId()
-            //Change to id for the framed player and not the current player
-            gameState.setFramed(Network.getCurrentUser().getUid(),true);
+            for(Player p:gameState.getPlayerState()){
+                if(p.getPlayerCharacterName().equals(getCharacterWithString(txt_frame_name.getText().toString()))){
+                    gameState.setFramed(p.getPlayerId(),true);
+                }
+            }
+            gameState.setFramer(framer.getPlayerId(),true);
             dialog.dismiss();
         });
     }
@@ -187,7 +191,6 @@ public class Dialogs {
 
         //ImageView img_close = dialog.findViewById(R.id.img_close);
         Button btn_winner = dialog.findViewById(R.id.btn_winner);
-        dialog.setCancelable(false);
 
         ImageView image = dialog.findViewById(R.id.img_win);
         image.setVisibility(View.GONE);
@@ -205,20 +208,23 @@ public class Dialogs {
             public void onTick(long l) {
                 txt_countdown.setText("" + l/1000);
                 btn_winner.setOnClickListener(v -> {
-                    dialog.dismiss();
-                    this.cancel();
                     gameState.setFramed("",true);
+                    gameState.setFramer("",true);
+                    dialog.cancel();
+                    this.cancel();
                 });
             }
             @Override
             public void onFinish() {
                 dialog.dismiss();
-                callLoseDialog(ac, "You were framed!");
+                gameState.setWinner(gameState.getFramer(),true);
+                //callLoseDialog(ac, "You were framed!");
                 //change to loser
                 //alert.setMessage("end");
             }
         }.start();
     }
+
 
 
 

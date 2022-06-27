@@ -89,6 +89,10 @@ public class BoardActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         gp1 = Gameplay.getInstance();
+        netCommunicator = NetworkCommunicator.getInstance();
+        gameState = GameState.getInstance();
+        susCommunicator = SuspicionCommunicator.getInstance();
+        gameplayCommunicator = GameplayCommunicator.getInstance();
 
         setContentView(R.layout.test_board2);
         ConstraintLayout constraint = findViewById(R.id.constraintLayout);
@@ -132,11 +136,7 @@ public class BoardActivity extends AppCompatActivity {
                     }
                 });
 
-        gameState = GameState.getInstance();
 
-        susCommunicator = SuspicionCommunicator.getInstance();
-
-        gameplayCommunicator = GameplayCommunicator.getInstance();
         gameplayCommunicator.register(() -> {
             if(gameplayCommunicator.isMoved()){
                 System.out.println("Now we refreshed");
@@ -156,7 +156,7 @@ public class BoardActivity extends AppCompatActivity {
             }
         });
 
-        netCommunicator = NetworkCommunicator.getInstance();
+
         netCommunicator.register(() -> {
             if(netCommunicator.isMagnify()){
                 if(!gp1.checkIfPlayerIsOwn())
@@ -182,9 +182,9 @@ public class BoardActivity extends AppCompatActivity {
                System.out.println("Someone lost");
            }
            if(netCommunicator.isFramed()){
-               //if(gameState.getFramed().equals(Network.getCurrentUser().getUid())){
+               if(gameState.getFramed().equals(Network.getCurrentUser().getUid())){
                    d.callFramedDialog(BoardActivity.this);
-               //}
+               }
            }
         });
 
@@ -976,9 +976,9 @@ public class BoardActivity extends AppCompatActivity {
         }
     }
 
-    public void onFramedViewClick(){
-        d.callFramedDialog(BoardActivity.this);
-    }
+//    public void onFramedViewClick(){
+//        d.callFramedDialog(BoardActivity.this);
+//    }
 
     /**
      * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert
