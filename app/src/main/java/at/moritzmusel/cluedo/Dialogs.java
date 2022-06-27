@@ -23,6 +23,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import com.google.firebase.database.util.GAuthToken;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +36,7 @@ import at.moritzmusel.cluedo.network.Network;
 import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class Dialogs {
-    Dialog dialog;
+    //Dialog dialog;
     Gameplay gp1 = Gameplay.getInstance();
     GameState gameState = GameState.getInstance();
     NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
@@ -48,9 +50,11 @@ public class Dialogs {
      * @param winner Name of the Winner
      */
     public void callWinDialog(Activity ac, String winner){
+        Dialog dialog;
         dialog = new Dialog(ac);
         dialog.setContentView(R.layout.win_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCancelable(false);
 
         ImageView img_close = dialog.findViewById(R.id.img_close);
         Button btn_winner = dialog.findViewById(R.id.btn_winner);
@@ -75,14 +79,15 @@ public class Dialogs {
      * @param ac Activity where it will be shown
      */
     public void callLoseDialog(Activity ac, String reason){
+        Dialog dialog;
         dialog = new Dialog(ac);
         dialog.setContentView(R.layout.win_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCancelable(false);
 
         ImageView img_close = dialog.findViewById(R.id.img_close);
         Button btn_loser = dialog.findViewById(R.id.btn_winner);
         btn_loser.setBackground(ac.getDrawable(R.drawable.custom_button2));
-        dialog.setCancelable(false);
 
         ImageView image = dialog.findViewById(R.id.img_win);
         image.setImageResource(R.drawable.red_lose);
@@ -94,26 +99,41 @@ public class Dialogs {
         txt_lost.setText("You Lost!");
         txt_lost.setTextColor(ac.getResources().getColor(R.color.red));
 
-        img_close.setOnClickListener(v -> {
-            endGame(ac);
-            dialog.dismiss();
-        });
-        btn_loser.setOnClickListener(v -> {
-            //ac.finishAffinity();
-            endGame(ac);
-            dialog.dismiss();
-        });
+        if(reason.equals("You made a wrong Accusation!")){
+            img_close.setVisibility(View.GONE);
+            btn_loser.setOnClickListener(v -> {
+                //ac.finishAffinity();
+                removeFromTurnOrder(Network.getCurrentUser().getUid());
+                dialog.dismiss();
+            });
+        }else{
+            img_close.setOnClickListener(v -> {
+                endGame(ac);
+                dialog.dismiss();
+            });
+            btn_loser.setOnClickListener(v -> {
+                //ac.finishAffinity();
+                endGame(ac);
+                dialog.dismiss();
+            });
+        }
         dialog.show();
     }
 
+    private void removeFromTurnOrder(String uid) {
+        String [] turnOrder = ArrayUtils.removeElement(gameState.getTurnOrder(), uid);
+        gameState.setTurnOrder(turnOrder,true);
+    }
+
     public void endGame(Activity ac){
-        Network.leaveLobby(Network.getCurrentUser(),Network.getCurrentGameID());
+        //Network.leaveLobby(Network.getCurrentUser(),Network.getCurrentGameID());
         Intent intent = new Intent(ac.getApplicationContext(),MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ac.startActivity(intent);
     }
 
     public void callFrameDialog(Activity ac, List<Player> players, Player framer){
+        Dialog dialog;
         dialog = new Dialog(ac);
         dialog.setContentView(R.layout.cheat_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -185,12 +205,13 @@ public class Dialogs {
     }
 
     public void callFramedDialog(Activity ac){
+        Dialog dialog;
         dialog = new Dialog(ac);
         dialog.setContentView(R.layout.win_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         //ImageView img_close = dialog.findViewById(R.id.img_close);
-        Button btn_winner = dialog.findViewById(R.id.btn_winner);
+        Button btn_deny = dialog.findViewById(R.id.btn_winner);
 
         ImageView image = dialog.findViewById(R.id.img_win);
         image.setVisibility(View.GONE);
@@ -199,7 +220,7 @@ public class Dialogs {
         TextView txt_framed_you = dialog.findViewById(R.id.txt_winner);
         txt_framed_you.setText("Somebody framed you!");
         txt_framed_you.setTextSize(24);
-        btn_winner.setText("Deny");
+        btn_deny.setText("Deny");
 
         dialog.show();
 
@@ -207,7 +228,7 @@ public class Dialogs {
             @Override
             public void onTick(long l) {
                 txt_countdown.setText("" + l/1000);
-                btn_winner.setOnClickListener(v -> {
+                btn_deny.setOnClickListener(v -> {
                     gameState.setFramed("",true);
                     gameState.setFramer("",true);
                     dialog.cancel();
