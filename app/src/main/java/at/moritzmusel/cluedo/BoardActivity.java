@@ -333,14 +333,14 @@ public class BoardActivity extends AppCompatActivity {
                 moveSuspectedPlayer(susCommunicator.getCharacter());
                 //moveCharacter
                 if(susCommunicator.getHasSuspected()){
-                    gp1.askPlayerAQuestion(new int[]{allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),newPosition+11});
+                    gp1.askPlayerAQuestion(new int[]{allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard()+11});
                     onCardViewClick();
                 }
 
                     //do something to ask the next player about your suspicion
                 else if (susCommunicator.getHasAccused()){
                     System.out.println("Accused");
-                    if(gp1.accusation(new int[]{allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),newPosition+11})){
+                    if(gp1.accusation(new int[]{allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard()+11})){
                         //you won
                         gameState.setWinner(Network.getCurrentUser().getUid(),true);
                     } else {
@@ -445,7 +445,7 @@ public class BoardActivity extends AppCompatActivity {
     private ArrayList<Integer> getPlayerCardIds(){
         ArrayList<Integer> card_ids;
         if(susCommunicator.getHasSuspected() || susCommunicator.getHasAccused()){
-            card_ids = new ArrayList<>(Arrays.asList(allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),newPosition+11));
+            card_ids = new ArrayList<>(Arrays.asList(allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard()+11));
         }
         else if(netCommunicator.isQuestionChanged())
             card_ids = new ArrayList<>(Arrays.asList(gameState.getAskQuestion().getCards()[0],gameState.getAskQuestion().getCards()[1],gameState.getAskQuestion().getCards()[2]));
