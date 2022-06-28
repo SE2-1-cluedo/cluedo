@@ -192,6 +192,8 @@ public class BoardActivity extends AppCompatActivity {
            }
         });
 
+
+
         allCards = new AllTheCards();
         allGameCards = allCards.getGameCards();
 
