@@ -158,6 +158,19 @@ public class Network {
         @Override
         public void onCancelled(@NonNull DatabaseError error) {}
     };
+    private static final ValueEventListener turnOrderListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            String[] turnOrder = ((String) Objects.requireNonNull(snapshot.getValue())).split(" ");
+            if(turnOrder.length > 1)
+                gameState.setTurnOrder(turnOrder,false);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    };
 
     public static DatabaseReference getDatabaseReference(){
         return games;
@@ -209,6 +222,7 @@ public class Network {
         gameState.setKiller(createKiller());
 
         game.child("turn-order").setValue("");
+        game.child("turn-order").addValueEventListener(turnOrderListener);
         //add players path
         game.child("killer").setValue(gameState.getKillerAsString());
         DatabaseReference p = game.child("players").child(user.getUid());
@@ -274,6 +288,7 @@ public class Network {
                     getCurrentGame().child("weapon-positions").addValueEventListener(weaponsListener);
                     getCurrentGame().child("turn-flag").addValueEventListener(turnFlagListener);
                     getCurrentGame().child("result").addValueEventListener(resultListener);
+                    getCurrentGame().child("turn-order").addValueEventListener(turnOrderListener);
             }
         });
 
@@ -289,6 +304,7 @@ public class Network {
         getCurrentGame().child("weapon-positions").removeEventListener(weaponsListener);
         getCurrentGame().child("turn-flag").removeEventListener(turnFlagListener);
         getCurrentGame().child("result").removeEventListener(resultListener);
+        getCurrentGame().child("turn-order").removeEventListener(turnOrderListener);
 
         currentCharacter = Character.MISS_SCARLETT;
         OnDataRetreive onDataRetreive = new OnDataRetreive() {
@@ -323,7 +339,7 @@ public class Network {
         }
 
         game.child("turn-order").setValue(sbTurnOrder.toString().trim());
-        gameState.setTurnOrder(turnOrder,false);
+        gameState.setTurnOrder(turnOrder,true);
 
         game.child("turn-flag").child("startGame").setValue("start");
 
