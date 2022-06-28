@@ -187,13 +187,11 @@ public class GameState {
     public void setPlayerState(List<Player> playerState, boolean database) {
         this.playerState = playerState;
         if(!database) {
-            System.out.println("Player changed");
             if(!communicator.isPlayerChanged()){
                 communicator.setPlayerChanged(true);
                 communicator.notifyList();
             }
             if(!communicator.isPositionChanged()){
-                System.out.println("Now position was called");
                 communicator.setPositionChanged(true);
                 communicator.notifyList();
             }
@@ -324,7 +322,6 @@ public class GameState {
         if(!database) {
                 communicator.setWeaponsChanged(true);
                 communicator.notifyList();
-                System.out.println("weapons changed");
         }
         else if(weaponPositions == null)
             dbRef.child("weapon-positions").setValue("");
@@ -339,7 +336,10 @@ public class GameState {
 
     public void setTurnOrder(String[] turnOrder, boolean database){
         this.turnOrder = turnOrder;
-        if(database) {
+        if(!database){
+            communicator.setTurnOrderChanged(true);
+            communicator.notifyList();
+        } else {
             StringBuilder sB = new StringBuilder();
             for(String s: turnOrder)
                 sB.append(s).append(" ");

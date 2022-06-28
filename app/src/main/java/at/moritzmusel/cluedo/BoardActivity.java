@@ -139,7 +139,6 @@ public class BoardActivity extends AppCompatActivity {
 
         gameplayCommunicator.register(() -> {
             if(gameplayCommunicator.isMoved()){
-                System.out.println("Now we refreshed");
                 refreshBoard();
                 gameplayCommunicator.setMoved(false);
                 netCommunicator.setPositionChanged(false);
@@ -149,9 +148,9 @@ public class BoardActivity extends AppCompatActivity {
                 //onCardViewClick();
             }
             if(gameplayCommunicator.isTurnChange()){
-//                notifyCurrentPlayer();
-//                if(gp1.checkIfPlayerIsOwn())
-//                callDice();
+                notifyCurrentPlayer();
+                if(gp1.checkIfPlayerIsOwn())
+                    callDice();
                 gameplayCommunicator.setTurnChange(false);
             }
         });
@@ -248,7 +247,6 @@ public class BoardActivity extends AppCompatActivity {
     }
 
     private void refreshBoard() {
-        System.out.println("Should have moved now");
         for (int i = 0; i < gp1.getPlayers().size(); i++) {
             String player = gp1.getPlayers().get(i).getPlayerCharacterName().name().split("[_]")[1].toLowerCase();
             String name = player + "_";
@@ -906,6 +904,7 @@ public class BoardActivity extends AppCompatActivity {
 
             } else {
                 deactivateSecrets();
+                gp1.endTurn();
             }
         }
     }

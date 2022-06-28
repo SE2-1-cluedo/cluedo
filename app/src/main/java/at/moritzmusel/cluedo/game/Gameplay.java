@@ -5,6 +5,8 @@ import static at.moritzmusel.cluedo.entities.Character.MISS_SCARLETT;
 import static at.moritzmusel.cluedo.entities.Character.PROFESSOR_PLUM;
 import static at.moritzmusel.cluedo.entities.Character.REVEREND_GREEN;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +51,7 @@ public class Gameplay {
         turnOrderGame = gameState.getTurnOrder();
         players = gameState.getPlayerState();
         weaponsPos = gameState.getWeaponPositions();
-//        decidePlayerWhoMovesFirst();
+        decidePlayerWhoMovesFirst();
         gameCommunicator = GameplayCommunicator.getInstance();
         netCommunicator = NetworkCommunicator.getInstance();
         netCommunicator.setTurnChanged(false);
@@ -70,20 +72,24 @@ public class Gameplay {
                 gameCommunicator.setSuspicion(true);
                 gameCommunicator.notifyList();
             }
-            if(netCommunicator.isTurnChanged()){
-                gameCommunicator.setTurnChange(true);
-                gameCommunicator.notifyList();
-                currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
-                netCommunicator.setTurnChanged(false);
+            if(netCommunicator.isTurnChanged()) {
+                if (!gameState.getPlayerTurn().equals(findPlayerByCharacterName(currentPlayer).getPlayerId())) {
+                    currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
+                    findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
+                    gameCommunicator.setTurnChange(true);
+                    gameCommunicator.notifyList();
+                    netCommunicator.setTurnChanged(false);
+                }
+            }
+            if(netCommunicator.isTurnOrderChanged()){
+                turnOrderGame = gameState.getTurnOrder();
+                netCommunicator.setTurnOrderChanged(false);
             }
         });
         currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
         findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
     }
 
-    public void startGame(){
-
-    }
     public static Gameplay getInstance(){
         if(OBJ == null){
             OBJ = new Gameplay();
@@ -95,8 +101,10 @@ public class Gameplay {
      */
     public Character endTurn() {
         String playerID = getPlayerIDOfNextPlayerInTurnOrder();
+        System.out.println(playerID);
+        System.out.println(Arrays.toString(turnOrderGame));
         currentPlayer = getCharacterByPlayerID(playerID);
-        gameState.setPlayerTurn(getPlayerIDOfNextPlayerInTurnOrder(), true);
+        gameState.setPlayerTurn(playerID, true);
         gameCommunicator.setTurnChange(true);
         gameCommunicator.notifyList();
         return currentPlayer;
@@ -191,8 +199,8 @@ public class Gameplay {
      * Decides which Player/Character is able to move first
      */
     public void decidePlayerWhoMovesFirst() {
-        String playerID = turnOrderGame[0];
-        currentPlayer = getCharacterByPlayerID(playerID);
+        currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
+        findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
     }
 
 
@@ -325,19 +333,10 @@ public class Gameplay {
      * @return playerID whos turn is next
      */
     private String getPlayerIDOfNextPlayerInTurnOrder(){
-        String playerID = "";
-        for (int i = 0; i < turnOrderGame.length;i++) {
-            if (turnOrderGame[i].equals(gameState.getPlayerTurn())) {
-                if(i+1 == turnOrderGame.length){
-                    i = 0;
-                }else {
-                    i+=1;
-                }
-                playerID = turnOrderGame[i];
-                break;
-            }
-        }
-        return playerID;
+        int pos = ArrayUtils.indexOf(turnOrderGame,findPlayerByCharacterName(currentPlayer).getPlayerId());
+        if(pos == turnOrderGame.length-1)
+            return turnOrderGame[0];
+        return turnOrderGame[pos+1];
     }
 
     /**

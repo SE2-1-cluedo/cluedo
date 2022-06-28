@@ -6,7 +6,7 @@ import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class NetworkCommunicator implements Communicator {
     private final ArrayList<ChangeListener> listenerArray;
-    private boolean turnChanged, playerChanged, positionChanged, questionChanged, weaponsChanged, hasWon, framed, framer, hasLost, magnify, characterChanged, startGame;
+    private boolean turnChanged, turnOrderChanged, playerChanged, positionChanged, questionChanged, weaponsChanged, hasWon, framed, framer, hasLost, magnify, characterChanged, startGame;
 
     private static NetworkCommunicator OBJ;
 
@@ -129,5 +129,13 @@ public class NetworkCommunicator implements Communicator {
 
     public void setPositionChanged(boolean positionChanged) {
         this.positionChanged = positionChanged;
+    }
+
+    public boolean isTurnOrderChanged() {
+        return turnOrderChanged;
+    }
+
+    public void setTurnOrderChanged(boolean turnOrderChanged) {
+        this.turnOrderChanged = turnOrderChanged;
     }
 }
