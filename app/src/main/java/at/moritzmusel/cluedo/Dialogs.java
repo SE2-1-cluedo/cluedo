@@ -88,7 +88,7 @@ public class Dialogs {
         txt_loser.setText(reason);
 
         TextView txt_lost = dialog.findViewById(R.id.txt_winner);
-        txt_lost.setText("You Lost!");
+        txt_lost.setText("You Lose!");
         txt_lost.setTextColor(ac.getResources().getColor(R.color.red));
 
         if(reason.equals("You made a wrong Accusation!")){

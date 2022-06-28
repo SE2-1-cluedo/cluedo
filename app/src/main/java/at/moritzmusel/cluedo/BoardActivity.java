@@ -169,7 +169,9 @@ public class BoardActivity extends AppCompatActivity {
            if(netCommunicator.isHasLost()) {
                if(gameState.getLoser().equals(Network.getCurrentUser().getUid())){
                    d.callLoseDialog(BoardActivity.this, "You made a wrong Accusation!");
+                   gameState.setLoser(null,true);
                }
+               netCommunicator.setHasLost(false);
            }
            if(netCommunicator.isHasWon()){
                if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
@@ -320,7 +322,7 @@ public class BoardActivity extends AppCompatActivity {
      * @param b Alertdialog to close
      */
     public void endDialog(android.app.AlertDialog b){
-        new CountDownTimer(3000, 1000) {
+        new CountDownTimer(2000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -399,7 +401,6 @@ public class BoardActivity extends AppCompatActivity {
                 builder.setMessage("One or more cards are owned by "+playerWithSusCard[0]);
             }
         }
-
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         new Thread(){
@@ -1018,17 +1019,24 @@ public class BoardActivity extends AppCompatActivity {
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
-                    if(gp1.checkIfPlayerIsOwn() && gameState.getPlayerTurn().equals(Network.getCurrentUser().getUid())){
+                    if(gp1.checkIfPlayerIsOwn() && !gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getIsAbleToMove() && checkIfInTurnOrder()){
                         startSuspicion();
                     }
                 }else if (swipeUp > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
                 }else if(swipeDown > MIN_SWIPE_DISTANCE){
-                    onCheatViewClick();
+                    if(checkIfInTurnOrder()){
+                        onCheatViewClick();
+                    }
                 }
                 break;
         }
         return false;
+    }
+
+    public boolean checkIfInTurnOrder(){
+        String[] turn_order = gameState.getTurnOrder();
+        return ArrayUtils.contains(turn_order, Network.getCurrentUser().getUid());
     }
 
 }
