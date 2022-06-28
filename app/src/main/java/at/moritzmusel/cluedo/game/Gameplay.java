@@ -78,8 +78,8 @@ public class Gameplay {
                     findPlayerByCharacterName(currentPlayer).setAbleToMove(true);
                     gameCommunicator.setTurnChange(true);
                     gameCommunicator.notifyList();
-                    netCommunicator.setTurnChanged(false);
                 }
+                netCommunicator.setTurnChanged(false);
             }
             if(netCommunicator.isTurnOrderChanged()){
                 turnOrderGame = gameState.getTurnOrder();

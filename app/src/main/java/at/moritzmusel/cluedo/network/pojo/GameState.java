@@ -35,6 +35,8 @@ public class GameState {
     private String[] turnOrder, magnify;
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponPositions = new int[]{5,1,9,3,6,8};
+    private List<Integer> eliminatedCards = new ArrayList<>();
+    private Map<String, Integer> playerPositions = new HashMap<>();
     DatabaseReference dbRef;
     private final NetworkCommunicator communicator;
 
@@ -57,6 +59,44 @@ public class GameState {
 
     public void reset(){
         OBJ = null;
+    }
+
+    public void setPlayerPositions(Map<String, Integer> playerPositions, boolean database){
+        this.playerPositions = playerPositions;
+        if(!database){
+            communicator.setPositionChanged(true);
+            communicator.notifyList();
+        } else if(playerPositions == null)
+            dbRef.child("player-positions").setValue("");
+         else {
+            StringBuilder sB = new StringBuilder();
+            for(int pos: playerPositions.values())
+                sB.append(pos).append(" ");
+            dbRef.child("player-positions").setValue(sB.toString().trim());
+        }
+    }
+
+    public Map<String, Integer> getPlayerPositions(){
+        return this.playerPositions;
+    }
+
+    public List<Integer> getEliminatedCards() {
+        return eliminatedCards;
+    }
+
+    public void setEliminatedCards(List<Integer> eliminatedCards, boolean database) {
+        this.eliminatedCards = eliminatedCards;
+        if(!database){
+            communicator.setEliminatedChanged(true);
+            communicator.notifyList();
+        } else if (eliminatedCards == null)
+            dbRef.child("cards-eliminated").setValue("");
+        else {
+            StringBuilder sB = new StringBuilder();
+            for(int i: eliminatedCards)
+                sB.append(i).append(" ");
+            dbRef.child("cards-eliminated").setValue(sB.toString().trim());
+        }
     }
 
     public List<Integer> getCardState() {

@@ -184,6 +184,8 @@ public class BoardActivity extends AppCompatActivity {
                if(gameState.getFramed().equals(Network.getCurrentUser().getUid())){
                    d.callFramedDialog(BoardActivity.this);
                }
+               netCommunicator.setFramed(false);
+               netCommunicator.setFramer(false);
            }
         });
 

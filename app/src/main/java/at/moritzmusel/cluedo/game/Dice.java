@@ -38,7 +38,8 @@ public class Dice {
 
     public void throwDice()  {
         SecureRandom r = new SecureRandom();
-        int i = r.nextInt(4)+1;
+//        int i = r.nextInt(4)+1;
+        int i = 3;
         Animation animation = AnimationUtils.loadAnimation(diceView.getContext(), R.anim.rotate_dice);
         diceView.startAnimation(animation);
         switch (i){

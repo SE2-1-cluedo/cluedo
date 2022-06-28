@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.ThreadLocalRandom;
@@ -131,21 +133,11 @@ public class Network {
                         NetworkCommunicator.getInstance().setCharacterChanged(true);
                         p.setPlayerCharacterName(Character.valueOf((String) Objects.requireNonNull(snap.child("character").getValue())));
 
-                       //setPosition
-                        p.setPositionOnBoard(Integer.parseInt((String) Objects.requireNonNull(snap.child("position").getValue())));
-
                         //set owned Cards
                         String[] ownedCards = ((String) (Objects.requireNonNull(snap.child("cards").getValue()))).split(" ");
                         if (!Objects.equals(ownedCards[0], "")) {
 
                             p.setPlayerOwnedCards((ArrayList<Integer>) Arrays.stream(Stream.of(ownedCards)
-                                    .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
-                        }
-
-                        //set known Cards
-                        String[] knownCards = ((String) Objects.requireNonNull(snap.child("cards-eliminated").getValue())).split(" ");
-                        if (!Objects.equals(knownCards[0], "")) {
-                            p.setCardsKnownThroughQuestions((ArrayList<Integer>) Arrays.stream(Stream.of(knownCards)
                                     .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
                         }
                     playerList.add(p);
@@ -164,6 +156,34 @@ public class Network {
             String[] turnOrder = ((String) Objects.requireNonNull(snapshot.getValue())).split(" ");
             if(turnOrder.length > 1)
                 gameState.setTurnOrder(turnOrder,false);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    };
+    private static final ValueEventListener positionsListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            Map<String, Integer> playerPositions = new HashMap<>();
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    };
+
+    private static final ValueEventListener eliminatedListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            //set known Cards
+            String[] knownCards = ((String) Objects.requireNonNull(snapshot.child("cards-eliminated").getValue())).split(" ");
+            if (!Objects.equals(knownCards[0], "")) {
+                gameState.setEliminatedCards(Arrays.stream(Stream.of(knownCards)
+                        .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()),false);
+            }
         }
 
         @Override
@@ -208,6 +228,12 @@ public class Network {
         turnFlag.child("startGame").setValue("waiting");
         turnFlag.addValueEventListener(turnFlagListener);
 
+        //add playerPositions
+        game.child("player-positions").setValue("");
+
+        //add eliminated-Cards
+        game.child("cards-eliminated").setValue("");
+
         //add result path
         DatabaseReference result = game.child("result");
         result.child("winner").setValue("");
@@ -227,8 +253,6 @@ public class Network {
         game.child("killer").setValue(gameState.getKillerAsString());
         DatabaseReference p = game.child("players").child(user.getUid());
         p.child("cards").setValue("");
-        p.child("cards-eliminated").setValue("");
-        p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
         p.child("character").setValue(getCurrentCharacter().name());
 
         game.child("weapon-positions").addValueEventListener(weaponsListener);
@@ -278,8 +302,6 @@ public class Network {
                     DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
                     p.child("character").setValue(currentCharacter.name());
                     p.child("cards").setValue("");
-                    p.child("cards-eliminated").setValue("");
-                    p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
 
                     gameState = GameState.getInstance();
                     gameState.setKiller(killer);
@@ -332,14 +354,20 @@ public class Network {
         DatabaseReference game = games.child(gameID);
         StringBuilder sbTurnOrder = new StringBuilder();
         String[] turnOrder = new String[list.size()];
+        Map<String, Integer> playerPositions = new HashMap<>();
         //set turnOrder
         for(int i = 0; i < list.size(); i++){
             sbTurnOrder.append(list.get(i).getPlayerId()).append(" ");
             turnOrder[i] = list.get(i).getPlayerId();
+
+            playerPositions.put(list.get(i).getPlayerId(),new SecureRandom().nextInt(9)+1);
         }
 
+
         game.child("turn-order").setValue(sbTurnOrder.toString().trim());
-        gameState.setTurnOrder(turnOrder,true);
+        gameState.setTurnOrder(turnOrder,false);
+
+        gameState.setPlayerPositions(playerPositions,true);
 
         game.child("turn-flag").child("startGame").setValue("start");
 
