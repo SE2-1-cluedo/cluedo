@@ -1000,7 +1000,7 @@ public class BoardActivity extends AppCompatActivity {
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
-                    if(gp1.checkIfPlayerIsOwn()){
+                    if(gp1.checkIfPlayerIsOwn() && gameState.getPlayerTurn().equals(Network.getCurrentUser().getUid())){
                         startSuspicion();
                     }
                 }else if (swipeUp > MIN_SWIPE_DISTANCE){
