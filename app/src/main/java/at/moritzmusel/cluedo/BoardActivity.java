@@ -10,10 +10,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -185,6 +185,8 @@ public class BoardActivity extends AppCompatActivity {
                if(gameState.getFramed().equals(Network.getCurrentUser().getUid())){
                    d.callFramedDialog(BoardActivity.this);
                }
+               netCommunicator.setFramed(false);
+               netCommunicator.setFramer(false);
            }
         });
 
@@ -264,9 +266,6 @@ public class BoardActivity extends AppCompatActivity {
         }
     }
 
-
-
-
     /**
      * Creates an alert with a dice action, which is shakeable and clickable.
      */
@@ -281,25 +280,28 @@ public class BoardActivity extends AppCompatActivity {
 
         View diceView = dice_layout.findViewById(R.id.dialogDice);
         dice = new Dice((ImageView) diceView);
-        diceView.setOnClickListener(v -> {
-            dice.throwDice();
-            diceRolled();
-        });
 
         mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
 
         builder.setCancelable(false);
 
-        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
-
+        //builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
+
+        diceView.setOnClickListener(v -> {
+            dice.throwDice();
+            diceRolled();
+            endDialog(alertDialog);
+        });
 
         shakeDetector.setOnShakeListener(count -> {
             if(count < 2){
                 dice.throwDice();
                 diceRolled();
+                endDialog(alertDialog);
             }
+
 //            new Thread(){
 //                public void run() {
 //                    try {
@@ -310,7 +312,24 @@ public class BoardActivity extends AppCompatActivity {
 //                    }
 //                }
 //            }.start();
-    });
+        });
+    }
+
+    /**
+     * Closes the alertdialog after 3 seconds
+     * @param b Alertdialog to close
+     */
+    public void endDialog(android.app.AlertDialog b){
+        new CountDownTimer(3000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+            @Override
+            public void onFinish() {
+                b.dismiss();
+            }
+        }.start();
     }
 
 
@@ -914,7 +933,6 @@ public class BoardActivity extends AppCompatActivity {
      * if button is clicked or the screen is swiped horizontally, the current cards of the player are shown
      */
     public void onCardViewClick() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this,R.style.AlertDialogStyle);
         if(netCommunicator.isQuestionChanged() || susCommunicator.getHasSuspected())
             builder.setTitle(gameState.getAskQuestion().getAskPerson()+" suspected");
