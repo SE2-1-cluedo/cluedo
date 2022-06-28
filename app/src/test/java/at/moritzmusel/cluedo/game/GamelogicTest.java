@@ -108,12 +108,12 @@ public class GamelogicTest {
 
     @Test
     public void testGetPlayerForSuspectedCardsPlayerHasCard() {
-        Assert.assertEquals(MISS_SCARLETT.name(),gameOdd.getPlayerForSuspectedCards(new int[]{3,1,5}));
+        Assert.assertEquals(DR_ORCHID.name(),gameOdd.getPlayerForSuspectedCards(new int[]{3,1,5})[0]);
     }
 
     @Test
     public void testGetPlayerForSuspectedCardsPlayerDoesNotHaveCard() {
-        Assert.assertEquals("nobody",gameOdd.getPlayerForSuspectedCards(new int[]{1,2,11}));
+        Assert.assertEquals("Nobody",gameOdd.getPlayerForSuspectedCards(new int[]{1,2,11})[0]);
     }
 
     @Test
@@ -125,9 +125,10 @@ public class GamelogicTest {
     @Test
     public void testCanMove(){
         Gameplay.rollDiceForPlayer(1);
+        Player currentPlayer = gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer());
         gameOdd.setStepsTaken(1);
         gameOdd.canMove();
-        Assert.assertFalse(gameOdd.findPlayerByCharacterName(gameOdd.getCurrentPlayer()).getIsAbleToMove());
+        Assert.assertTrue(currentPlayer.getIsAbleToMove());
     }
 
     @Test

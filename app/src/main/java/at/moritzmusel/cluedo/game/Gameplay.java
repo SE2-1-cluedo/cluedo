@@ -213,7 +213,7 @@ public class Gameplay {
             if(p.getPlayerOwnedCards().contains(cardDrawn))
                 return p.getPlayerCharacterName().name();
 
-        return "?nobody? :^)";
+        return "nobody";
     }
 
      /**
