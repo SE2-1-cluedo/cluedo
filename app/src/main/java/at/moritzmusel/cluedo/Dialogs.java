@@ -4,8 +4,6 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -17,11 +15,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseUser;
-
-import com.google.firebase.database.util.GAuthToken;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -36,7 +29,6 @@ import at.moritzmusel.cluedo.network.Network;
 import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class Dialogs {
-    //Dialog dialog;
     Gameplay gp1 = Gameplay.getInstance();
     GameState gameState = GameState.getInstance();
     NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
@@ -96,7 +88,7 @@ public class Dialogs {
         txt_loser.setText(reason);
 
         TextView txt_lost = dialog.findViewById(R.id.txt_winner);
-        txt_lost.setText("You Lost!");
+        txt_lost.setText("You Lose!");
         txt_lost.setTextColor(ac.getResources().getColor(R.color.red));
 
         if(reason.equals("You made a wrong Accusation!")){
@@ -112,7 +104,6 @@ public class Dialogs {
                 dialog.dismiss();
             });
             btn_loser.setOnClickListener(v -> {
-                //ac.finishAffinity();
                 endGame(ac);
                 dialog.dismiss();
             });
@@ -120,11 +111,19 @@ public class Dialogs {
         dialog.show();
     }
 
+    /**
+     * Deletes a player id from the turnorder, so he can not do anything after a wrong accusation
+     * @param uid Id to delete
+     */
     private void removeFromTurnOrder(String uid) {
         String [] turnOrder = ArrayUtils.removeElement(gameState.getTurnOrder(), uid);
         gameState.setTurnOrder(turnOrder,true);
     }
 
+    /**
+     * If the the winner is set it will be used to switch to the beginning screen
+     * @param ac Activity to be called
+     */
     public void endGame(Activity ac){
         //Network.leaveLobby(Network.getCurrentUser(),Network.getCurrentGameID());
         Intent intent = new Intent(ac.getApplicationContext(),MainActivity.class);
@@ -132,6 +131,12 @@ public class Dialogs {
         ac.startActivity(intent);
     }
 
+    /**
+     * A dialog to select a player to fame and end the game
+     * @param ac Activity to be called
+     * @param players list of all players
+     * @param framer the player who frames another player
+     */
     public void callFrameDialog(Activity ac, List<Player> players, Player framer){
         Dialog dialog;
         dialog = new Dialog(ac);
@@ -152,7 +157,7 @@ public class Dialogs {
         for(Player p: players){
             player_characters.add(p.getPlayerCharacterName().name());
             if(p.getPlayerId() == framer.getPlayerId()){
-                //player_characters.remove(framer.getPlayerCharacterName().name());
+                player_characters.remove(framer.getPlayerCharacterName().name());
                 //gameState.setFramer(framer.getPlayerId().toString(), true);
             }
             adapter.notifyDataSetChanged();
@@ -183,6 +188,11 @@ public class Dialogs {
         });
     }
 
+    /**
+     * Gives a string and returns a Character
+     * @param name Name of the Character
+     * @return Character that equals the string
+     */
     public Character getCharacterWithString(String name){
         if(name.equals(Character.MISS_SCARLETT.name())){
             return Character.MISS_SCARLETT;
@@ -204,6 +214,10 @@ public class Dialogs {
         }
     }
 
+    /**
+     * A dialog is called with a countdown and if it reaches zero the game ends.
+     * @param ac Activity to be called
+     */
     public void callFramedDialog(Activity ac){
         Dialog dialog;
         dialog = new Dialog(ac);
@@ -224,21 +238,24 @@ public class Dialogs {
 
         dialog.show();
 
-        new CountDownTimer(11000, 1000) {
+        new CountDownTimer(4000, 1000) {
             @Override
             public void onTick(long l) {
                 txt_countdown.setText("" + l/1000);
                 btn_deny.setOnClickListener(v -> {
-                    gameState.setFramed("",true);
-                    gameState.setFramer("",true);
+                    gameState.setFramed(null,true);
+                    gameState.setFramer(null,true);
                     dialog.cancel();
                     this.cancel();
                 });
             }
+
             @Override
             public void onFinish() {
-                dialog.dismiss();
                 gameState.setWinner(gameState.getFramer(),true);
+                gameState.setFramed(null,true);
+                gameState.setFramer(null,true);
+                dialog.dismiss();
                 //callLoseDialog(ac, "You were framed!");
                 //change to loser
                 //alert.setMessage("end");

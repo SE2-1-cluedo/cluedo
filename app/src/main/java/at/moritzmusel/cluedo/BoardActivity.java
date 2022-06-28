@@ -10,10 +10,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -168,7 +168,9 @@ public class BoardActivity extends AppCompatActivity {
            if(netCommunicator.isHasLost()) {
                if(gameState.getLoser().equals(Network.getCurrentUser().getUid())){
                    d.callLoseDialog(BoardActivity.this, "You made a wrong Accusation!");
+                   gameState.setLoser(null,true);
                }
+               netCommunicator.setHasLost(false);
            }
            if(netCommunicator.isHasWon()){
                if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
@@ -184,8 +186,12 @@ public class BoardActivity extends AppCompatActivity {
                if(gameState.getFramed().equals(Network.getCurrentUser().getUid())){
                    d.callFramedDialog(BoardActivity.this);
                }
+               netCommunicator.setFramed(false);
+               netCommunicator.setFramer(false);
            }
         });
+
+
 
         allCards = new AllTheCards();
         allGameCards = allCards.getGameCards();
@@ -262,9 +268,6 @@ public class BoardActivity extends AppCompatActivity {
         }
     }
 
-
-
-
     /**
      * Creates an alert with a dice action, which is shakeable and clickable.
      */
@@ -279,25 +282,28 @@ public class BoardActivity extends AppCompatActivity {
 
         View diceView = dice_layout.findViewById(R.id.dialogDice);
         dice = new Dice((ImageView) diceView);
-        diceView.setOnClickListener(v -> {
-            dice.throwDice();
-            diceRolled();
-        });
 
         mSensorManager.registerListener(shakeDetector, accel, SensorManager.SENSOR_DELAY_UI);
 
         builder.setCancelable(false);
 
-        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
-
+        //builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
+
+        diceView.setOnClickListener(v -> {
+            dice.throwDice();
+            diceRolled();
+            endDialog(alertDialog);
+        });
 
         shakeDetector.setOnShakeListener(count -> {
             if(count < 2){
                 dice.throwDice();
                 diceRolled();
+                endDialog(alertDialog);
             }
+
 //            new Thread(){
 //                public void run() {
 //                    try {
@@ -308,7 +314,24 @@ public class BoardActivity extends AppCompatActivity {
 //                    }
 //                }
 //            }.start();
-    });
+        });
+    }
+
+    /**
+     * Closes the alertdialog after 3 seconds
+     * @param b Alertdialog to close
+     */
+    public void endDialog(android.app.AlertDialog b){
+        new CountDownTimer(2000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+            @Override
+            public void onFinish() {
+                b.dismiss();
+            }
+        }.start();
     }
 
 
@@ -378,7 +401,6 @@ public class BoardActivity extends AppCompatActivity {
                 builder.setMessage("One or more cards are owned by "+playerWithSusCard[0]);
             }
         }
-
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         new Thread(){
@@ -913,7 +935,6 @@ public class BoardActivity extends AppCompatActivity {
      * if button is clicked or the screen is swiped horizontally, the current cards of the player are shown
      */
     public void onCardViewClick() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this,R.style.AlertDialogStyle);
         if(netCommunicator.isQuestionChanged() || susCommunicator.getHasSuspected())
             builder.setTitle(gameState.getAskQuestion().getAskPerson()+" suspected");
@@ -999,17 +1020,24 @@ public class BoardActivity extends AppCompatActivity {
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
-                    if(gp1.checkIfPlayerIsOwn()){
+                    if(gp1.checkIfPlayerIsOwn() && !gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getIsAbleToMove() && checkIfInTurnOrder()){
                         startSuspicion();
                     }
                 }else if (swipeUp > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
                 }else if(swipeDown > MIN_SWIPE_DISTANCE){
-                    onCheatViewClick();
+                    if(checkIfInTurnOrder()){
+                        onCheatViewClick();
+                    }
                 }
                 break;
         }
         return false;
+    }
+
+    public boolean checkIfInTurnOrder(){
+        String[] turn_order = gameState.getTurnOrder();
+        return ArrayUtils.contains(turn_order, Network.getCurrentUser().getUid());
     }
 
 }
