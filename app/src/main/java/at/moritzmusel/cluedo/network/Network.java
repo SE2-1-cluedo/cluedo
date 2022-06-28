@@ -2,6 +2,8 @@ package at.moritzmusel.cluedo.network;
 
 import android.content.Context;
 import android.net.sip.SipSession;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -300,11 +302,7 @@ public class Network {
 
 
     public static void leaveLobby(FirebaseUser user, String gameID) {
-        getCurrentGame().child("players").removeEventListener(playerListener);
-        getCurrentGame().child("weapon-positions").removeEventListener(weaponsListener);
-        getCurrentGame().child("turn-flag").removeEventListener(turnFlagListener);
-        getCurrentGame().child("result").removeEventListener(resultListener);
-        getCurrentGame().child("turn-order").removeEventListener(turnOrderListener);
+        detachListeners();
 
         currentCharacter = Character.MISS_SCARLETT;
         OnDataRetreive onDataRetreive = new OnDataRetreive() {
@@ -460,5 +458,22 @@ public class Network {
 
     public static void test(){
         //Log.i(TAG, ""+checkIfGameExists(getCurrentGameID()));
+    }
+    private static void detachListeners(){
+        getCurrentGame().child("players").removeEventListener(playerListener);
+        getCurrentGame().child("weapon-positions").removeEventListener(weaponsListener);
+        getCurrentGame().child("turn-flag").removeEventListener(turnFlagListener);
+        getCurrentGame().child("result").removeEventListener(resultListener);
+        getCurrentGame().child("turn-order").removeEventListener(turnOrderListener);
+    }
+    public static void deleteGame(){
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                detachListeners();
+                games.child(getCurrentGameID()).removeValue();
+            }
+        }, 5000);
     }
 }
