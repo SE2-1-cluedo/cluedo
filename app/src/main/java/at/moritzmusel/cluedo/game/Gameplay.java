@@ -150,7 +150,6 @@ public class Gameplay {
         stepsTaken++;
         if(stepsTaken == numDice) {
             findPlayerByCharacterName(currentPlayer).setAbleToMove(false);
-            endTurn();
         }
     }
 
