@@ -168,7 +168,7 @@ public class BoardActivity extends AppCompatActivity {
                     rolledMagnifyingGlass();
             }
             if(netCommunicator.isQuestionChanged()){
-                if(!gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId().equals(Network.getCurrentUser().getUid()))
+                if(!gp1.checkIfPlayerIsOwn())
                     onCardViewClick();
             }
            if(netCommunicator.isHasLost()) {
@@ -961,7 +961,6 @@ public class BoardActivity extends AppCompatActivity {
 
                 @Override
                 public void onFinish() {
-                    gameplayCommunicator.setSuspicion(false);
                     alertDialog.dismiss();
                     showSuspicionResult();
                 }

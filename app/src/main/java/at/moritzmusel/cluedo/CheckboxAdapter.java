@@ -56,7 +56,24 @@ public class CheckboxAdapter extends ArrayAdapter {
             this.checkboxStatecb6.add(i, false);
         }
 
+        gpl = Gameplay.getInstance();
         this.notepadData = notepadData;
+
+        com.register(()->{
+            if(com.isEliminatedChanged()){
+                int count = 0;
+                for (int x = 0; x < checkboxItems.size(); x++) {
+                    for (int j = 0; j < gmst.getEliminatedCards().size(); j++) {
+                        if (x == gmst.getEliminatedCards().get(j)) {
+                            notepadData.setAllCheckBoxInLine(gmst.getEliminatedCards().get(j));
+                        }
+                    }
+                    count++;
+                }
+            }
+            gmst.setEliminatedCards(null, true);
+            com.setEliminatedChanged(false);
+        });
 
     }
 
@@ -79,9 +96,6 @@ public class CheckboxAdapter extends ArrayAdapter {
             holder.cb6 = convertView.findViewById(R.id.checkbox6);
 
 
-            gpl = Gameplay.getInstance();
-
-
             if (!gpl.getCardsOfPlayerOwn().isEmpty()) {
                 int count = 0;
                 for (int x = 0; x < checkboxItems.size(); x++) {
@@ -93,21 +107,6 @@ public class CheckboxAdapter extends ArrayAdapter {
                     count++;
                 }
             }
-
-            com.register(()->{
-                if(com.isEliminatedChanged()){
-                    int count = 0;
-                    for (int x = 0; x < checkboxItems.size(); x++) {
-                        for (int j = 0; j < gmst.getEliminatedCards().size(); j++) {
-                            if (x == gmst.getEliminatedCards().get(j)) {
-                                notepadData.setAllCheckBoxInLine(gmst.getEliminatedCards().get(j));
-                            }
-                        }
-                        count++;
-                    }
-                }
-                gmst.setEliminatedCards(null, true);
-            });
 
             List<Player> players = gpl.getPlayers();
             for (int i = 0; i < checkboxItems.size(); i++) {
