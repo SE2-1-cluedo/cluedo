@@ -44,18 +44,11 @@
                 app:srcCompat="@drawable/scarlett" />
 
             <ImageView
-                android:id="@+id/img_colonel"
+                android:id="@+id/img_plum"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/mustard" />
-
-            <ImageView
-                android:id="@+id/img_orchid"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/orchid" />
+                app:srcCompat="@drawable/plum" />
 
             <ImageView
                 android:id="@+id/img_green"
@@ -72,11 +65,23 @@
                 app:srcCompat="@drawable/peacock" />
 
             <ImageView
-                android:id="@+id/img_plum"
+                android:id="@+id/img_colonel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/plum" />
+                app:srcCompat="@drawable/mustard" />
+
+            <ImageView
+                android:id="@+id/img_orchid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/orchid" />
+
+
+
+
+
         </TableRow>
 
     </TableLayout>
