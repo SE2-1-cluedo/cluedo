@@ -193,6 +193,7 @@ public class BoardActivity extends AppCompatActivity {
                    //loser activity
                }
                System.out.println("Someone lost");
+               Network.deleteGame();
            }
            if(netCommunicator.isFramed()){
                if(gameState.getFramed().equals(Network.getCurrentUser().getUid())){
