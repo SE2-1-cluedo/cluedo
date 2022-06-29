@@ -34,7 +34,6 @@ public class GameState {
     private int[] killer;
     private String playerTurn;
     private String[] turnOrder, magnify;
-    private List<Integer> eliminatedCards = new ArrayList<>();
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponPositions = new int[]{5,1,9,3,6,8};
     DatabaseReference dbRef;
@@ -350,25 +349,6 @@ public class GameState {
                 sB.append(i).append(" ");
 
             dbRef.child("weapon-positions").setValue(sB.toString().trim());
-        }
-    }
-
-    public List<Integer> getEliminatedCards() {
-        return eliminatedCards;
-    }
-
-    public void setEliminatedCards(List<Integer> eliminatedCards, boolean database) {
-        this.eliminatedCards = eliminatedCards;
-        if(!database){
-            communicator.setEliminatedChanged(true);
-            communicator.notifyList();
-        } else if (eliminatedCards == null)
-            dbRef.child("cards-eliminated").setValue("");
-        else {
-            StringBuilder sB = new StringBuilder();
-            for(int i: eliminatedCards)
-                sB.append(i).append(" ");
-            dbRef.child("cards-eliminated").setValue(sB.toString().trim());
         }
     }
 
