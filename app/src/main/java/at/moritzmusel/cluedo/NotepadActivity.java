@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 
@@ -14,11 +15,13 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
+import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
 import at.moritzmusel.cluedo.network.pojo.GameState;
 
-public class NotepadActivity extends AppCompatActivity implements View.OnClickListener {
+public class NotepadActivity extends AppCompatActivity {
 
     CheckboxAdapter checkAdapter;
     float x1, x2;
@@ -27,21 +30,76 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
     Gameplay gpl = Gameplay.getInstance();
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notepad_update);
 
+        ImageView img_scarlett = findViewById(R.id.img_scarlett);
+        ImageView img_plum = findViewById(R.id.img_plum);
+        ImageView img_green = findViewById(R.id.img_green);
+        ImageView img_peacock = findViewById(R.id.img_peacock);
+        ImageView img_mustard = findViewById(R.id.img_colonel);
+        ImageView img_orchid = findViewById(R.id.img_orchid);
+
+
+
 
         String[] stringArray = getResources().getStringArray(R.array.all);
+
         List<String> list = new ArrayList<>(Arrays.asList(stringArray));
         ListView listView = findViewById(R.id.listviewNotepad);
         checkAdapter = new CheckboxAdapter(this, list, notepadData);
         listView.setAdapter(checkAdapter);
 
+        ArrayList<String> characters = new ArrayList<>();
+        characters.add(Character.MISS_SCARLETT.name());
+        characters.add(Character.PROFESSOR_PLUM.name());
+        characters.add(Character.REVEREND_GREEN.name());
+        characters.add(Character.MRS_PEACOCK.name());
+        characters.add(Character.COLONEL_MUSTARD.name());
+        characters.add(Character.DR_ORCHID.name());
 
-        Button btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
-        btn_closeNotepad.setOnClickListener(this);
+        boolean[] inGame = new boolean[6];
+
+        for (int i = 0; i < characters.size(); i++) {
+            for (int j = 0; j < gpl.getPlayers().size(); j++) {
+                if (characters.get(i).equals(gpl.getPlayers().get(j).getPlayerCharacterName().name())) {
+                    inGame[i] = true;
+                }
+
+            }
+        }
+        for (int i = 0; i < inGame.length; i++) {
+            if(!inGame[i]){
+                switch(i){
+                    case 0:
+                        img_scarlett.setVisibility(View.GONE);
+                        break;
+                    case 1:
+                        img_plum.setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        img_green.setVisibility(View.GONE);
+                        break;
+                    case 3:
+                        img_peacock.setVisibility(View.GONE);
+                        break;
+                    case 4:
+                        img_mustard.setVisibility(View.GONE);
+                        break;
+                    case 5:
+                        img_orchid.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+
+        }
+
+        //Button btn_closeNotepad = findViewById(R.id.btn_closeNotepad);
+        //btn_closeNotepad.setOnClickListener(this);
 
 
     }
@@ -54,13 +112,13 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.btn_closeNotepad) {
-            checkAdapter.safeState();
-            finish();
-        }
-    }
+//    @Override
+//    //public void onClick(View view) {
+//        if (view.getId() == R.id.btn_closeNotepad) {
+//            checkAdapter.safeState();
+//            finish();
+//        }
+//    }
 
 
     /**
@@ -107,7 +165,7 @@ public class NotepadActivity extends AppCompatActivity implements View.OnClickLi
                 checkboxStatecb5 = new ArrayList<Boolean>();
                 checkboxStatecb6 = new ArrayList<Boolean>();
 
-                for (int i = 0; i < 21; i++) {
+                for (int i = 0; i < 22; i++) {
                     checkboxStatecb1.add(i, false);
                     checkboxStatecb2.add(i, false);
                     checkboxStatecb3.add(i, false);

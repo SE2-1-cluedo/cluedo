@@ -3,16 +3,20 @@ package at.moritzmusel.cluedo.communication;
 import java.util.ArrayList;
 
 public class GameplayCommunicator implements Communicator{
-    private boolean moved, suspicion, turnChange, magnifying;
+    private boolean playerMoved, weaponMoved, suspicion, turnChange;
     private final ArrayList<ChangeListener> listenerArray;
 
-    private static final GameplayCommunicator OBJ = new GameplayCommunicator();
+    private static GameplayCommunicator OBJ = new GameplayCommunicator();
 
     private GameplayCommunicator(){
         listenerArray = new ArrayList<>();
     }
 
     public static GameplayCommunicator getInstance(){
+        if(OBJ == null){
+            OBJ = new GameplayCommunicator();
+            return OBJ;
+        }
         return OBJ;
     }
 
@@ -27,12 +31,20 @@ public class GameplayCommunicator implements Communicator{
             listener.onChange();
     }
 
-    public boolean isMoved() {
-        return moved;
+    public boolean isPlayerMoved() {
+        return playerMoved;
     }
 
-    public void setMoved(boolean moved) {
-        this.moved = moved;
+    public void setPlayerMoved(boolean playerMoved) {
+        this.playerMoved = playerMoved;
+    }
+
+    public boolean isWeaponMoved() {
+        return weaponMoved;
+    }
+
+    public void setWeaponMoved(boolean weaponMoved) {
+        this.weaponMoved = weaponMoved;
     }
 
     public boolean isSuspicion() {
@@ -49,13 +61,5 @@ public class GameplayCommunicator implements Communicator{
 
     public void setTurnChange(boolean turnChange) {
         this.turnChange = turnChange;
-    }
-
-    public boolean isMagnifying() {
-        return magnifying;
-    }
-
-    public void setMagnifying(boolean magnifying) {
-        this.magnifying = magnifying;
     }
 }

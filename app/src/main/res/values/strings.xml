@@ -31,6 +31,7 @@
         \n<b>Swipe Right:</b> There you can see your notepad. Swipe left to get back to the board.
         \n<b>Swipe Left:</b> To make your suspicion and accusation. Swipe right to get back to the board.
         \n<b>Swipe Up:</b> Open your three to six cards.
+        \n<b>Swipe Down:</b> On an rare occasion you can frame someone win and end the game.
         \n\n<b>Notepad:</b>
         \nIn the Notepad you can use Checkboxes to remember your clues for the murderer and accusation.
         \n\n<b>Suspicion/Accusation:</b>
@@ -58,6 +59,8 @@
     <string name="Selection_weapon">Selection weapon</string>
     <string name="choose_the_character_you_want_to_play_with">Choose the character you want to play with</string>
     <string name="back_to_map">Back to map</string>
+    <string name="frame">Frame</string>
+    <string name="notepad">Notepad</string>
 
     <string-array name="person_array">
         <item>Professor Plum</item>
@@ -91,27 +94,28 @@
     </string-array>
 
     <string-array name="all">
+        <item>Miss Scarlett</item>
         <item>Professor Plum</item>
         <item>Reverend Green</item>
-        <item>Miss Scarlett</item>
         <item>Mrs Peacock</item>
         <item>Colonel Mustard</item>
         <item>Dr. Orchid</item>
         <item>Dagger</item>
-        <item>Pistole</item>
+        <item>Candlestick</item>
+        <item>Revolver</item>
         <item>Rope</item>
         <item>Pipe</item>
-        <item>Candlestick</item>
         <item>Wrench</item>
         <item>Lounge</item>
+        <item>Conservatory</item>
+        <item>Ball Room</item>
         <item>Dining Room</item>
+        <item>Kitchen</item>
+        <item>Library</item>
         <item>Billiard Room</item>
         <item>Study</item>
         <item>Hall</item>
-        <item>Library</item>
-        <item>Ballroom</item>
-        <item>Conservatory</item>
-        <item>Kitchen</item>
+        <item>Hall</item>
     </string-array>
 
 </resources>

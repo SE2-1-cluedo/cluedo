@@ -20,15 +20,15 @@ public class AllTheCards {
     public Card pipe = new Card(10, "Pipe", CardType.WEAPON);
     public Card wrench = new Card(11, "Wrench", CardType.WEAPON);
 
-    public Card hall = new Card(12, "Lounge", CardType.ROOM);
-    public Card lounge = new Card(13, "Conservatory", CardType.ROOM);
-    public Card dining_room = new Card(14, "Ball Room", CardType.ROOM);
-    public Card kitchen = new Card(15, "Dining Room", CardType.ROOM);
-    public Card ballroom = new Card(16, "Kitchen", CardType.ROOM);
-    public Card conservatory = new Card(17, "Library", CardType.ROOM);
+    public Card lounge = new Card(12, "Lounge", CardType.ROOM);
+    public Card conservatory = new Card(13, "Conservatory", CardType.ROOM);
+    public Card ballroom = new Card(14, "Ball Room", CardType.ROOM);
+    public Card dining_room = new Card(15, "Dining Room", CardType.ROOM);
+    public Card kitchen = new Card(16, "Kitchen", CardType.ROOM);
+    public Card library = new Card(17, "Library", CardType.ROOM);
     public Card billiard_room = new Card(18, "Billiard Room", CardType.ROOM);
-    public Card library = new Card(19, "Study", CardType.ROOM);
-    public Card study = new Card(20, "Hall", CardType.ROOM);
+    public Card study = new Card(19, "Study", CardType.ROOM);
+    public Card hall = new Card(20, "Hall", CardType.ROOM);
 
     /**
      * adds all the cards for the game in a list
@@ -51,15 +51,15 @@ public class AllTheCards {
         gameCards.add(wrench);
 
         //Rooms
-        gameCards.add(hall);
         gameCards.add(lounge);
+        gameCards.add(conservatory);
+        gameCards.add(ballroom);
         gameCards.add(dining_room);
         gameCards.add(kitchen);
-        gameCards.add(ballroom);
-        gameCards.add(conservatory);
-        gameCards.add(billiard_room);
         gameCards.add(library);
+        gameCards.add(billiard_room);
         gameCards.add(study);
+        gameCards.add(hall);
     }
 
     /**
@@ -75,6 +75,13 @@ public class AllTheCards {
             if(c.getDesignation().equals(name))
                 return c.getId();
             return -1;
+    }
+
+    public Card findCardWithId(int id){
+        for(Card c: gameCards)
+            if(c.getId() == id)
+                return c;
+            return null;
     }
 
 }

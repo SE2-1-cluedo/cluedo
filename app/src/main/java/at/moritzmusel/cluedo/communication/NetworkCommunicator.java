@@ -6,9 +6,9 @@ import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class NetworkCommunicator implements Communicator {
     private final ArrayList<ChangeListener> listenerArray;
-    private boolean turnChanged, playerChanged, positionChanged, questionChanged, weaponsChanged, hasWon, hasLost, magnify, characterChanged, startGame;
+    private boolean turnChanged, turnOrderChanged, eliminatedChanged, playerChanged, positionChanged, questionChanged, weaponsChanged, hasWon, framed, framer, hasLost, magnify, characterChanged, startGame;
 
-    private static NetworkCommunicator OBJ = new NetworkCommunicator();
+    private static NetworkCommunicator OBJ;
 
     private NetworkCommunicator(){
         listenerArray = new ArrayList<>();
@@ -73,6 +73,20 @@ public class NetworkCommunicator implements Communicator {
         return hasWon;
     }
 
+    public boolean isFramed() {
+        return framed;
+    }
+    public void setFramed(boolean framed) {
+        this.framed = framed;
+    }
+
+    public boolean isFramer() {
+        return framer;
+    }
+    public void setFramer(boolean framer) {
+        this.framer = framer;
+    }
+
     public boolean isHasLost() {
         return hasLost;
     }
@@ -115,5 +129,21 @@ public class NetworkCommunicator implements Communicator {
 
     public void setPositionChanged(boolean positionChanged) {
         this.positionChanged = positionChanged;
+    }
+
+    public boolean isTurnOrderChanged() {
+        return turnOrderChanged;
+    }
+
+    public void setTurnOrderChanged(boolean turnOrderChanged) {
+        this.turnOrderChanged = turnOrderChanged;
+    }
+
+    public boolean isEliminatedChanged() {
+        return eliminatedChanged;
+    }
+
+    public void setEliminatedChanged(boolean eliminatedChanged) {
+        this.eliminatedChanged = eliminatedChanged;
     }
 }

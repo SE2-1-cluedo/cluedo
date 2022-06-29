@@ -8,13 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
+import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
+import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class CheckboxAdapter extends ArrayAdapter {
     Context context;
@@ -26,27 +30,22 @@ public class CheckboxAdapter extends ArrayAdapter {
     List<Boolean> checkboxStatecb6;
     List<String> checkboxItems;
     NotepadActivity.NotepadData notepadData;
-    Player player;
     Gameplay gpl;
-    CheckBox cb1;
-    CheckBox cb2;
-    CheckBox cb3;
-    CheckBox cb4;
-    CheckBox cb5;
-    CheckBox cb6;
-    TextView textView;
+    NetworkCommunicator com = NetworkCommunicator.getInstance();
+    GameState gmst = GameState.getInstance();
+
 
     public CheckboxAdapter(Context context, List<String> resource, NotepadActivity.NotepadData notepadData) {
         super(context, R.layout.list_row, resource);
 
         this.context = context;
         this.checkboxItems = resource;
-        this.checkboxStatecb1 = new ArrayList<Boolean>();
-        this.checkboxStatecb2 = new ArrayList<Boolean>();
-        this.checkboxStatecb3 = new ArrayList<Boolean>();
-        this.checkboxStatecb4 = new ArrayList<Boolean>();
-        this.checkboxStatecb5 = new ArrayList<Boolean>();
-        this.checkboxStatecb6 = new ArrayList<Boolean>();
+        this.checkboxStatecb1 = new ArrayList<>();
+        this.checkboxStatecb2 = new ArrayList<>();
+        this.checkboxStatecb3 = new ArrayList<>();
+        this.checkboxStatecb4 = new ArrayList<>();
+        this.checkboxStatecb5 = new ArrayList<>();
+        this.checkboxStatecb6 = new ArrayList<>();
 
         for (int i = 0; i < this.getCount(); i++) {
             this.checkboxStatecb1.add(i, false);
@@ -57,9 +56,25 @@ public class CheckboxAdapter extends ArrayAdapter {
             this.checkboxStatecb6.add(i, false);
         }
 
+        gpl = Gameplay.getInstance();
         this.notepadData = notepadData;
 
-        //this.checkboxStatecb1 = new ArrayList<Boolean>(Collections.nCopies(resource.size(), true));
+        com.register(()->{
+            if(com.isEliminatedChanged()){
+                int count = 0;
+                for (int x = 0; x < checkboxItems.size(); x++) {
+                    for (int j = 0; j < gmst.getEliminatedCards().size(); j++) {
+                        if (x == gmst.getEliminatedCards().get(j)) {
+                            notepadData.setAllCheckBoxInLine(gmst.getEliminatedCards().get(j));
+                        }
+                    }
+                    count++;
+                }
+            }
+            gmst.setEliminatedCards(null, true);
+            com.setEliminatedChanged(false);
+        });
+
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -80,6 +95,7 @@ public class CheckboxAdapter extends ArrayAdapter {
             holder.cb5 = convertView.findViewById(R.id.checkbox5);
             holder.cb6 = convertView.findViewById(R.id.checkbox6);
 
+
             if (!gpl.getCardsOfPlayerOwn().isEmpty()) {
                 int count = 0;
                 for (int x = 0; x < checkboxItems.size(); x++) {
@@ -92,106 +108,110 @@ public class CheckboxAdapter extends ArrayAdapter {
                 }
             }
 
+            List<Player> players = gpl.getPlayers();
+            for (int i = 0; i < checkboxItems.size(); i++) {
+                if (players.size() < 4) {
+                    holder.cb4.setVisibility(View.GONE);
+                    holder.cb5.setVisibility(View.GONE);
+                    holder.cb6.setVisibility(View.GONE);
+                }
+                if (players.size() < 5) {
+                    holder.cb5.setVisibility(View.GONE);
+                    holder.cb6.setVisibility(View.GONE);
+                }
+                if (players.size() < 6) {
+                    holder.cb6.setVisibility(View.GONE);
+                }
+            }
+
+
             convertView.setTag(holder);
         } else {
-            holder = (CheckHolder)convertView.getTag();
-
-    }
-        holder.textView.setText(checkboxItems.get(position));
-
-        holder.cb1.setOnClickListener(new View.OnClickListener()
-
-    {
-        @Override
-        public void onClick (View view){
-        if (holder.cb1.isChecked()) {
-            checkboxStatecb1.set(position, true);
-        } else {
-            checkboxStatecb1.set(position, false);
+            holder = (CheckHolder) convertView.getTag();
         }
+        holder.textView.setText(checkboxItems.get(position));
+        holder.cb1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holder.cb1.isChecked()) {
+                    checkboxStatecb1.set(position, true);
+                } else {
+                    checkboxStatecb1.set(position, false);
+                }
 
-    }
-    });
+            }
+
+        });
         holder.cb1.setChecked(checkboxStatecb1.get(position));
 
-        holder.cb2.setOnClickListener(new View.OnClickListener()
+        holder.cb2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holder.cb2.isChecked()) {
+                    checkboxStatecb2.set(position, true);
+                } else {
+                    checkboxStatecb2.set(position, false);
+                }
 
-    {
-        @Override
-        public void onClick (View view){
-        if (holder.cb2.isChecked()) {
-            checkboxStatecb2.set(position, true);
-        } else {
-            checkboxStatecb2.set(position, false);
-        }
-
-    }
-    });
+            }
+        });
         holder.cb2.setChecked(checkboxStatecb2.get(position));
 
-        holder.cb3.setOnClickListener(new View.OnClickListener()
+        holder.cb3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holder.cb3.isChecked()) {
+                    checkboxStatecb3.set(position, true);
+                } else {
+                    checkboxStatecb3.set(position, false);
+                }
 
-    {
-        @Override
-        public void onClick (View view){
-        if (holder.cb3.isChecked()) {
-            checkboxStatecb3.set(position, true);
-        } else {
-            checkboxStatecb3.set(position, false);
-        }
-
-    }
-    });
+            }
+        });
         holder.cb3.setChecked(checkboxStatecb3.get(position));
 
-        holder.cb4.setOnClickListener(new View.OnClickListener()
+        holder.cb4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holder.cb4.isChecked()) {
+                    checkboxStatecb4.set(position, true);
+                } else {
+                    checkboxStatecb4.set(position, false);
+                }
 
-    {
-        @Override
-        public void onClick (View view){
-        if (holder.cb4.isChecked()) {
-            checkboxStatecb4.set(position, true);
-        } else {
-            checkboxStatecb4.set(position, false);
-        }
-
-    }
-    });
+            }
+        });
         holder.cb4.setChecked(checkboxStatecb4.get(position));
 
-        holder.cb5.setOnClickListener(new View.OnClickListener()
+        holder.cb5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holder.cb5.isChecked()) {
+                    checkboxStatecb5.set(position, true);
+                } else {
+                    checkboxStatecb5.set(position, false);
+                }
 
-    {
-        @Override
-        public void onClick (View view){
-        if (holder.cb5.isChecked()) {
-            checkboxStatecb5.set(position, true);
-        } else {
-            checkboxStatecb5.set(position, false);
-        }
-
-    }
-    });
+            }
+        });
         holder.cb5.setChecked(checkboxStatecb5.get(position));
 
-        holder.cb6.setOnClickListener(new View.OnClickListener()
+        holder.cb6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holder.cb6.isChecked()) {
+                    checkboxStatecb6.set(position, true);
+                } else {
+                    checkboxStatecb6.set(position, false);
+                }
 
-    {
-        @Override
-        public void onClick (View view){
-        if (holder.cb6.isChecked()) {
-            checkboxStatecb6.set(position, true);
-        } else {
-            checkboxStatecb6.set(position, false);
-        }
-
-    }
-    });
+            }
+        });
         holder.cb6.setChecked(checkboxStatecb6.get(position));
         return convertView;
-}
+    }
 
-    public void safeState(){
+    public void safeState() {
         notepadData.setCheckboxStatecb1(this.checkboxStatecb1);
         notepadData.setCheckboxStatecb2(this.checkboxStatecb2);
         notepadData.setCheckboxStatecb3(this.checkboxStatecb3);
@@ -201,38 +221,37 @@ public class CheckboxAdapter extends ArrayAdapter {
 
     }
 
-    public void loadState(){
-        if(!notepadData.getCheckboxStatecb1().isEmpty()) {
+    public void loadState() {
+        if (!notepadData.getCheckboxStatecb1().isEmpty()) {
             this.checkboxStatecb1 = notepadData.getCheckboxStatecb1();
         }
-        if(!notepadData.getCheckboxStatecb2().isEmpty()) {
+        if (!notepadData.getCheckboxStatecb2().isEmpty()) {
             this.checkboxStatecb2 = notepadData.getCheckboxStatecb2();
         }
-        if(!notepadData.getCheckboxStatecb3().isEmpty()) {
+        if (!notepadData.getCheckboxStatecb3().isEmpty()) {
             this.checkboxStatecb3 = notepadData.getCheckboxStatecb3();
         }
-        if(!notepadData.getCheckboxStatecb4().isEmpty()) {
+        if (!notepadData.getCheckboxStatecb4().isEmpty()) {
             this.checkboxStatecb4 = notepadData.getCheckboxStatecb4();
         }
-        if(!notepadData.getCheckboxStatecb5().isEmpty()) {
+        if (!notepadData.getCheckboxStatecb5().isEmpty()) {
             this.checkboxStatecb5 = notepadData.getCheckboxStatecb5();
         }
-        if(!notepadData.getCheckboxStatecb6().isEmpty()) {
+        if (!notepadData.getCheckboxStatecb6().isEmpty()) {
             this.checkboxStatecb6 = notepadData.getCheckboxStatecb6();
         }
     }
 
 
+    static class CheckHolder {
 
-static class CheckHolder {
+        TextView textView;
+        CheckBox cb1;
+        CheckBox cb2;
+        CheckBox cb3;
+        CheckBox cb4;
+        CheckBox cb5;
+        CheckBox cb6;
 
-    TextView textView;
-    CheckBox cb1;
-    CheckBox cb2;
-    CheckBox cb3;
-    CheckBox cb4;
-    CheckBox cb5;
-    CheckBox cb6;
-
-}
+    }
 }

@@ -6,6 +6,8 @@ import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,23 +28,25 @@ import at.moritzmusel.cluedo.network.data.QuestionCards;
 public class GameState {
     private List<Player> playerState;
     private List<Integer> cardState;
-    private List<Card> questionCardStack;
+    private List<Integer> eliminatedCards = new ArrayList<>();
     private Question askQuestion;
+    private String framed, framer;
     private String winner, loser;
     private int[] killer;
     private String playerTurn;
     private String[] turnOrder, magnify;
+    private int frameNumber;
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponPositions = new int[]{5,1,9,3,6,8};
     DatabaseReference dbRef;
-    private final NetworkCommunicator communicator = NetworkCommunicator.getInstance();
+    private final NetworkCommunicator communicator;
 
 
     private static GameState OBJ;
 
     private GameState(){
-        //initQuestionCardsStack(Network.getCtx());
         dbRef = Network.getCurrentGame();
+        communicator = NetworkCommunicator.getInstance();
     }
 
     public static GameState getInstance() {
@@ -78,8 +82,39 @@ public class GameState {
         }
     }
 
+    public int getFrameNumber() {
+        return frameNumber;
+    }
+
+    public void setFrameNumber(int frameNumber, boolean database) {
+        this.frameNumber = frameNumber;
+        if(database){
+            dbRef.child("frameNumber").setValue(String.valueOf(frameNumber));
+        }
+    }
+
     public List<Player> getPlayerState() {
         return playerState;
+    }
+
+    public List<Integer> getEliminatedCards() {
+        return eliminatedCards;
+    }
+
+    public void setEliminatedCards(List<Integer> eliminatedCards, boolean database) {
+        this.eliminatedCards = eliminatedCards;
+        if(!database){
+            communicator.setEliminatedChanged(true);
+            communicator.notifyList();
+            System.out.println("Got eliminated Cards");
+        } else if (eliminatedCards == null)
+            dbRef.child("cards-eliminated").setValue("");
+        else {
+            StringBuilder sB = new StringBuilder();
+            for(int i: eliminatedCards)
+                sB.append(i).append(" ");
+            dbRef.child("cards-eliminated").setValue(sB.toString().trim());
+        }
     }
 
     public String getWinner() {
@@ -98,6 +133,46 @@ public class GameState {
             dbRef.child("result").child("winner").setValue("");
         else
             dbRef.child("result").child("winner").setValue(winner);
+
+    }
+
+    public String getFramed() {
+        return framed;
+    }
+
+    public void setFramed(String framed, boolean database){
+        this.framed = framed;
+        if(!database){
+            if(!communicator.isFramed()){
+                communicator.setFramed(true);
+                communicator.notifyList();
+                System.out.println("is framed");
+            }
+        } else if(framed == null){
+            dbRef.child("result").child("framed").setValue("");
+        }
+        else
+            dbRef.child("result").child("framed").setValue(framed);
+
+    }
+
+    public String getFramer() {
+        return framer;
+    }
+
+    public void setFramer(String framer, boolean database){
+        this.framer = framer;
+        if(!database){
+            if(!communicator.isFramer()){
+                communicator.setFramer(true);
+                communicator.notifyList();
+                System.out.println("is framer");
+            }
+        } else if(framed == null){
+            dbRef.child("result").child("framer").setValue("");
+        }
+        else
+            dbRef.child("result").child("framer").setValue(framer);
 
     }
 
@@ -145,13 +220,11 @@ public class GameState {
     public void setPlayerState(List<Player> playerState, boolean database) {
         this.playerState = playerState;
         if(!database) {
-            System.out.println("Player changed");
             if(!communicator.isPlayerChanged()){
                 communicator.setPlayerChanged(true);
                 communicator.notifyList();
             }
             if(!communicator.isPositionChanged()){
-                System.out.println("Now position was called");
                 communicator.setPositionChanged(true);
                 communicator.notifyList();
             }
@@ -170,7 +243,6 @@ public class GameState {
                     for(String player : players){
                         Map<String,Object> map = new HashMap<>();
                         map.put("cards","");
-                        map.put("cards-eliminated","");
                         map.put("character","");
                         map.put("position","");
                         dbRef.child("players").child(player).updateChildren(map);
@@ -180,7 +252,6 @@ public class GameState {
         } else {
             for (Player p : playerState){
                 dbRef.child("players").child(p.getPlayerId()).child("cards").setValue(p.getOwnedCardsAsString());
-                dbRef.child("players").child(p.getPlayerId()).child("cards-eliminated").setValue(p.getKnownCardsAsString());
                 dbRef.child("players").child(p.getPlayerId()).child("position").setValue(Integer.toString(p.getPositionOnBoard()));
             }
         }
@@ -229,7 +300,7 @@ public class GameState {
             StringBuilder sB = new StringBuilder();
             sB.append(askQuestion.getAskPerson()).append(" ");
             for(int i : askQuestion.getCards())
-                sB.append(i).append("");
+                sB.append(i).append(" ");
             dbRef.child("turn-flag").child("question").setValue(sB.toString().trim());
         }
     }
@@ -255,22 +326,17 @@ public class GameState {
     }
 
     public void setPlayerTurn(String playerTurn, boolean database) {
-        this.playerTurn = playerTurn;
-        if(!database) {
-            if(!communicator.isPlayerChanged()){
-                communicator.setTurnChanged(true);
-                communicator.notifyList();
-                System.out.println("turn changed");
+        if(playerTurn != null && !playerTurn.equals(this.playerTurn)){
+            this.playerTurn = playerTurn;
+            if(!database) {
+                if(!communicator.isPlayerChanged()){
+                    communicator.setTurnChanged(true);
+                    communicator.notifyList();
+                    System.out.println("turn changed");
+                }
             }
+            else dbRef.child("turn-flag").child("player-turn").setValue(playerTurn);
         }
-        else if(playerTurn == null)
-            dbRef.child("turn-flag").child("player-turn").setValue("");
-        else dbRef.child("turn-flag").child("player-turn").setValue(playerTurn);
-    }
-
-    private void initQuestionCardsStack(Context ctx){
-        QuestionCards qc = new QuestionCards(ctx);
-        this.questionCardStack = qc.getQuestionCards();
     }
 
     public int[] getWeaponPositions() {
@@ -280,11 +346,8 @@ public class GameState {
     public void setWeaponPositions(int[] weaponPositions, boolean database) {
         this.weaponPositions = weaponPositions;
         if(!database) {
-            if(!communicator.isWeaponsChanged()){
                 communicator.setWeaponsChanged(true);
                 communicator.notifyList();
-                System.out.println("weapons changed");
-            }
         }
         else if(weaponPositions == null)
             dbRef.child("weapon-positions").setValue("");
@@ -299,7 +362,10 @@ public class GameState {
 
     public void setTurnOrder(String[] turnOrder, boolean database){
         this.turnOrder = turnOrder;
-        if(database) {
+        if(!database){
+            communicator.setTurnOrderChanged(true);
+            communicator.notifyList();
+        } else {
             StringBuilder sB = new StringBuilder();
             for(String s: turnOrder)
                 sB.append(s).append(" ");
@@ -310,5 +376,14 @@ public class GameState {
 
     public String[] getTurnOrder(){
         return turnOrder;
+    }
+
+    /**
+     * Deletes a player id from the turnorder, so he can not do anything after a wrong accusation
+     * @param uid Id to delete
+     */
+    public void removeFromTurnOrder(String uid) {
+        String [] turnOrder = ArrayUtils.removeElement(this.getTurnOrder(), uid);
+        this.setTurnOrder(turnOrder,true);
     }
 }

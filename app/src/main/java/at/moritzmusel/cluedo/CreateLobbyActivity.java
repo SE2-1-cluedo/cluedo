@@ -31,7 +31,6 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     private ArrayAdapter<String> adapter;
     private TextView lobby_title;
     private Button start;
-    private Button back;
     private boolean decision, started;
     private Character c;
     private TextView character_name;
@@ -117,8 +116,8 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      * the start button will be clickable
      */
     private void checkNumberOfPlayers(){
-        if(c == Character.MISS_SCARLETT){
-            if(playerItems.size() < 3 || playerItems.size() > 6){
+        if(c == Character.getFirstCharacter()){
+            if(playerItems.size() < 1 || playerItems.size() > 6){
                 start.setClickable(false);
                 start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
             }
@@ -141,13 +140,12 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-
     /**
      * Because the characters for the players will be automatically assign by the network
      * and if your are Miss Scarlett then you are the host that can start the game. c == Character.MISS_SCARLETT ||
      */
     private void setLobby() {
-        if(c == Character.MISS_SCARLETT){
+        if(c == Character.getFirstCharacter()){
             createUI();
         }else{
             joinUI();
@@ -228,7 +226,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
         if(view.getId() == R.id.btn_send_link){
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, getGameID());//Hier wird dann der Einladungslink weitergesendet.
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getGameID());
             sendIntent.setType("text/plain");
             Intent shareIntent = Intent.createChooser(sendIntent, null);
             startActivity(shareIntent);
@@ -241,6 +239,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             Network.startGame(getGameID(),player_list);
             Intent i = new Intent(CreateLobbyActivity.this, BoardActivity.class);
             startActivity(i);
+            finish();
         }
         if(view.getId() == R.id.btn_back){
             back();
@@ -250,15 +249,14 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
     /**
      * resets the network so the list of players can be properly shown
      */
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //gamestate.reset();
-        networkCommunicator.reset();
-        if (!started) {
-            networkCommunicator.reset();
-        }
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        /*gamestate.reset();
+//        {
+//            networkCommunicator.reset();
+//        }*/
+//    }
 
     /**
      * If you press back you will leave the lobby
@@ -266,7 +264,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      * that informs him that he leaves the lobby
      */
     public void back(){
-        if(player_list.size() == 1){
+        if(c == Character.getFirstCharacter()){
             Network.setCtx(this);
             androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(CreateLobbyActivity.this);
             builder.setTitle("Attention!");
@@ -283,6 +281,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             Network.setCtx(this);
             Network.leaveLobby(user, getGameID());
             finish();
+
         }
     }
 

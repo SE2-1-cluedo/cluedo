@@ -2,6 +2,8 @@ package at.moritzmusel.cluedo.network;
 
 import android.content.Context;
 import android.net.sip.SipSession;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -43,6 +45,7 @@ public class Network {
     private static GameState gameState;
     private static FirebaseUser currentUser;
     private static final int[] killer = new int[3];
+    private static NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
     private static final ValueEventListener turnFlagListener = new ValueEventListener() {
 
         @Override
@@ -59,12 +62,13 @@ public class Network {
 
             //getMagnify
             String[] magnify = ((String) Objects.requireNonNull(snapshot.child("magnify").getValue())).split(" ");
-            if(magnify.length > 1)
-            getGameState().setMagnify(magnify,false);
+            if(magnify.length == 2)
+                getGameState().setMagnify(magnify,false);
 
             //get Question
             String[] question = ((String) Objects.requireNonNull(snapshot.child("question").getValue())).split(" ");
-            if(question.length == 4) {
+            if(question.length > 1) {
+                System.out.println("Question listened");
                 int[] numbers = new int[]{Integer.parseInt(question[1]), Integer.parseInt(question[2]), Integer.parseInt(question[3])};
                 getGameState().setAskQuestion(new Question(question[0],numbers),false);
             }
@@ -99,6 +103,14 @@ public class Network {
             String loser = (String) Objects.requireNonNull(snapshot.child("loser").getValue());
             if(loser.length() > 0)
             getGameState().setLoser(loser,false);
+
+            String framed = (String) Objects.requireNonNull(snapshot.child("framed").getValue());
+            if(framed.length() > 0)
+                getGameState().setFramed(framed, false);
+
+            String framer = (String) Objects.requireNonNull(snapshot.child("framer").getValue());
+            if(framed.length() > 0)
+                getGameState().setFramer(framer, false);
         }
 
         @Override
@@ -113,7 +125,7 @@ public class Network {
             ArrayList<Player> playerList = new ArrayList<>();
             boolean playerChanged = false;
             for (DataSnapshot snap : snapshot.getChildren()) {
-                if (snap.child("character").exists() && snap.child("position").exists() && snap.child("cards").exists() && snap.child("cards-eliminated").exists()) {
+                if (snap.child("character").exists() && snap.child("position").exists() && snap.child("cards").exists()) {
                         Player p = new Player(snap.getKey());
                         playerChanged = true;
 
@@ -131,22 +143,55 @@ public class Network {
                             p.setPlayerOwnedCards((ArrayList<Integer>) Arrays.stream(Stream.of(ownedCards)
                                     .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
                         }
-
-                        //set known Cards
-                        String[] knownCards = ((String) Objects.requireNonNull(snap.child("cards-eliminated").getValue())).split(" ");
-                        if (!Objects.equals(knownCards[0], "")) {
-                            p.setCardsKnownThroughQuestions((ArrayList<Integer>) Arrays.stream(Stream.of(knownCards)
-                                    .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
-                        }
                     playerList.add(p);
                 }
-                if (playerChanged)
-                    getGameState().setPlayerState(playerList, false);
             }
+            if (playerChanged)
+                getGameState().setPlayerState(playerList, false);
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError error) {}
+    };
+    private static final ValueEventListener turnOrderListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            String[] turnOrder = ((String) Objects.requireNonNull(snapshot.getValue())).split(" ");
+            if(turnOrder.length > 1)
+                gameState.setTurnOrder(turnOrder,false);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    };
+    private static final ValueEventListener eliminatedListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            //set known Cards
+            String[] knownCards = ((String) Objects.requireNonNull(snapshot.getValue())).split(" ");
+            if (!Objects.equals(knownCards[0], "")) {
+                gameState.setEliminatedCards(Arrays.stream(Stream.of(knownCards)
+                        .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()),false);
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    };
+    private static final ValueEventListener frameNumberListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            gameState.setFrameNumber(Integer.parseInt((String) Objects.requireNonNull(snapshot.getValue())),false);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
     };
 
     public static DatabaseReference getDatabaseReference(){
@@ -170,6 +215,7 @@ public class Network {
         Date current = Calendar.getInstance().getTime();
         String gameID = intToChars(current.hashCode());
         setCurrentGameID(gameID);
+
         DatabaseReference game = database.child("games").child(gameID);
         SimpleDateFormat formated = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         formated.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -184,10 +230,20 @@ public class Network {
         turnFlag.child("startGame").setValue("waiting");
         turnFlag.addValueEventListener(turnFlagListener);
 
+        //add frameNumber
+        game.child("frameNumber").setValue(String.valueOf(1));
+        game.child("frameNumber").addValueEventListener(frameNumberListener);
+
+        //add eliminated-Cards
+        game.child("cards-eliminated").setValue("");
+        game.child("cards-eliminated").addValueEventListener(eliminatedListener);
+
         //add result path
         DatabaseReference result = game.child("result");
         result.child("winner").setValue("");
         result.child("loser").setValue("");
+        result.child("framed").setValue("");
+        result.child("framer").setValue("");
         result.addValueEventListener(resultListener);
 
         gameState.setWeaponPositions(gameState.getWeaponPositions(),true);
@@ -196,11 +252,11 @@ public class Network {
         gameState.setKiller(createKiller());
 
         game.child("turn-order").setValue("");
+        game.child("turn-order").addValueEventListener(turnOrderListener);
         //add players path
         game.child("killer").setValue(gameState.getKillerAsString());
         DatabaseReference p = game.child("players").child(user.getUid());
         p.child("cards").setValue("");
-        p.child("cards-eliminated").setValue("");
         p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
         p.child("character").setValue(getCurrentCharacter().name());
 
@@ -245,14 +301,12 @@ public class Network {
                 for(DataSnapshot snap: task.getResult().child("players").getChildren()) {
                     joinedCharacters.add((String) snap.child("character").getValue());
                 }
-                do {
+                while(joinedCharacters.contains(currentCharacter.name())){
                     currentCharacter = currentCharacter.getNextCharacter();
-                } while (joinedCharacters.contains(currentCharacter.name()));
-
+                }
                     DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
                     p.child("character").setValue(currentCharacter.name());
                     p.child("cards").setValue("");
-                    p.child("cards-eliminated").setValue("");
                     p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
 
                     gameState = GameState.getInstance();
@@ -262,6 +316,9 @@ public class Network {
                     getCurrentGame().child("weapon-positions").addValueEventListener(weaponsListener);
                     getCurrentGame().child("turn-flag").addValueEventListener(turnFlagListener);
                     getCurrentGame().child("result").addValueEventListener(resultListener);
+                    getCurrentGame().child("turn-order").addValueEventListener(turnOrderListener);
+                    getCurrentGame().child("cards-eliminated").addValueEventListener(eliminatedListener);
+                    getCurrentGame().child("frameNumber").addValueEventListener(frameNumberListener);
             }
         });
 
@@ -273,20 +330,18 @@ public class Network {
 
 
     public static void leaveLobby(FirebaseUser user, String gameID) {
-        getCurrentGame().child("players").removeEventListener(playerListener);
-        getCurrentGame().child("weapon-positions").removeEventListener(weaponsListener);
-        getCurrentGame().child("turn-flag").removeEventListener(turnFlagListener);
-        getCurrentGame().child("result").removeEventListener(resultListener);
+        detachListeners();
 
         currentCharacter = Character.MISS_SCARLETT;
         OnDataRetreive onDataRetreive = new OnDataRetreive() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
                 DatabaseReference player = games.child(gameID).child("players").child(user.getUid());
-                if (dataSnapshot!= null && dataSnapshot.exists() && getCurrentGameID() != null && user != null){
+                if (dataSnapshot!= null && dataSnapshot.exists() && getCurrentGameID() != null){
                     player.removeValue();
                     setCurrentGameID(null);
                     gameState.reset();
+                    networkCommunicator.reset();
                     setGameState(null);
                 }
             }
@@ -310,7 +365,7 @@ public class Network {
         }
 
         game.child("turn-order").setValue(sbTurnOrder.toString().trim());
-        gameState.setTurnOrder(turnOrder,false);
+        gameState.setTurnOrder(turnOrder,true);
 
         game.child("turn-flag").child("startGame").setValue("start");
 
@@ -344,12 +399,12 @@ public class Network {
         getGameState().getPlayerState();
     }
 
-    private static String intToChars(int number) {
+    private static String intToChars(long number) {
         StringBuilder rt = new StringBuilder();
-        char[] tmp = (Integer.toString(number) + ThreadLocalRandom.current().nextInt(10000, 99999)).toCharArray();
-        for (int i = 0; i < tmp.length; ) {
+        char[] tmp = (String.valueOf(number) + ThreadLocalRandom.current().nextLong(10000, 99999)).toCharArray();
+        for (int i = 6; i < tmp.length; ) {
             if (i < (tmp.length - 2)) {
-                int nmbr = (int) tmp[i] + (int) tmp[i + 1] - 94;
+                long nmbr = (long) tmp[i] + (long) tmp[i + 1] - 94;
                 char t;
                 if (nmbr <= 26) {
                     t = (char) (nmbr + 65);
@@ -431,5 +486,21 @@ public class Network {
 
     public static void test(){
         //Log.i(TAG, ""+checkIfGameExists(getCurrentGameID()));
+    }
+    private static void detachListeners(){
+        getCurrentGame().child("cards-eliminated").removeEventListener(eliminatedListener);
+        getCurrentGame().child("players").removeEventListener(playerListener);
+        getCurrentGame().child("weapon-positions").removeEventListener(weaponsListener);
+        getCurrentGame().child("turn-flag").removeEventListener(turnFlagListener);
+        getCurrentGame().child("result").removeEventListener(resultListener);
+        getCurrentGame().child("turn-order").removeEventListener(turnOrderListener);
+        getCurrentGame().child("frameNumber").removeEventListener(frameNumberListener);
+    }
+    public static void deleteGame(){
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(() -> {
+            detachListeners();
+            games.child(getCurrentGameID()).removeValue();
+        }, 5000);
     }
 }

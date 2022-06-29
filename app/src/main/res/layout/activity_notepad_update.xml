@@ -9,143 +9,107 @@
     android:orientation="vertical">
 
 
-    <Button
-        android:id="@+id/btn_closeNotepad"
-        android:layout_width="123dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="600dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/custom_button"
-        android:text="@string/back_to_map"
-        android:textColor="@color/white"
+    <TextView
+        android:id="@+id/txt_notepad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="@string/notepad"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.586"
+        app:layout_constraintHorizontal_bias="0.054"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <LinearLayout
-        android:id="@+id/tableHeaderScrollContent"
-        android:layout_width="876dp"
-        android:layout_height="58dp"
-
-        android:layout_marginTop="14dp"
-        android:layout_marginBottom="250dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="501dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="190dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_closeNotepad">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/col2"
-            android:layout_width="186dp"
-            android:layout_height="match_parent"
-            android:text="NOTEPAD"
-            android:textAlignment="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#689F38"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="546dp"
-            tools:layout_editor_absoluteY="97dp" />
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/col"
-            android:layout_width="30dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Miss Scarlett"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#689F38"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="6dp"
-            tools:layout_editor_absoluteY="97dp" />
+            <ImageView
+                android:id="@+id/img_scarlett"
+                android:layout_width="00dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/scarlett" />
 
-        <TextView
-            android:id="@+id/col3"
-            android:layout_width="24dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Col. Mustard"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#689F38"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="6dp"
-            tools:layout_editor_absoluteY="97dp" />
+            <ImageView
+                android:id="@+id/img_plum"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/plum" />
 
-        <TextView
-            android:id="@+id/col4"
-            android:layout_width="23dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Dr. Orchid"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#689F38"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="6dp"
-            tools:layout_editor_absoluteY="97dp" />
+            <ImageView
+                android:id="@+id/img_green"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/green" />
 
-        <TextView
-            android:id="@+id/col1"
-            android:layout_width="113dp"
-            android:layout_height="match_parent"
-            android:text="Revd. Green"
-            android:textAlignment="textStart"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#689F38"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="318dp"
-            tools:layout_editor_absoluteY="97dp" />
+            <ImageView
+                android:id="@+id/img_peacock"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/peacock" />
 
-        <TextView
-            android:id="@+id/col0"
-            android:layout_width="117dp"
-            android:layout_height="match_parent"
-            android:text="Mrs. Peacock"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#689F38"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="6dp"
-            tools:layout_editor_absoluteY="97dp" />
+            <ImageView
+                android:id="@+id/img_colonel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/mustard" />
 
-        <TextView
-            android:id="@+id/col5"
-            android:layout_width="103dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Prof. Plum"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#689F38"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="6dp"
-            tools:layout_editor_absoluteY="97dp" />
+            <ImageView
+                android:id="@+id/img_orchid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/orchid" />
 
-    </LinearLayout>
+        </TableRow>
+
+    </TableLayout>
 
     <ListView
         android:id="@+id/listviewNotepad"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tableHeaderScrollContent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout">
 
     </ListView>
 
     <ListView
         android:id="@+id/listviewNotepadCheckbox"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tableHeaderScrollContent"
-        app:layout_constraintVertical_bias="0.148">
+        app:layout_constraintTop_toBottomOf="@+id/txt_notepad">
 
     </ListView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
