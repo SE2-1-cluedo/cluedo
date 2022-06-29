@@ -168,6 +168,9 @@ public class BoardActivity extends AppCompatActivity {
            if(netCommunicator.isHasLost()) {
                if(gameState.getLoser().equals(Network.getCurrentUser().getUid())){
                    d.callLoseDialog(BoardActivity.this, "You made a wrong Accusation!");
+                   gameState.removeFromTurnOrder(Network.getCurrentUser().getUid());
+                   //gameState.setEliminatedCards(gp1.findPlayerById(gameState.getLoser()).getPlayerOwnedCards(), true);
+                   gameState.setLoser(null,true);
                }else{
                    d.callLoseDialog(BoardActivity.this, "Somebody else made a wrong Accusation!");
                }
