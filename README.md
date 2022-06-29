@@ -16,13 +16,14 @@ Now you are able to move your character through the 9 rooms to find clues. The m
 the magnifying glass which will give the information which player a certain card has.
 
 Move:
-After the dice throw you can use the yellow arrows to move your character.
+After the dice throw you can use the yellow arrows to move your character. After a suspicion your turn ends.
 
 The Swiping Motions:
-To make it easier to overview everything you can use three swiping motions to see your cards, notepad and accusation.\n
+To make it easier to overview everything you can use three swiping motions to see your cards, notepad and accusation.
 Swipe Right: There you can see your notepad. Swipe left to get back to the board.
 Swipe Left: To make your suspicion and accusation. Swipe right to get back to the board.
 Swipe Up: Open your three to six cards.
+Swipe Down: You have chance to cheat.
 
 Notepad:
 In the Notepad you can use Checkboxes to remember your clues for the murderer and accusation.
