@@ -55,10 +55,6 @@ public class Gameplay {
         netCommunicator.setWeaponsChanged(false);
         netCommunicator.setPlayerChanged(false);
         netCommunicator.register(()->{
-            if(netCommunicator.isQuestionChanged()){
-                gameCommunicator.setSuspicion(true);
-                gameCommunicator.notifyList();
-            }
             if(netCommunicator.isTurnChanged()) {
                 if (!gameState.getPlayerTurn().equals(findPlayerByCharacterName(currentPlayer).getPlayerId())) {
                     currentPlayer = findPlayerById(gameState.getPlayerTurn()).getPlayerCharacterName();
@@ -150,7 +146,6 @@ public class Gameplay {
         stepsTaken++;
         if(stepsTaken == numDice) {
             findPlayerByCharacterName(currentPlayer).setAbleToMove(false);
-            endTurn();
         }
     }
 

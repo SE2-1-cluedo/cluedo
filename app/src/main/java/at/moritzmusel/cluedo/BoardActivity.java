@@ -92,6 +92,7 @@ public class BoardActivity extends AppCompatActivity {
         gameState = GameState.getInstance();
         susCommunicator = SuspicionCommunicator.getInstance();
         gameplayCommunicator = GameplayCommunicator.getInstance();
+        gameplayCommunicator.setTurnChange(false);
 
         setContentView(R.layout.test_board2);
         ConstraintLayout constraint = findViewById(R.id.constraintLayout);
@@ -137,9 +138,6 @@ public class BoardActivity extends AppCompatActivity {
 
 
         gameplayCommunicator.register(() -> {
-            if(gameplayCommunicator.isSuspicion()){
-                //onCardViewClick();
-            }
             if(gameplayCommunicator.isTurnChange()){
                 notifyCurrentPlayer();
                 if(gp1.checkIfPlayerIsOwn())
@@ -148,36 +146,36 @@ public class BoardActivity extends AppCompatActivity {
             }
         });
 
+        notifyCurrentPlayer();
 
         netCommunicator.register(() -> {
             if(netCommunicator.isWeaponsChanged()){
-                if(gp1.checkIfPlayerIsOwn()){
                     int[] weapon = gp1.weaponDifference(gameState.getWeaponPositions());
-                    refreshBoard(weaponNames.get(weapon[1]),weapon[0],false);
+                    if(weapon != null)
+                       refreshBoard(weaponNames.get(weapon[1]),weapon[0],false);
                     netCommunicator.setWeaponsChanged(false);
-                }
+
             }
             if(netCommunicator.isPositionChanged()){
-                if(!gp1.checkIfPlayerIsOwn()){
-                    String[] player = gp1.playerDifference(gameState.getPlayerState());
-                    refreshBoard(player[1],Integer.parseInt(player[0]),true);
-                    netCommunicator.setPositionChanged(false);
-                }
 
+                    String[] player = gp1.playerDifference(gameState.getPlayerState());
+                    if(player != null)
+                        refreshBoard(player[1],Integer.parseInt(player[0]),true);
+                    netCommunicator.setPositionChanged(false);
             }
             if(netCommunicator.isMagnify()){
                 if(!gp1.checkIfPlayerIsOwn())
                     rolledMagnifyingGlass();
             }
             if(netCommunicator.isQuestionChanged()){
-                if(!gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId().equals(Network.getCurrentUser().getUid()))
+                if(!gp1.checkIfPlayerIsOwn())
                     onCardViewClick();
             }
            if(netCommunicator.isHasLost()) {
                if(gameState.getLoser().equals(Network.getCurrentUser().getUid())){
                    d.callLoseDialog(BoardActivity.this, "You made a wrong Accusation!");
                    gameState.removeFromTurnOrder(Network.getCurrentUser().getUid());
-                   //gameState.setEliminatedCards(gp1.findPlayerById(gameState.getLoser()).getPlayerOwnedCards(), true);
+                   gameState.setEliminatedCards(gp1.findPlayerById(gameState.getLoser()).getPlayerOwnedCards(), true);
                    gameState.setLoser(null,true);
                }else{
                    d.callLoseDialog(BoardActivity.this, "Somebody else made a wrong Accusation!");
@@ -235,7 +233,7 @@ public class BoardActivity extends AppCompatActivity {
      * uses the methods of the EvidenceCards-Class
      */
     private void rolledMagnifyingGlass() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BoardActivity.this);
         builder.setTitle("What is going on?");
         int magnifiedCard;
         String owner;
@@ -259,10 +257,11 @@ public class BoardActivity extends AppCompatActivity {
         }
         netCommunicator.setMagnify(false);
         gameState.setMagnify(null,true);
-        builder.setNeutralButton("OK", (dialog, which) -> dialog.dismiss());
         builder.create();
-        AlertDialog alertDialog = builder.create();
+        android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
+
+        endDialog(alertDialog,3000);
     }
 
     private void refreshBoard(String id, int position, boolean isPlayer) {
@@ -415,7 +414,11 @@ public class BoardActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 alertDialog.dismiss();
-                gameState.setAskQuestion(null, true);
+                netCommunicator.setQuestionChanged(false);
+                if(gp1.checkIfPlayerIsOwn()){
+                    gameState.setAskQuestion(null, true);
+                    gp1.endTurn();
+                }
             }
         }.start();
     }
@@ -782,6 +785,7 @@ public class BoardActivity extends AppCompatActivity {
             calledPlayer.setX(findViewById(createRoomDestination(player,newPosition)).getX());
             calledPlayer.setY(findViewById(createRoomDestination(player,newPosition)).getY());
             gp1.findPlayerByCharacterName(Character.valueOf(myName.toString())).setPositionOnBoard(newPosition);
+            gameState.setPlayerState(gp1.getPlayers(),true);
         }
     }
 
@@ -927,7 +931,6 @@ public class BoardActivity extends AppCompatActivity {
 
             } else {
                 deactivateSecrets();
-                gp1.endTurn();
             }
         }
     }
@@ -961,7 +964,6 @@ public class BoardActivity extends AppCompatActivity {
 
                 @Override
                 public void onFinish() {
-                    gameplayCommunicator.setSuspicion(false);
                     alertDialog.dismiss();
                     showSuspicionResult();
                 }
