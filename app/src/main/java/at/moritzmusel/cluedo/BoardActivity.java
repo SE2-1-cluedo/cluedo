@@ -186,6 +186,7 @@ public class BoardActivity extends AppCompatActivity {
            if(netCommunicator.isHasLost()) {
                if(gameState.getLoser().equals(Network.getCurrentUser().getUid())){
                    d.callLoseDialog(BoardActivity.this, "You made a wrong Accusation!");
+                   gp1.endTurn();
                    gameState.removeFromTurnOrder(Network.getCurrentUser().getUid());
                    if(gameState.getTurnOrder().length == 1){
                        gameState.setWinner(gameState.getTurnOrder()[0], true);
