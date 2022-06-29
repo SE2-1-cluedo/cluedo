@@ -1,21 +1,15 @@
 package at.moritzmusel.cluedo.game;
 
-import static at.moritzmusel.cluedo.entities.Character.DR_ORCHID;
-import static at.moritzmusel.cluedo.entities.Character.MISS_SCARLETT;
-import static at.moritzmusel.cluedo.entities.Character.PROFESSOR_PLUM;
-import static at.moritzmusel.cluedo.entities.Character.REVEREND_GREEN;
-
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import at.moritzmusel.cluedo.Card;
-import at.moritzmusel.cluedo.communication.GameplayCommunicator;
-import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.communication.GameplayCommunicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Character;
@@ -33,7 +27,7 @@ public class Gameplay {
     private static int numDice;
     private static int stepsTaken = 0;
     private Character currentPlayer;
-    private List<Player> players = new ArrayList<>();
+    private List<Player> players;
     private ArrayList<Integer> clueCards = new ArrayList<>();
     private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
@@ -61,13 +55,6 @@ public class Gameplay {
         netCommunicator.setWeaponsChanged(false);
         netCommunicator.setPlayerChanged(false);
         netCommunicator.register(()->{
-            if(netCommunicator.isPositionChanged() || netCommunicator.isWeaponsChanged()){
-                weaponsPos = gameState.getWeaponPositions();
-                players = gameState.getPlayerState();
-                //checkWhatChangedInPlayer(gameState.getPlayerState());
-                gameCommunicator.setMoved(true);
-                gameCommunicator.notifyList();
-            }
             if(netCommunicator.isQuestionChanged()){
                 gameCommunicator.setSuspicion(true);
                 gameCommunicator.notifyList();
@@ -94,6 +81,26 @@ public class Gameplay {
         if(OBJ == null){
             OBJ = new Gameplay();
         }return OBJ;
+    }
+
+    public int[] weaponDifference(int[] newPos){
+        for(int i = 0; i < weaponsPos.length; i++){
+            if(weaponsPos[i]!=newPos[i]) {
+                weaponsPos = newPos;
+                return new int[]{newPos[i],i};
+            }
+        }
+        return null;
+    }
+
+    public String[] playerDifference(List<Player> newPlayers){
+        for(int i = 0; i < players.size(); i++){
+            if(players.get(i).getPositionOnBoard() != newPlayers.get(i).getPositionOnBoard()) {
+                players = newPlayers;
+                return new String[]{String.valueOf(newPlayers.get(i).getPositionOnBoard()),newPlayers.get(i).getPlayerId()};
+            }
+        }
+        return null;
     }
 
     /**
@@ -286,7 +293,7 @@ public class Gameplay {
         for(int i = 0; i < players.size(); i++){
             if(!(newPlayers.get(i).getPositionOnBoard() == players.get(i).getPositionOnBoard())){
                 players = newPlayers;
-                gameCommunicator.setMoved(true);
+                gameCommunicator.setPlayerMoved(true);
                 gameCommunicator.notifyList();
             }
         }
@@ -299,7 +306,7 @@ public class Gameplay {
     protected void checkWeaponChanged(int[] newWeapon) {
         if(!(Arrays.equals(newWeapon, weaponsPos))){
             weaponsPos = newWeapon;
-            gameCommunicator.setMoved(true);
+            gameCommunicator.setPlayerMoved(true);
             gameCommunicator.notifyList();
         }
     }

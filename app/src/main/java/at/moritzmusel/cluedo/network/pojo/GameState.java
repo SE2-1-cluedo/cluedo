@@ -33,6 +33,7 @@ public class GameState {
     private int[] killer;
     private String playerTurn;
     private String[] turnOrder, magnify;
+    private List<Integer> eliminatedCards = new ArrayList<>();
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponPositions = new int[]{5,1,9,3,6,8};
     DatabaseReference dbRef;
@@ -82,6 +83,25 @@ public class GameState {
 
     public List<Player> getPlayerState() {
         return playerState;
+    }
+
+    public List<Integer> getEliminatedCards() {
+        return eliminatedCards;
+    }
+
+    public void setEliminatedCards(List<Integer> eliminatedCards, boolean database) {
+        this.eliminatedCards = eliminatedCards;
+        if(!database){
+            communicator.setEliminatedChanged(true);
+            communicator.notifyList();
+        } else if (eliminatedCards == null)
+            dbRef.child("cards-eliminated").setValue("");
+        else {
+            StringBuilder sB = new StringBuilder();
+            for(int i: eliminatedCards)
+                sB.append(i).append(" ");
+            dbRef.child("cards-eliminated").setValue(sB.toString().trim());
+        }
     }
 
     public String getWinner() {
@@ -210,7 +230,6 @@ public class GameState {
                     for(String player : players){
                         Map<String,Object> map = new HashMap<>();
                         map.put("cards","");
-                        map.put("cards-eliminated","");
                         map.put("character","");
                         map.put("position","");
                         dbRef.child("players").child(player).updateChildren(map);
@@ -220,7 +239,6 @@ public class GameState {
         } else {
             for (Player p : playerState){
                 dbRef.child("players").child(p.getPlayerId()).child("cards").setValue(p.getOwnedCardsAsString());
-                dbRef.child("players").child(p.getPlayerId()).child("cards-eliminated").setValue(p.getKnownCardsAsString());
                 dbRef.child("players").child(p.getPlayerId()).child("position").setValue(Integer.toString(p.getPositionOnBoard()));
             }
         }

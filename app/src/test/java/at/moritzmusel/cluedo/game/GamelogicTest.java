@@ -2,7 +2,6 @@ package at.moritzmusel.cluedo.game;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -188,7 +187,7 @@ public class GamelogicTest {
         newPlayer.add(new Player("1"));
         gameOdd.checkWhatChangedInPlayer(newPlayer);
         Assert.assertEquals(newPlayer,gameOdd.getPlayers());
-        verify(gameCommunicator,times(1)).setMoved(anyBoolean());
+        verify(gameCommunicator,times(1)).setPlayerMoved(anyBoolean());
         verify(gameCommunicator,times(1)).notifyList();
     }
 
@@ -197,7 +196,7 @@ public class GamelogicTest {
         int[] pos = new int[]{1,7,8};
         gameOdd.checkWeaponChanged(pos);
         Assert.assertEquals(pos,gameOdd.getWeaponsPos());
-        verify(gameCommunicator,times(1)).setMoved(anyBoolean());
+        verify(gameCommunicator,times(1)).setPlayerMoved(anyBoolean());
         verify(gameCommunicator,times(1)).notifyList();
 
     }

@@ -33,7 +33,6 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Random;
 import java.util.stream.IntStream;
 
 
@@ -138,12 +137,6 @@ public class BoardActivity extends AppCompatActivity {
 
 
         gameplayCommunicator.register(() -> {
-            if(gameplayCommunicator.isMoved()){
-                refreshBoard();
-                gameplayCommunicator.setMoved(false);
-                netCommunicator.setPositionChanged(false);
-                netCommunicator.setWeaponsChanged(false);
-            }
             if(gameplayCommunicator.isSuspicion()){
                 //onCardViewClick();
             }
@@ -157,6 +150,21 @@ public class BoardActivity extends AppCompatActivity {
 
 
         netCommunicator.register(() -> {
+            if(netCommunicator.isWeaponsChanged()){
+                if(gp1.checkIfPlayerIsOwn()){
+                    int[] weapon = gp1.weaponDifference(gameState.getWeaponPositions());
+                    refreshBoard(weaponNames.get(weapon[1]),weapon[0],false);
+                    netCommunicator.setWeaponsChanged(false);
+                }
+            }
+            if(netCommunicator.isPositionChanged()){
+                if(!gp1.checkIfPlayerIsOwn()){
+                    String[] player = gp1.playerDifference(gameState.getPlayerState());
+                    refreshBoard(player[1],Integer.parseInt(player[0]),true);
+                    netCommunicator.setPositionChanged(false);
+                }
+
+            }
             if(netCommunicator.isMagnify()){
                 if(!gp1.checkIfPlayerIsOwn())
                     rolledMagnifyingGlass();
@@ -252,17 +260,17 @@ public class BoardActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void refreshBoard() {
-        for (int i = 0; i < gp1.getPlayers().size(); i++) {
-            String player = gp1.getPlayers().get(i).getPlayerCharacterName().name().split("[_]")[1].toLowerCase();
-            String name = player + "_";
-            Button startPlace = findViewById(createRoomDestination(name, gp1.getPlayers().get(i).getPositionOnBoard()));
-            findViewById(createPlayer(player)).setX(startPlace.getX());
-            findViewById(createPlayer(player)).setY(startPlace.getY());
-        }
-        for(int i = 0; i < gp1.getWeaponsPos().length; i++){
-            String str = "w_"+weaponNames.get(i);
-            Button startPosition = findViewById(createRoomDestination("weapon", gp1.getWeaponsPos()[i]));
+    private void refreshBoard(String id, int position, boolean isPlayer) {
+        if(isPlayer) {
+            Player player = gp1.findPlayerById(id);
+            String playerName = player.getPlayerCharacterName().name().split("[_]")[1].toLowerCase();
+            String posName = playerName + "_";
+            Button startPlace = findViewById(createRoomDestination(posName, position));
+            findViewById(createPlayer(playerName)).setX(startPlace.getX());
+            findViewById(createPlayer(playerName)).setY(startPlace.getY());
+        } else {
+            String str = "w_"+id;
+            Button startPosition = findViewById(createRoomDestination("weapon", position));
             findViewById(getResources().getIdentifier(str,"id",getPackageName())).setX(startPosition.getX());
             findViewById(getResources().getIdentifier(str,"id",getPackageName())).setY(startPosition.getY());
         }
@@ -294,26 +302,15 @@ public class BoardActivity extends AppCompatActivity {
         diceView.setOnClickListener(v -> {
             dice.throwDice();
             diceRolled();
-            endDialog(alertDialog);
+            endDialog(alertDialog,3000);
         });
 
         shakeDetector.setOnShakeListener(count -> {
             if(count < 2){
                 dice.throwDice();
                 diceRolled();
-                endDialog(alertDialog);
+                endDialog(alertDialog,3000);
             }
-
-//            new Thread(){
-//                public void run() {
-//                    try {
-//                        Thread.sleep(2000);
-//                        runOnUiThread(alertDialog::cancel);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }.start();
         });
     }
 
@@ -321,8 +318,8 @@ public class BoardActivity extends AppCompatActivity {
      * Closes the alertdialog after 3 seconds
      * @param b Alertdialog to close
      */
-    public void endDialog(android.app.AlertDialog b){
-        new CountDownTimer(2000, 1000) {
+    public void endDialog(android.app.AlertDialog b, int time){
+        new CountDownTimer(time, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -385,39 +382,38 @@ public class BoardActivity extends AppCompatActivity {
         }
     }
 
-    private void showSuspicionResult(){
+    private void showSuspicionResult() {
         AlertDialog.Builder builder = new AlertDialog.Builder(BoardActivity.this);
 
         String[] playerWithSusCard = gp1.getPlayerForSuspectedCards(gameState.getAskQuestion().getCards());
-        if(gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId().equals(Network.getCurrentUser().getUid())){
-            if(playerWithSusCard.length == 1)
-                builder.setMessage("The cards are owned by "+playerWithSusCard[0]);
+        if (gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId().equals(Network.getCurrentUser().getUid())) {
+            if (playerWithSusCard.length == 1)
+                builder.setMessage("The cards are owned by " + playerWithSusCard[0]);
             else
-            builder.setMessage("The Card "+allCards.getGameCards().get(Integer.parseInt(playerWithSusCard[1])).getDesignation()+" is owned by "+playerWithSusCard[0]);
+                builder.setMessage("The Card " + allCards.getGameCards().get(Integer.parseInt(playerWithSusCard[1])).getDesignation() + " is owned by " + playerWithSusCard[0]);
         } else {
-            if(playerWithSusCard.length == 1)
-                builder.setMessage("The cards are owned by "+playerWithSusCard[0]);
+            if (playerWithSusCard.length == 1)
+                builder.setMessage("The cards are owned by " + playerWithSusCard[0]);
             else {
-                builder.setMessage("One or more cards are owned by "+playerWithSusCard[0]);
+                builder.setMessage("One or more cards are owned by " + playerWithSusCard[0]);
             }
         }
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        new Thread(){
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                    runOnUiThread(() -> {
-                        alertDialog.dismiss();
-                        gameState.setAskQuestion(null,true);
-                        //gp1.endTurn();
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+        new CountDownTimer(6000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                alertDialog.dismiss();
+                gameState.setAskQuestion(null, true);
             }
         }.start();
-        }
+    }
 
     /**
      * sets the layout for the card alert
@@ -952,18 +948,17 @@ public class BoardActivity extends AppCompatActivity {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
-            new Thread(){
-                public void run() {
-                    try {
-                        Thread.sleep(3000);
-                        runOnUiThread(() -> {
-                            gameplayCommunicator.setSuspicion(false);
-                            alertDialog.dismiss();
-                            showSuspicionResult();
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            new CountDownTimer(4000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    gameplayCommunicator.setSuspicion(false);
+                    alertDialog.dismiss();
+                    showSuspicionResult();
                 }
             }.start();
         }
@@ -1020,7 +1015,7 @@ public class BoardActivity extends AppCompatActivity {
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
-                    if(gp1.checkIfPlayerIsOwn() && !gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getIsAbleToMove() && checkIfInTurnOrder()){
+                    if(gp1.checkIfPlayerIsOwn() && checkIfInTurnOrder()){
                         startSuspicion();
                     }
                 }else if (swipeUp > MIN_SWIPE_DISTANCE){

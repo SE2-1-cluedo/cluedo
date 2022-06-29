@@ -125,7 +125,7 @@ public class Network {
             ArrayList<Player> playerList = new ArrayList<>();
             boolean playerChanged = false;
             for (DataSnapshot snap : snapshot.getChildren()) {
-                if (snap.child("character").exists() && snap.child("position").exists() && snap.child("cards").exists() && snap.child("cards-eliminated").exists()) {
+                if (snap.child("character").exists() && snap.child("position").exists() && snap.child("cards").exists()) {
                         Player p = new Player(snap.getKey());
                         playerChanged = true;
 
@@ -143,18 +143,11 @@ public class Network {
                             p.setPlayerOwnedCards((ArrayList<Integer>) Arrays.stream(Stream.of(ownedCards)
                                     .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
                         }
-
-                        //set known Cards
-                        String[] knownCards = ((String) Objects.requireNonNull(snap.child("cards-eliminated").getValue())).split(" ");
-                        if (!Objects.equals(knownCards[0], "")) {
-                            p.setCardsKnownThroughQuestions((ArrayList<Integer>) Arrays.stream(Stream.of(knownCards)
-                                    .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()));
-                        }
                     playerList.add(p);
                 }
-                if (playerChanged)
-                    getGameState().setPlayerState(playerList, false);
             }
+            if (playerChanged)
+                getGameState().setPlayerState(playerList, false);
         }
 
         @Override
@@ -166,6 +159,22 @@ public class Network {
             String[] turnOrder = ((String) Objects.requireNonNull(snapshot.getValue())).split(" ");
             if(turnOrder.length > 1)
                 gameState.setTurnOrder(turnOrder,false);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    };
+    private static final ValueEventListener eliminatedListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            //set known Cards
+            String[] knownCards = ((String) Objects.requireNonNull(snapshot.getValue())).split(" ");
+            if (!Objects.equals(knownCards[0], "")) {
+                gameState.setEliminatedCards(Arrays.stream(Stream.of(knownCards)
+                        .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()),false);
+            }
         }
 
         @Override
@@ -210,6 +219,10 @@ public class Network {
         turnFlag.child("startGame").setValue("waiting");
         turnFlag.addValueEventListener(turnFlagListener);
 
+        //add eliminated-Cards
+        game.child("cards-eliminated").setValue("");
+        game.child("cards-eliminated").addValueEventListener(eliminatedListener);
+
         //add result path
         DatabaseReference result = game.child("result");
         result.child("winner").setValue("");
@@ -229,7 +242,6 @@ public class Network {
         game.child("killer").setValue(gameState.getKillerAsString());
         DatabaseReference p = game.child("players").child(user.getUid());
         p.child("cards").setValue("");
-        p.child("cards-eliminated").setValue("");
         p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
         p.child("character").setValue(getCurrentCharacter().name());
 
@@ -280,7 +292,6 @@ public class Network {
                     DatabaseReference p = games.child(gameID).child("players").child(user.getUid());
                     p.child("character").setValue(currentCharacter.name());
                     p.child("cards").setValue("");
-                    p.child("cards-eliminated").setValue("");
                     p.child("position").setValue(String.valueOf(new SecureRandom().nextInt(9)+1));
 
                     gameState = GameState.getInstance();
@@ -291,6 +302,7 @@ public class Network {
                     getCurrentGame().child("turn-flag").addValueEventListener(turnFlagListener);
                     getCurrentGame().child("result").addValueEventListener(resultListener);
                     getCurrentGame().child("turn-order").addValueEventListener(turnOrderListener);
+                    getCurrentGame().child("cards-eliminated").addValueEventListener(eliminatedListener);
             }
         });
 
@@ -460,6 +472,7 @@ public class Network {
         //Log.i(TAG, ""+checkIfGameExists(getCurrentGameID()));
     }
     private static void detachListeners(){
+        getCurrentGame().child("cards-eliminated").removeEventListener(eliminatedListener);
         getCurrentGame().child("players").removeEventListener(playerListener);
         getCurrentGame().child("weapon-positions").removeEventListener(weaponsListener);
         getCurrentGame().child("turn-flag").removeEventListener(turnFlagListener);
@@ -468,12 +481,9 @@ public class Network {
     }
     public static void deleteGame(){
         final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                detachListeners();
-                games.child(getCurrentGameID()).removeValue();
-            }
+        handler.postDelayed(() -> {
+            detachListeners();
+            games.child(getCurrentGameID()).removeValue();
         }, 5000);
     }
 }

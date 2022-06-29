@@ -3,7 +3,7 @@ package at.moritzmusel.cluedo.communication;
 import java.util.ArrayList;
 
 public class GameplayCommunicator implements Communicator{
-    private boolean moved, suspicion, turnChange;
+    private boolean playerMoved, weaponMoved, suspicion, turnChange;
     private final ArrayList<ChangeListener> listenerArray;
 
     private static GameplayCommunicator OBJ = new GameplayCommunicator();
@@ -31,12 +31,20 @@ public class GameplayCommunicator implements Communicator{
             listener.onChange();
     }
 
-    public boolean isMoved() {
-        return moved;
+    public boolean isPlayerMoved() {
+        return playerMoved;
     }
 
-    public void setMoved(boolean moved) {
-        this.moved = moved;
+    public void setPlayerMoved(boolean playerMoved) {
+        this.playerMoved = playerMoved;
+    }
+
+    public boolean isWeaponMoved() {
+        return weaponMoved;
+    }
+
+    public void setWeaponMoved(boolean weaponMoved) {
+        this.weaponMoved = weaponMoved;
     }
 
     public boolean isSuspicion() {
