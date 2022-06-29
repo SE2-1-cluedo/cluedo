@@ -108,8 +108,8 @@ public class Gameplay {
         System.out.println(Arrays.toString(turnOrderGame));
         currentPlayer = getCharacterByPlayerID(playerID);
         gameState.setPlayerTurn(playerID, true);
-        gameCommunicator.setTurnChange(true);
-        gameCommunicator.notifyList();
+//        gameCommunicator.setTurnChange(true);
+//        gameCommunicator.notifyList();
         return currentPlayer;
     }
 

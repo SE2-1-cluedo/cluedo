@@ -411,24 +411,40 @@ public class BoardActivity extends AppCompatActivity {
         }
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-        if(gp1.checkIfPlayerIsOwn())
+        if(gp1.checkIfPlayerIsOwn()){
             gameState.setAskQuestion(null, true);
+            new CountDownTimer(6000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
 
-        new CountDownTimer(6000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                alertDialog.dismiss();
-                netCommunicator.setQuestionChanged(false);
-                if(gp1.checkIfPlayerIsOwn()){
-                    gp1.endTurn();
                 }
-            }
-        }.start();
+
+                @Override
+                public void onFinish() {
+                    alertDialog.dismiss();
+                    netCommunicator.setQuestionChanged(false);
+                    if(gp1.checkIfPlayerIsOwn()){
+                        gp1.endTurn();
+                    }
+                }
+            }.start();
+        } else {
+            new CountDownTimer(6000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    alertDialog.dismiss();
+                    netCommunicator.setQuestionChanged(false);
+                }
+            }.start();
+        }
+
+
+
     }
 
     /**
@@ -964,6 +980,7 @@ public class BoardActivity extends AppCompatActivity {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
             netCommunicator.setQuestionChanged(false);
+            susCommunicator.setHasSuspected(false);
 
             new CountDownTimer(4000, 1000) {
                 @Override
