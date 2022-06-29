@@ -67,7 +67,7 @@ public class Dialogs {
     }
 
     /**
-     * Shows a Dialog with the Information that you lost.
+     * Shows a Dialog with the Information that you lost or made a wrong accusation.
      * @param ac Activity where it will be shown
      */
     public void callLoseDialog(Activity ac, String reason){
@@ -95,10 +95,22 @@ public class Dialogs {
             img_close.setVisibility(View.GONE);
             btn_loser.setOnClickListener(v -> {
                 //ac.finishAffinity();
+                gameState.setLoser(null,true);
                 removeFromTurnOrder(Network.getCurrentUser().getUid());
                 dialog.dismiss();
             });
-        }else{
+        }else if(reason.equals("Somebody else made a wrong Accusation!")){
+            txt_loser.setText(gp1.getCharacterByPlayerID(gameState.getLoser())  + " made a wrong Accusation");
+            txt_lost.setVisibility(View.GONE);
+            image.setVisibility(View.GONE);
+            img_close.setOnClickListener(v -> {
+                dialog.dismiss();
+            });
+            btn_loser.setOnClickListener(v -> {
+                dialog.dismiss();
+            });
+        }
+        else{
             img_close.setOnClickListener(v -> {
                 endGame(ac);
                 dialog.dismiss();

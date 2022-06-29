@@ -168,7 +168,8 @@ public class BoardActivity extends AppCompatActivity {
            if(netCommunicator.isHasLost()) {
                if(gameState.getLoser().equals(Network.getCurrentUser().getUid())){
                    d.callLoseDialog(BoardActivity.this, "You made a wrong Accusation!");
-                   gameState.setLoser(null,true);
+               }else{
+                   d.callLoseDialog(BoardActivity.this, "Somebody else made a wrong Accusation!");
                }
                netCommunicator.setHasLost(false);
            }
@@ -1020,9 +1021,9 @@ public class BoardActivity extends AppCompatActivity {
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
-                    if(gp1.checkIfPlayerIsOwn() && !gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getIsAbleToMove() && checkIfInTurnOrder()){
+                    //if(gp1.checkIfPlayerIsOwn() && !gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getIsAbleToMove() && checkIfInTurnOrder()){
                         startSuspicion();
-                    }
+                    //}
                 }else if (swipeUp > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
                 }else if(swipeDown > MIN_SWIPE_DISTANCE){

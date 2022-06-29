@@ -41,6 +41,7 @@
                 android:layout_width="00dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="visible"
                 app:srcCompat="@drawable/scarlett" />
 
             <ImageView
@@ -48,6 +49,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="invisible"
                 app:srcCompat="@drawable/mustard" />
 
             <ImageView
@@ -55,6 +57,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="invisible"
                 app:srcCompat="@drawable/orchid" />
 
             <ImageView
@@ -62,6 +65,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="invisible"
                 app:srcCompat="@drawable/green" />
 
             <ImageView
@@ -69,6 +73,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="invisible"
                 app:srcCompat="@drawable/peacock" />
 
             <ImageView
@@ -76,6 +81,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="invisible"
                 app:srcCompat="@drawable/plum" />
         </TableRow>
 
