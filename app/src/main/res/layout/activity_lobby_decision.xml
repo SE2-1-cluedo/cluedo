@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F6F6F6"
-    tools:context=".LobbyDecisionActivity">
+    tools:context=".activities.LobbyDecisionActivity">
 
     <ImageView
         android:id="@+id/img_logo2"

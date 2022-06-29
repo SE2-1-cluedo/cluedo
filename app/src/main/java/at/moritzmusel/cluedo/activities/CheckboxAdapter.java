@@ -1,4 +1,4 @@
-package at.moritzmusel.cluedo;
+package at.moritzmusel.cluedo.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,14 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import at.moritzmusel.cluedo.R;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
-import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
 import at.moritzmusel.cluedo.network.pojo.GameState;

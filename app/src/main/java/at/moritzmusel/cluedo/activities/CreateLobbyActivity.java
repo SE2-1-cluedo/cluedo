@@ -1,4 +1,4 @@
-package at.moritzmusel.cluedo;
+package at.moritzmusel.cluedo.activities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.moritzmusel.cluedo.R;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
@@ -117,7 +118,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      */
     private void checkNumberOfPlayers(){
         if(c == Character.getFirstCharacter()){
-            if(playerItems.size() < 1 || playerItems.size() > 6){
+            if(playerItems.size() < 3 || playerItems.size() > 6){
                 start.setClickable(false);
                 start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));
             }

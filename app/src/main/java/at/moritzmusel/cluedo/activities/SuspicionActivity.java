@@ -1,4 +1,4 @@
-package at.moritzmusel.cluedo;
+package at.moritzmusel.cluedo.activities;
 
 import static at.moritzmusel.cluedo.R.id.personSelect;
 import static at.moritzmusel.cluedo.R.id.spinner_weapon;
@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import at.moritzmusel.cluedo.R;
 import at.moritzmusel.cluedo.communication.SuspicionCommunicator;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;

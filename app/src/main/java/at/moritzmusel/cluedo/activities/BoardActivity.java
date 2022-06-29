@@ -1,4 +1,4 @@
-package at.moritzmusel.cluedo;
+package at.moritzmusel.cluedo.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,13 +33,16 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.stream.IntStream;
 
 
+import at.moritzmusel.cluedo.game.Dialogs;
+import at.moritzmusel.cluedo.entities.EvidenceCards;
+import at.moritzmusel.cluedo.R;
 import at.moritzmusel.cluedo.communication.GameplayCommunicator;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.communication.SuspicionCommunicator;
+import at.moritzmusel.cluedo.entities.AllTheCards;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Dice;
 import at.moritzmusel.cluedo.network.Network;
@@ -52,8 +55,8 @@ public class BoardActivity extends AppCompatActivity {
     private View decorView;
     private View playerCardsView;
     private AllTheCards allCards;
-    private float x1, x2;
-    private float y1, y2;
+    private float x1;
+    private float y1;
     private boolean canFrame;
     private GameState gameState;
     private SuspicionCommunicator susCommunicator;
@@ -64,7 +67,6 @@ public class BoardActivity extends AppCompatActivity {
     private Dice dice;
     private Gameplay gp1;
     private int newPosition;
-    private LinkedList<Card> allGameCards;
     private final ArrayList<Button> secrets = new ArrayList<>();
     private final ArrayList<ImageView> allWeapons = new ArrayList<>();
     private final ArrayList<String> weaponNames = new ArrayList<>(Arrays.asList("dagger","candlestick","revolver","rope", "pipe","wrench"));
@@ -223,15 +225,8 @@ public class BoardActivity extends AppCompatActivity {
 
 
         allCards = new AllTheCards();
-        allGameCards = allCards.getGameCards();
 
         evidenceCards = new EvidenceCards();
-
-//        ImageButton cardView = findViewById(R.id.cardView);
-//        cardView.setOnClickListener(v -> {
-//            gameplayCommunicator.setMoved(true);
-//            gameplayCommunicator.notifyList();
-//        });
 
         ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.cardback);
@@ -317,7 +312,6 @@ public class BoardActivity extends AppCompatActivity {
 
         builder.setCancelable(false);
 
-        //builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
         android.app.AlertDialog alertDialog = builder.create();
         alertDialog.show();
 
@@ -454,9 +448,6 @@ public class BoardActivity extends AppCompatActivity {
                 }
             }.start();
         }
-
-
-
     }
 
     /**
@@ -632,7 +623,7 @@ public class BoardActivity extends AppCompatActivity {
         builder.setCancelable(false);
         builder.setMessage("Are you sure you want to exit?");
         builder.setPositiveButton("Yes", (dialog, which) -> {
-            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         });
@@ -1036,10 +1027,6 @@ public class BoardActivity extends AppCompatActivity {
         canFrame = false;
     }
 
-//    public void onFramedViewClick(){
-//        d.callFramedDialog(BoardActivity.this);
-//    }
-
     /**
      * EventListener für Swipe-Event to start either the Notepad, Suspicion or the card alert
      */
@@ -1053,14 +1040,14 @@ public class BoardActivity extends AppCompatActivity {
                 break;
 
             case MotionEvent.ACTION_UP:
-                x2 = touchEvent.getX();
-                y2 = touchEvent.getY();
+                float x2 = touchEvent.getX();
+                float y2 = touchEvent.getY();
                 float swipeRight = x2 -x1, swipeLeft = x1- x2, swipeUp = y1- y2, swipeDown = y2 - y1;
 
                 if(swipeRight > MIN_SWIPE_DISTANCE){
                     startNotepad();
                 } else if(swipeLeft > MIN_SWIPE_DISTANCE){
-                    if(gp1.checkIfPlayerIsOwn() && checkIfInTurnOrder()){
+                    if(gp1.checkIfPlayerIsOwn() && checkIfInTurnOrder() && !gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getIsAbleToMove()){
                         startSuspicion();
                     }
                 }else if (swipeUp > MIN_SWIPE_DISTANCE){

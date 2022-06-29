@@ -9,7 +9,7 @@
     android:scrollbars="horizontal|vertical"
     android:verticalScrollbarPosition="defaultPosition"
     app:layout_scrollFlags="scroll"
-    tools:context=".CommandsActivity">
+    tools:context=".activities.CommandsActivity">
 
     <ScrollView
         android:layout_width="match_parent"

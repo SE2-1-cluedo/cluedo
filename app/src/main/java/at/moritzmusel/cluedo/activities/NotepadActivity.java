@@ -1,9 +1,8 @@
-package at.moritzmusel.cluedo;
+package at.moritzmusel.cluedo.activities;
 
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -15,11 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 
 
-import at.moritzmusel.cluedo.communication.NetworkCommunicator;
+import at.moritzmusel.cluedo.R;
 import at.moritzmusel.cluedo.entities.Character;
-import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
-import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class NotepadActivity extends AppCompatActivity {
 
@@ -173,7 +170,7 @@ public class NotepadActivity extends AppCompatActivity {
                     checkboxStatecb5.add(i, false);
                     checkboxStatecb6.add(i, false);
                 }
-                this.active = true;
+                active = true;
             }
         }
 
@@ -182,7 +179,7 @@ public class NotepadActivity extends AppCompatActivity {
         }
 
         public void setCheckboxStatecb1(List<Boolean> checkboxStatecb1) {
-            this.checkboxStatecb1 = checkboxStatecb1;
+            NotepadData.checkboxStatecb1 = checkboxStatecb1;
         }
 
         public List<Boolean> getCheckboxStatecb2() {
@@ -190,7 +187,7 @@ public class NotepadActivity extends AppCompatActivity {
         }
 
         public void setCheckboxStatecb2(List<Boolean> checkboxStatecb2) {
-            this.checkboxStatecb2 = checkboxStatecb2;
+            NotepadData.checkboxStatecb2 = checkboxStatecb2;
         }
 
         public List<Boolean> getCheckboxStatecb3() {
@@ -198,7 +195,7 @@ public class NotepadActivity extends AppCompatActivity {
         }
 
         public void setCheckboxStatecb3(List<Boolean> checkboxStatecb3) {
-            this.checkboxStatecb3 = checkboxStatecb3;
+            NotepadData.checkboxStatecb3 = checkboxStatecb3;
         }
 
         public List<Boolean> getCheckboxStatecb4() {
@@ -206,7 +203,7 @@ public class NotepadActivity extends AppCompatActivity {
         }
 
         public void setCheckboxStatecb4(List<Boolean> checkboxStatecb4) {
-            this.checkboxStatecb4 = checkboxStatecb4;
+            NotepadData.checkboxStatecb4 = checkboxStatecb4;
         }
 
         public List<Boolean> getCheckboxStatecb5() {
@@ -214,7 +211,7 @@ public class NotepadActivity extends AppCompatActivity {
         }
 
         public void setCheckboxStatecb5(List<Boolean> checkboxStatecb5) {
-            this.checkboxStatecb5 = checkboxStatecb5;
+            NotepadData.checkboxStatecb5 = checkboxStatecb5;
         }
 
         public List<Boolean> getCheckboxStatecb6() {
@@ -222,7 +219,7 @@ public class NotepadActivity extends AppCompatActivity {
         }
 
         public void setCheckboxStatecb6(List<Boolean> checkboxStatecb6) {
-            this.checkboxStatecb6 = checkboxStatecb6;
+            NotepadData.checkboxStatecb6 = checkboxStatecb6;
         }
 
         public void setAllCheckBoxInLine(int i) {
