@@ -28,8 +28,6 @@ import at.moritzmusel.cluedo.network.data.QuestionCards;
 public class GameState {
     private List<Player> playerState;
     private List<Integer> cardState;
-    private List<Integer> cardsEliminated;
-    private List<Card> questionCardStack;
     private List<Integer> eliminatedCards = new ArrayList<>();
     private Question askQuestion;
     private String framed, framer;
@@ -47,7 +45,6 @@ public class GameState {
     private static GameState OBJ;
 
     private GameState(){
-        //initQuestionCardsStack(Network.getCtx());
         dbRef = Network.getCurrentGame();
         communicator = NetworkCommunicator.getInstance();
     }
@@ -340,11 +337,6 @@ public class GameState {
             }
             else dbRef.child("turn-flag").child("player-turn").setValue(playerTurn);
         }
-    }
-
-    private void initQuestionCardsStack(Context ctx){
-        QuestionCards qc = new QuestionCards(ctx);
-        this.questionCardStack = qc.getQuestionCards();
     }
 
     public int[] getWeaponPositions() {
