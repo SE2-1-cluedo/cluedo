@@ -6,6 +6,8 @@ import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,6 +28,7 @@ import at.moritzmusel.cluedo.network.data.QuestionCards;
 public class GameState {
     private List<Player> playerState;
     private List<Integer> cardState;
+    private List<Integer> cardsEliminated;
     private List<Card> questionCardStack;
     private List<Integer> eliminatedCards = new ArrayList<>();
     private Question askQuestion;
@@ -368,5 +371,14 @@ public class GameState {
 
     public String[] getTurnOrder(){
         return turnOrder;
+    }
+
+    /**
+     * Deletes a player id from the turnorder, so he can not do anything after a wrong accusation
+     * @param uid Id to delete
+     */
+    public void removeFromTurnOrder(String uid) {
+        String [] turnOrder = ArrayUtils.removeElement(this.getTurnOrder(), uid);
+        this.setTurnOrder(turnOrder,true);
     }
 }
