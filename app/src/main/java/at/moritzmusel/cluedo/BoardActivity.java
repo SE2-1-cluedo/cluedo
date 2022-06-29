@@ -414,8 +414,10 @@ public class BoardActivity extends AppCompatActivity {
             public void onFinish() {
                 alertDialog.dismiss();
                 netCommunicator.setQuestionChanged(false);
-                gameState.setAskQuestion(null, true);
-                gp1.endTurn();
+                if(gp1.checkIfPlayerIsOwn()){
+                    gameState.setAskQuestion(null, true);
+                    gp1.endTurn();
+                }
             }
         }.start();
     }
