@@ -1,7 +1,5 @@
 package at.moritzmusel.cluedo;
 
-import static android.content.Context.NOTIFICATION_SERVICE;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -16,22 +14,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
-import at.moritzmusel.cluedo.network.Network;
 import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class Dialogs {
     Gameplay gp1 = Gameplay.getInstance();
     GameState gameState = GameState.getInstance();
-    NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
 
     public Dialogs() {
     }
@@ -53,7 +46,7 @@ public class Dialogs {
         btn_winner.setClickable(false);
 
         TextView txt_winner = dialog.findViewById(R.id.txt_win);
-        txt_winner.setText("The Winner is: " + winner);
+        txt_winner.setText("The Winner is:\n " + winner);
         img_close.setOnClickListener(v -> {
             endGame(ac);
             dialog.dismiss();
@@ -61,7 +54,7 @@ public class Dialogs {
         new CountDownTimer(4000, 1000) {
             @Override
             public void onTick(long l) {
-                btn_winner.setText("Reset in: " + l/1000);
+                btn_winner.setText("Ends in: " + l/1000);
             }
 
             @Override
@@ -70,7 +63,6 @@ public class Dialogs {
             }
         }.start();
         btn_winner.setOnClickListener(v -> {
-            //ac.finishAffinity();
             endGame(ac);
             dialog.dismiss();
         });
@@ -115,12 +107,8 @@ public class Dialogs {
             txt_loser.setTextSize(16);
             txt_lost.setVisibility(View.GONE);
             image.setVisibility(View.GONE);
-            img_close.setOnClickListener(v -> {
-                dialog.dismiss();
-            });
-            btn_loser.setOnClickListener(v -> {
-                dialog.dismiss();
-            });
+            img_close.setOnClickListener(v -> dialog.dismiss());
+            btn_loser.setOnClickListener(v -> dialog.dismiss());
         }
         else{
             new CountDownTimer(4000, 1000) {
@@ -148,10 +136,11 @@ public class Dialogs {
      * @param ac Activity to be called
      */
     public void endGame(Activity ac){
-        //Network.leaveLobby(Network.getCurrentUser(),Network.getCurrentGameID());
         Intent intent = new Intent(ac.getApplicationContext(),MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ac.startActivity(intent);
+        ac.finishAffinity();
     }
 
     /**
@@ -179,7 +168,7 @@ public class Dialogs {
 
         for(Player p: players){
             player_characters.add(p.getPlayerCharacterName().name());
-            if(p.getPlayerId() == framer.getPlayerId()){
+            if(p.getPlayerId().equals(framer.getPlayerId())){
                 player_characters.remove(framer.getPlayerCharacterName().name());
                 //gameState.setFramer(framer.getPlayerId().toString(), true);
             }
@@ -196,9 +185,7 @@ public class Dialogs {
             }
         });
 
-        img_close.setOnClickListener(v -> {
-            dialog.dismiss();
-        });
+        img_close.setOnClickListener(v -> dialog.dismiss());
 
         btn_frame.setOnClickListener(v -> {
             for(Player p:gameState.getPlayerState()){

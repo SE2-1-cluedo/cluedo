@@ -171,10 +171,14 @@ public class BoardActivity extends AppCompatActivity {
                 if(!gp1.checkIfPlayerIsOwn())
                     onCardViewClick();
             }
+            //Here you handle all cases for a wrong accusation
            if(netCommunicator.isHasLost()) {
                if(gameState.getLoser().equals(Network.getCurrentUser().getUid())){
                    d.callLoseDialog(BoardActivity.this, "You made a wrong Accusation!");
                    gameState.removeFromTurnOrder(Network.getCurrentUser().getUid());
+                   if(gameState.getTurnOrder().length == 1){
+                       gameState.setWinner(gameState.getTurnOrder()[0], true);
+                   }
                    gameState.setEliminatedCards(gp1.findPlayerById(gameState.getLoser()).getPlayerOwnedCards(), true);
                    gameState.setLoser(null,true);
                }else{
@@ -182,6 +186,7 @@ public class BoardActivity extends AppCompatActivity {
                }
                netCommunicator.setHasLost(false);
            }
+            //Here you handle all cases for a the satisfaction of the winning conditions
            if(netCommunicator.isHasWon()){
                if(gameState.getWinner().equals(Network.getCurrentUser().getUid())){
                    d.callWinDialog(BoardActivity.this,gp1.findPlayerById(Network.getCurrentUser().getUid()).getPlayerCharacterName().name());
@@ -193,6 +198,7 @@ public class BoardActivity extends AppCompatActivity {
                System.out.println("Someone lost");
                Network.deleteGame();
            }
+            //Here you handle the cheat function.
            if(netCommunicator.isFramed()){
                if(gameState.getFramed().equals(Network.getCurrentUser().getUid())){
                    d.callFramedDialog(BoardActivity.this);

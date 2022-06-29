@@ -145,7 +145,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      * and if your are Miss Scarlett then you are the host that can start the game. c == Character.MISS_SCARLETT ||
      */
     private void setLobby() {
-        if(c == Character.MISS_SCARLETT){
+        if(c == Character.getFirstCharacter()){
             createUI();
         }else{
             joinUI();
@@ -264,7 +264,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      * that informs him that he leaves the lobby
      */
     public void back(){
-        if(c == Character.MISS_SCARLETT){
+        if(c == Character.getFirstCharacter()){
             Network.setCtx(this);
             androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(CreateLobbyActivity.this);
             builder.setTitle("Attention!");
@@ -281,6 +281,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
             Network.setCtx(this);
             Network.leaveLobby(user, getGameID());
             finish();
+
         }
     }
 
