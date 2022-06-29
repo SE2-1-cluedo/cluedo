@@ -403,6 +403,8 @@ public class BoardActivity extends AppCompatActivity {
         }
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+        if(gp1.checkIfPlayerIsOwn())
+            gameState.setAskQuestion(null, true);
 
         new CountDownTimer(6000, 1000) {
             @Override
@@ -415,7 +417,6 @@ public class BoardActivity extends AppCompatActivity {
                 alertDialog.dismiss();
                 netCommunicator.setQuestionChanged(false);
                 if(gp1.checkIfPlayerIsOwn()){
-                    gameState.setAskQuestion(null, true);
                     gp1.endTurn();
                 }
             }
@@ -954,6 +955,7 @@ public class BoardActivity extends AppCompatActivity {
         } else {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
+            netCommunicator.setQuestionChanged(false);
 
             new CountDownTimer(4000, 1000) {
                 @Override
