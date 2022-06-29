@@ -67,7 +67,7 @@ public class Network {
 
             //get Question
             String[] question = ((String) Objects.requireNonNull(snapshot.child("question").getValue())).split(" ");
-            if(question.length == 4) {
+            if(question.length > 1) {
                 System.out.println("Question listened");
                 int[] numbers = new int[]{Integer.parseInt(question[1]), Integer.parseInt(question[2]), Integer.parseInt(question[3])};
                 getGameState().setAskQuestion(new Question(question[0],numbers),false);

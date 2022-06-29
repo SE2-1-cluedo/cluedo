@@ -97,6 +97,7 @@ public class GameState {
         if(!database){
             communicator.setEliminatedChanged(true);
             communicator.notifyList();
+            System.out.println("Got eliminated Cards");
         } else if (eliminatedCards == null)
             dbRef.child("cards-eliminated").setValue("");
         else {
@@ -316,17 +317,17 @@ public class GameState {
     }
 
     public void setPlayerTurn(String playerTurn, boolean database) {
-        this.playerTurn = playerTurn;
-        if(!database) {
-            if(!communicator.isPlayerChanged()){
-                communicator.setTurnChanged(true);
-                communicator.notifyList();
-                System.out.println("turn changed");
+        if(playerTurn != null && !playerTurn.equals(this.playerTurn)){
+            this.playerTurn = playerTurn;
+            if(!database) {
+                if(!communicator.isPlayerChanged()){
+                    communicator.setTurnChanged(true);
+                    communicator.notifyList();
+                    System.out.println("turn changed");
+                }
             }
+            else dbRef.child("turn-flag").child("player-turn").setValue(playerTurn);
         }
-        else if(playerTurn == null)
-            dbRef.child("turn-flag").child("player-turn").setValue("");
-        else dbRef.child("turn-flag").child("player-turn").setValue(playerTurn);
     }
 
     private void initQuestionCardsStack(Context ctx){
