@@ -11,7 +11,9 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import at.moritzmusel.cluedo.Card;
 import at.moritzmusel.cluedo.communication.GameplayCommunicator;
@@ -33,7 +35,7 @@ public class Gameplay {
     private static int numDice;
     private static int stepsTaken = 0;
     private Character currentPlayer;
-    private List<Player> players = new ArrayList<>();
+    private List<Player> players;
     private ArrayList<Integer> clueCards = new ArrayList<>();
     private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
@@ -43,6 +45,7 @@ public class Gameplay {
     private NetworkCommunicator netCommunicator;
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponsPos;
+    private Map<String, Integer> playerPositions;
 
     private static Gameplay OBJ;
 
@@ -51,18 +54,21 @@ public class Gameplay {
         turnOrderGame = gameState.getTurnOrder();
         players = gameState.getPlayerState();
         weaponsPos = gameState.getWeaponPositions();
+        playerPositions = gameState.getPlayerPositions();
         decidePlayerWhoMovesFirst();
         gameCommunicator = GameplayCommunicator.getInstance();
         netCommunicator = NetworkCommunicator.getInstance();
         netCommunicator.setTurnChanged(false);
         netCommunicator.setQuestionChanged(false);
-        netCommunicator.setPositionChanged(false);
         netCommunicator.setMagnify(false);
         netCommunicator.setWeaponsChanged(false);
         netCommunicator.setPlayerChanged(false);
         netCommunicator.register(()->{
-            if(netCommunicator.isPositionChanged() || netCommunicator.isWeaponsChanged()){
+            if(netCommunicator.isPositionChanged()){
+                playerPositions = gameState.getPlayerPositions();
                 weaponsPos = gameState.getWeaponPositions();
+            }
+            if(netCommunicator.isWeaponsChanged()){
                 players = gameState.getPlayerState();
                 //checkWhatChangedInPlayer(gameState.getPlayerState());
                 gameCommunicator.setMoved(true);
@@ -130,10 +136,10 @@ public class Gameplay {
      * @param position new position of player
      */
 
-    public void updatePlayerPosition(int position) {
-        Player player = findPlayerByCharacterName(currentPlayer);
-        player.setPositionOnBoard(position);
-        gameState.setPlayerState(players,true);
+    public void updatePlayerPosition(Character character,int position) {
+        Player player = findPlayerByCharacterName(character);
+        playerPositions.replace(player.getPlayerId(),position);
+        gameState.setPlayerPositions(playerPositions,true);
     }
 
     /**
@@ -190,7 +196,7 @@ public class Gameplay {
      */
     public boolean isAllowedToUseSecretPassage() {
         Player player = findPlayerByCharacterName(currentPlayer);
-        int position = player.getPositionOnBoard();
+        int position = playerPositions.get(player.getPlayerId());
         return position == 1 || position == 7 || position == 3;
     }
 
@@ -241,14 +247,10 @@ public class Gameplay {
      * @return Player who playing as the character
      */
     public Player findPlayerByCharacterName(Character character) {
-        int countCharacters = 1;
-        while (true) {
-            for (int i = 0; i < players.size(); i++) {
-                if (players.get(i).getPlayerCharacterName() == character) {
-                    return players.get(i);
-                }
-            }
-        }
+        return players.stream()
+                .filter(player -> character.equals(player.getPlayerCharacterName()))
+                .findAny()
+                .orElse(null);
     }
 
 
@@ -282,15 +284,15 @@ public class Gameplay {
         return players.get(i).getPlayerCharacterName();
     }
 
-    protected void checkWhatChangedInPlayer(List<Player> newPlayers){
-        for(int i = 0; i < players.size(); i++){
-            if(!(newPlayers.get(i).getPositionOnBoard() == players.get(i).getPositionOnBoard())){
-                players = newPlayers;
-                gameCommunicator.setMoved(true);
-                gameCommunicator.notifyList();
-            }
-        }
-    }
+//    protected void checkWhatChangedInPlayer(List<Player> newPlayers){
+//        for(int i = 0; i < players.size(); i++){
+//            if(!(newPlayers.get(i).getPositionOnBoard() == players.get(i).getPositionOnBoard())){
+//                players = newPlayers;
+//                gameCommunicator.setMoved(true);
+//                gameCommunicator.notifyList();
+//            }
+//        }
+//    }
 
   /*  protected void questionChanged(Question newQuestion) {
         //if(!newQuestion.equals())
@@ -393,5 +395,13 @@ public class Gameplay {
 
     public void setTurnOrderGame(String[] turnOrderGame) {
         this.turnOrderGame = turnOrderGame;
+    }
+
+    public void setPlayerPositions(Map<String, Integer> playerPositions) {
+        this.playerPositions = playerPositions;
+    }
+
+    public Map<String, Integer> getPlayerPositions() {
+        return playerPositions;
     }
 }

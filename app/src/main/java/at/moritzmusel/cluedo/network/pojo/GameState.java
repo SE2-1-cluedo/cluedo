@@ -64,6 +64,7 @@ public class GameState {
     public void setPlayerPositions(Map<String, Integer> playerPositions, boolean database){
         this.playerPositions = playerPositions;
         if(!database){
+            System.out.println("Map in Gamestate");
             communicator.setPositionChanged(true);
             communicator.notifyList();
         } else if(playerPositions == null)
@@ -260,8 +261,6 @@ public class GameState {
         } else {
             for (Player p : playerState){
                 dbRef.child("players").child(p.getPlayerId()).child("cards").setValue(p.getOwnedCardsAsString());
-                dbRef.child("players").child(p.getPlayerId()).child("cards-eliminated").setValue(p.getKnownCardsAsString());
-                dbRef.child("players").child(p.getPlayerId()).child("position").setValue(Integer.toString(p.getPositionOnBoard()));
             }
         }
     }

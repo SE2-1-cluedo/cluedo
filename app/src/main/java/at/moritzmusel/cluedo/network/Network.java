@@ -45,7 +45,7 @@ public class Network {
     private static GameState gameState;
     private static FirebaseUser currentUser;
     private static final int[] killer = new int[3];
-    private static NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
+    private static final NetworkCommunicator networkCommunicator = NetworkCommunicator.getInstance();
     private static final ValueEventListener turnFlagListener = new ValueEventListener() {
 
         @Override
@@ -125,7 +125,7 @@ public class Network {
             ArrayList<Player> playerList = new ArrayList<>();
             boolean playerChanged = false;
             for (DataSnapshot snap : snapshot.getChildren()) {
-                if (snap.child("character").exists() && snap.child("position").exists() && snap.child("cards").exists() && snap.child("cards-eliminated").exists()) {
+                if (snap.child("character").exists() && snap.child("cards").exists()) {
                         Player p = new Player(snap.getKey());
                         playerChanged = true;
 
@@ -167,6 +167,14 @@ public class Network {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             Map<String, Integer> playerPositions = new HashMap<>();
+            int i = 0;
+            String[] pos = ((String) Objects.requireNonNull(snapshot.getValue())).split(" ");
+            System.out.println(Arrays.toString(pos));
+            if(!Objects.equals(pos[0],"")){
+                for(Player p: gameState.getPlayerState())
+                    playerPositions.put(p.getPlayerId(),Integer.valueOf(pos[i++]));
+                gameState.setPlayerPositions(playerPositions,false);
+            }
         }
 
         @Override
@@ -179,7 +187,7 @@ public class Network {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             //set known Cards
-            String[] knownCards = ((String) Objects.requireNonNull(snapshot.child("cards-eliminated").getValue())).split(" ");
+            String[] knownCards = ((String) Objects.requireNonNull(snapshot.getValue())).split(" ");
             if (!Objects.equals(knownCards[0], "")) {
                 gameState.setEliminatedCards(Arrays.stream(Stream.of(knownCards)
                         .mapToInt(Integer::parseInt).toArray()).boxed().collect(Collectors.toList()),false);
@@ -230,9 +238,11 @@ public class Network {
 
         //add playerPositions
         game.child("player-positions").setValue("");
+        game.child("player-positions").addValueEventListener(positionsListener);
 
         //add eliminated-Cards
         game.child("cards-eliminated").setValue("");
+        game.child("cards-eliminated").addValueEventListener(eliminatedListener);
 
         //add result path
         DatabaseReference result = game.child("result");
@@ -311,6 +321,8 @@ public class Network {
                     getCurrentGame().child("turn-flag").addValueEventListener(turnFlagListener);
                     getCurrentGame().child("result").addValueEventListener(resultListener);
                     getCurrentGame().child("turn-order").addValueEventListener(turnOrderListener);
+                    getCurrentGame().child("player-positions").addValueEventListener(positionsListener);
+                    getCurrentGame().child("cards-eliminated").addValueEventListener(eliminatedListener);
             }
         });
 
@@ -353,21 +365,23 @@ public class Network {
     public static void startGame(String gameID, List<Player> list) {
         DatabaseReference game = games.child(gameID);
         StringBuilder sbTurnOrder = new StringBuilder();
+        StringBuilder sbPlayerPosition = new StringBuilder();
         String[] turnOrder = new String[list.size()];
         Map<String, Integer> playerPositions = new HashMap<>();
         //set turnOrder
         for(int i = 0; i < list.size(); i++){
             sbTurnOrder.append(list.get(i).getPlayerId()).append(" ");
             turnOrder[i] = list.get(i).getPlayerId();
-
-            playerPositions.put(list.get(i).getPlayerId(),new SecureRandom().nextInt(9)+1);
+            int number = new SecureRandom().nextInt(9)+1;
+            sbPlayerPosition.append(number).append(" ");
+            playerPositions.put(list.get(i).getPlayerId(),number);
         }
-
 
         game.child("turn-order").setValue(sbTurnOrder.toString().trim());
         gameState.setTurnOrder(turnOrder,false);
 
-        gameState.setPlayerPositions(playerPositions,true);
+        game.child("player-positions").setValue(sbPlayerPosition.toString().trim());
+        gameState.setPlayerPositions(playerPositions,false);
 
         game.child("turn-flag").child("startGame").setValue("start");
 

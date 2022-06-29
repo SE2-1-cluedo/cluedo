@@ -74,7 +74,7 @@ public class SuspicionActivity extends AppCompatActivity implements AdapterView.
 
         //Textfeld aktueller Raum
         currentRoom = findViewById(R.id.currentRoom);
-        int room = gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard()-1;
+        int room = gp1.getPlayerPositions().get(gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId())-1;
         currentRoom.setText(roomsArray[room]);
 
         ca = SuspicionCommunicator.getInstance();

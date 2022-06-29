@@ -33,6 +33,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -117,12 +118,13 @@ public class BoardActivity extends AppCompatActivity {
                     public void onGlobalLayout() {
                         // Layout has happened here.
                             for (int i = 0; i < gp1.getPlayers().size(); i++) {
-                                    String player = gp1.getPlayers().get(i).getPlayerCharacterName().name().split("[_]")[1].toLowerCase();
-                                    findViewById(createPlayer(player)).setVisibility(View.VISIBLE);
-                                    String name = player + "_";
-                                    Button startPlace = findViewById(createRoomDestination(name, gp1.getPlayers().get(i).getPositionOnBoard()));
-                                    findViewById(createPlayer(player)).setX(startPlace.getX());
-                                    findViewById(createPlayer(player)).setY(startPlace.getY());
+                                Player player = gp1.getPlayers().get(i);
+                                    String playerName = player.getPlayerCharacterName().name().split("[_]")[1].toLowerCase();
+                                    findViewById(createPlayer(playerName)).setVisibility(View.VISIBLE);
+                                    String name = playerName + "_";
+                                    Button startPlace = findViewById(createRoomDestination(name, gp1.getPlayerPositions().get(player.getPlayerId())));
+                                    findViewById(createPlayer(playerName)).setX(startPlace.getX());
+                                    findViewById(createPlayer(playerName)).setY(startPlace.getY());
                                 }
                             for(int i = 0; i < gp1.getWeaponsPos().length; i++){
                                     String str = "w_"+weaponNames.get(i);
@@ -130,7 +132,7 @@ public class BoardActivity extends AppCompatActivity {
                                     findViewById(getResources().getIdentifier(str,"id",getPackageName())).setX(startPosition.getX());
                                     findViewById(getResources().getIdentifier(str,"id",getPackageName())).setY(startPosition.getY());
                             }
-                        newPosition = gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard();
+                        newPosition = gp1.getPlayerPositions().get(gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId());
                         // Don't forget to remove your listener when you are done with it.
                         constraint.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
@@ -139,13 +141,10 @@ public class BoardActivity extends AppCompatActivity {
 
         gameplayCommunicator.register(() -> {
             if(gameplayCommunicator.isMoved()){
-                refreshBoard();
+
                 gameplayCommunicator.setMoved(false);
                 netCommunicator.setPositionChanged(false);
                 netCommunicator.setWeaponsChanged(false);
-            }
-            if(gameplayCommunicator.isSuspicion()){
-                //onCardViewClick();
             }
             if(gameplayCommunicator.isTurnChange()){
                 notifyCurrentPlayer();
@@ -248,17 +247,17 @@ public class BoardActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void refreshBoard() {
-        for (int i = 0; i < gp1.getPlayers().size(); i++) {
-            String player = gp1.getPlayers().get(i).getPlayerCharacterName().name().split("[_]")[1].toLowerCase();
-            String name = player + "_";
-            Button startPlace = findViewById(createRoomDestination(name, gp1.getPlayers().get(i).getPositionOnBoard()));
-            findViewById(createPlayer(player)).setX(startPlace.getX());
-            findViewById(createPlayer(player)).setY(startPlace.getY());
-        }
-        for(int i = 0; i < gp1.getWeaponsPos().length; i++){
-            String str = "w_"+weaponNames.get(i);
-            Button startPosition = findViewById(createRoomDestination("weapon", gp1.getWeaponsPos()[i]));
+    private void refreshBoard(String id, boolean isPlayer) {
+        if(isPlayer) {
+            Player player = gp1.findPlayerById(id);
+            String playerName = player.getPlayerCharacterName().name().split("[_]")[1].toLowerCase();
+            String posName = playerName + "_";
+            Button startPlace = findViewById(createRoomDestination(posName, gp1.getPlayerPositions().get(id)));
+            findViewById(createPlayer(playerName)).setX(startPlace.getX());
+            findViewById(createPlayer(playerName)).setY(startPlace.getY());
+        } else {
+            String str = "w_"+id;
+            Button startPosition = findViewById(createRoomDestination("weapon", gp1.getWeaponsPos()[0]));
             findViewById(getResources().getIdentifier(str,"id",getPackageName())).setX(startPosition.getX());
             findViewById(getResources().getIdentifier(str,"id",getPackageName())).setY(startPosition.getY());
         }
@@ -333,14 +332,14 @@ public class BoardActivity extends AppCompatActivity {
                 moveSuspectedPlayer(susCommunicator.getCharacter());
                 //moveCharacter
                 if(susCommunicator.getHasSuspected()){
-                    gp1.askPlayerAQuestion(new int[]{allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard()+11});
+                    gp1.askPlayerAQuestion(new int[]{allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),gp1.getPlayerPositions().get(gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId())+11});
                     onCardViewClick();
                 }
 
                     //do something to ask the next player about your suspicion
                 else if (susCommunicator.getHasAccused()){
                     System.out.println("Accused");
-                    if(gp1.accusation(new int[]{allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard()+11})){
+                    if(gp1.accusation(new int[]{allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),gp1.getPlayerPositions().get(gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId())+11})){
                         //you won
                         gameState.setWinner(Network.getCurrentUser().getUid(),true);
                     } else {
@@ -445,7 +444,7 @@ public class BoardActivity extends AppCompatActivity {
     private ArrayList<Integer> getPlayerCardIds(){
         ArrayList<Integer> card_ids;
         if(susCommunicator.getHasSuspected() || susCommunicator.getHasAccused()){
-            card_ids = new ArrayList<>(Arrays.asList(allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard()+11));
+            card_ids = new ArrayList<>(Arrays.asList(allCards.findIdWithName(susCommunicator.getCharacter()),allCards.findIdWithName(susCommunicator.getWeapon()),gp1.getPlayerPositions().get(gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId())+11));
         }
         else if(netCommunicator.isQuestionChanged())
             card_ids = new ArrayList<>(Arrays.asList(gameState.getAskQuestion().getCards()[0],gameState.getAskQuestion().getCards()[1],gameState.getAskQuestion().getCards()[2]));
@@ -585,7 +584,7 @@ public class BoardActivity extends AppCompatActivity {
      * Ends the turn and sends a message who the next player is
      */
     private void notifyCurrentPlayer(){
-        newPosition = gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPositionOnBoard();
+        newPosition = gp1.getPlayerPositions().get(gp1.findPlayerByCharacterName(gp1.getCurrentPlayer()).getPlayerId());
         Toast.makeText(this,"It is now "+gp1.getCurrentPlayer().name()+"'s turn", Toast.LENGTH_SHORT).show();
     }
 
@@ -757,10 +756,11 @@ public class BoardActivity extends AppCompatActivity {
         ImageView calledPlayer = findViewById(getResources().getIdentifier(player,"id",getPackageName()));
         player += "_";
 
-        if(calledPlayer.getVisibility() == View.VISIBLE && gp1.findPlayerByCharacterName(Character.valueOf(myName.toString())).getPositionOnBoard() != newPosition){
+        if(calledPlayer.getVisibility() == View.VISIBLE && gp1.getPlayerPositions().get(gp1.findPlayerByCharacterName(Character.valueOf(myName.toString())).getPlayerId()) != newPosition){
             calledPlayer.setX(findViewById(createRoomDestination(player,newPosition)).getX());
             calledPlayer.setY(findViewById(createRoomDestination(player,newPosition)).getY());
-            gp1.findPlayerByCharacterName(Character.valueOf(myName.toString())).setPositionOnBoard(newPosition);
+            gp1.updatePlayerPosition(Character.valueOf(myName.toString()),newPosition);
+
         }
     }
 
@@ -820,7 +820,7 @@ public class BoardActivity extends AppCompatActivity {
         mover.setX(destination.getX());
         mover.setY(destination.getY());
 
-        gp1.updatePlayerPosition(newPosition);
+        gp1.updatePlayerPosition(gp1.getCurrentPlayer(),newPosition);
 
         setArrowsInvisible();
         gp1.canMove();

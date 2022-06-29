@@ -9,7 +9,6 @@ import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class Player {
     private final String playerId;
-    private int positionOnBoard;
     private boolean isAbleToMove = false;
     private Character playerCharacterName;
     private ArrayList<Integer> playerOwnedCards = new ArrayList<>();
@@ -59,14 +58,6 @@ public class Player {
 
     public String getPlayerId() {
         return playerId;
-    }
-
-    public int getPositionOnBoard() {
-        return positionOnBoard;
-    }
-
-    public void setPositionOnBoard(int positionOnBoard) {
-        this.positionOnBoard = positionOnBoard;
     }
 
     public Character getPlayerCharacterName() {
