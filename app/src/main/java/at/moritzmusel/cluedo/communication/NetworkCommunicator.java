@@ -138,12 +138,4 @@ public class NetworkCommunicator implements Communicator {
     public void setTurnOrderChanged(boolean turnOrderChanged) {
         this.turnOrderChanged = turnOrderChanged;
     }
-
-    public boolean isEliminatedChanged() {
-        return eliminatedChanged;
-    }
-
-    public void setEliminatedChanged(boolean eliminatedChanged) {
-        this.eliminatedChanged = eliminatedChanged;
-    }
 }
