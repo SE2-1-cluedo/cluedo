@@ -116,7 +116,7 @@ public class CreateLobbyActivity extends AppCompatActivity implements View.OnCli
      * the start button will be clickable
      */
     private void checkNumberOfPlayers(){
-        if(c == Character.MISS_SCARLETT){
+        if(c == Character.getFirstCharacter()){
             if(playerItems.size() < 1 || playerItems.size() > 6){
                 start.setClickable(false);
                 start.setBackground(getResources().getDrawable(android.R.drawable.progress_horizontal));

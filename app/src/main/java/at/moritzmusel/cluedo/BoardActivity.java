@@ -14,6 +14,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -994,14 +995,13 @@ public class BoardActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
+    public void vibrate(long[] pattern){
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(pattern, -1);
+    }
+
     public void onCheatViewClick(){
-        SecureRandom r = new SecureRandom();
-        int i = r.nextInt(100);
-        for(Player p:gameState.getPlayerState()){
-            //if(p.getPositionOnBoard() == i){
-                d.callFrameDialog(BoardActivity.this,gp1.getPlayers(), gp1.findPlayerById(Network.getCurrentUser().getUid()));
-            //}
-        }
+        d.callFrameDialog(BoardActivity.this,gp1.getPlayers(), gp1.findPlayerById(Network.getCurrentUser().getUid()));
     }
 
 //    public void onFramedViewClick(){
@@ -1034,8 +1034,17 @@ public class BoardActivity extends AppCompatActivity {
                 }else if (swipeUp > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
                 }else if(swipeDown > MIN_SWIPE_DISTANCE){
-                    if(checkIfInTurnOrder()){
-                        onCheatViewClick();
+                    if(gp1.checkIfPlayerIsOwn() && checkIfInTurnOrder()){
+                        SecureRandom r = new SecureRandom();
+                        int i = r.nextInt(9);
+                        for(Player p:gameState.getPlayerState()){
+                            if(p.getPositionOnBoard() == i){
+                                long[] pattern = {0, 100, 1000, 300};
+                                vibrate(pattern);
+                                onCheatViewClick();
+                            }
+                        }
+
                     }
                 }
                 break;
