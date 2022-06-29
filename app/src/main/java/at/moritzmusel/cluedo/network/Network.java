@@ -182,6 +182,17 @@ public class Network {
 
         }
     };
+    private static final ValueEventListener frameNumberListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            gameState.setFrameNumber(Integer.parseInt((String) Objects.requireNonNull(snapshot.getValue())),false);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    };
 
     public static DatabaseReference getDatabaseReference(){
         return games;
@@ -218,6 +229,10 @@ public class Network {
         turnFlag.child("magnify").setValue("");
         turnFlag.child("startGame").setValue("waiting");
         turnFlag.addValueEventListener(turnFlagListener);
+
+        //add frameNumber
+        game.child("frameNumber").setValue(String.valueOf(1));
+        game.child("frameNumber").addValueEventListener(frameNumberListener);
 
         //add eliminated-Cards
         game.child("cards-eliminated").setValue("");
@@ -303,6 +318,7 @@ public class Network {
                     getCurrentGame().child("result").addValueEventListener(resultListener);
                     getCurrentGame().child("turn-order").addValueEventListener(turnOrderListener);
                     getCurrentGame().child("cards-eliminated").addValueEventListener(eliminatedListener);
+                    getCurrentGame().child("frameNumber").addValueEventListener(frameNumberListener);
             }
         });
 
@@ -478,6 +494,7 @@ public class Network {
         getCurrentGame().child("turn-flag").removeEventListener(turnFlagListener);
         getCurrentGame().child("result").removeEventListener(resultListener);
         getCurrentGame().child("turn-order").removeEventListener(turnOrderListener);
+        getCurrentGame().child("frameNumber").removeEventListener(frameNumberListener);
     }
     public static void deleteGame(){
         final Handler handler = new Handler(Looper.getMainLooper());

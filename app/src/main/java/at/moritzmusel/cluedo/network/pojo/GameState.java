@@ -37,6 +37,7 @@ public class GameState {
     private int[] killer;
     private String playerTurn;
     private String[] turnOrder, magnify;
+    private int frameNumber;
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponPositions = new int[]{5,1,9,3,6,8};
     DatabaseReference dbRef;
@@ -81,6 +82,17 @@ public class GameState {
                 sB.append(c).append("");
 
             dbRef.child("players").child(Network.getCurrentUser().getUid()).child("cards").setValue(sB.toString().trim());
+        }
+    }
+
+    public int getFrameNumber() {
+        return frameNumber;
+    }
+
+    public void setFrameNumber(int frameNumber, boolean database) {
+        this.frameNumber = frameNumber;
+        if(database){
+            dbRef.child("frameNumber").setValue(String.valueOf(frameNumber));
         }
     }
 

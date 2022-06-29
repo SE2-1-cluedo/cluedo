@@ -54,6 +54,7 @@ public class BoardActivity extends AppCompatActivity {
     private AllTheCards allCards;
     private float x1, x2;
     private float y1, y2;
+    private boolean canFrame;
     private GameState gameState;
     private SuspicionCommunicator susCommunicator;
     private GameplayCommunicator gameplayCommunicator;
@@ -141,8 +142,17 @@ public class BoardActivity extends AppCompatActivity {
         gameplayCommunicator.register(() -> {
             if(gameplayCommunicator.isTurnChange()){
                 notifyCurrentPlayer();
-                if(gp1.checkIfPlayerIsOwn())
+                if(gp1.checkIfPlayerIsOwn()){
                     callDice();
+                    SecureRandom r = new SecureRandom();
+                    int i = r.nextInt(20)+3;
+                    if(gameState.getFrameNumber()%i == 0){
+                        long[] pattern = {0, 100, 1000, 300};
+                        vibrate(pattern);
+                        canFrame = true;
+                    }
+                }
+
                 gameplayCommunicator.setTurnChange(false);
             }
         });
@@ -424,6 +434,7 @@ public class BoardActivity extends AppCompatActivity {
                     alertDialog.dismiss();
                     netCommunicator.setQuestionChanged(false);
                     if(gp1.checkIfPlayerIsOwn()){
+                        gameState.setFrameNumber(gameState.getFrameNumber()+1,true);
                         gp1.endTurn();
                     }
                 }
@@ -1021,6 +1032,7 @@ public class BoardActivity extends AppCompatActivity {
 
     public void onCheatViewClick(){
         d.callFrameDialog(BoardActivity.this,gp1.getPlayers(), gp1.findPlayerById(Network.getCurrentUser().getUid()));
+        canFrame = false;
     }
 
 //    public void onFramedViewClick(){
@@ -1053,17 +1065,8 @@ public class BoardActivity extends AppCompatActivity {
                 }else if (swipeUp > MIN_SWIPE_DISTANCE){
                     onCardViewClick();
                 }else if(swipeDown > MIN_SWIPE_DISTANCE){
-                    if(gp1.checkIfPlayerIsOwn() && checkIfInTurnOrder()){
-                        SecureRandom r = new SecureRandom();
-                        int i = r.nextInt(9);
-                        for(Player p:gameState.getPlayerState()){
-                            if(p.getPositionOnBoard() == i){
-                                long[] pattern = {0, 100, 1000, 300};
-                                vibrate(pattern);
-                                onCheatViewClick();
-                            }
-                        }
-
+                    if(gp1.checkIfPlayerIsOwn() && checkIfInTurnOrder() && canFrame){
+                        onCheatViewClick();
                     }
                 }
                 break;
