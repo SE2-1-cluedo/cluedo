@@ -3,7 +3,7 @@ package at.moritzmusel.cluedo.network.pojo;
 //This class is used to ask a question to a user
 //Further: Will be used in gamestate
 public class Question {
-    private String askPerson;
+    private final String askPerson;
     private int[] cards;
 
     public Question(String askPerson, int[] cards) {
@@ -17,10 +17,6 @@ public class Question {
 
     public String getAskPerson() {
         return askPerson;
-    }
-
-    public void setAskPerson(String askPerson) {
-        this.askPerson = askPerson;
     }
 
     public int[] getCards() {

@@ -1,4 +1,4 @@
-package at.moritzmusel.cluedo;
+package at.moritzmusel.cluedo.entities;
 
 public class Card{
 

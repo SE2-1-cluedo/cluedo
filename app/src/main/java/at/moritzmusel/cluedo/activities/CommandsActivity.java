@@ -1,10 +1,12 @@
-package at.moritzmusel.cluedo;
+package at.moritzmusel.cluedo.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import at.moritzmusel.cluedo.R;
 
 public class CommandsActivity extends AppCompatActivity implements View.OnClickListener {
 

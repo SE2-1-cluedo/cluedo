@@ -12,45 +12,38 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".JoinLobbyActivity"
-            android:parentActivityName=".LobbyDecisionActivity"
+            android:name=".activities.JoinLobbyActivity"
+            android:parentActivityName=".activities.LobbyDecisionActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".CreateLobbyActivity"
-            android:parentActivityName=".LobbyDecisionActivity"
+            android:name=".activities.CreateLobbyActivity"
+            android:parentActivityName=".activities.LobbyDecisionActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".LobbyDecisionActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".activities.LobbyDecisionActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".CommandsActivity"
+            android:name=".activities.CommandsActivity"
             android:exported="false" />
         <activity
-            android:name=".BoardActivity"
+            android:name=".activities.BoardActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden"
             android:exported="false" />
         <activity
-            android:name=".SuspicionActivity"
+            android:name=".activities.SuspicionActivity"
             android:screenOrientation="landscape"
             android:exported="false" />
         <activity
-            android:name=".ChooseActivity"
-            android:exported="false" />
-        <activity
-            android:name=".NotepadActivity"
+            android:name=".activities.NotepadActivity"
             android:screenOrientation="landscape"
             android:exported="false" />
         <activity
-            android:name=".DebugNetwork"
-            android:screenOrientation="landscape"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>

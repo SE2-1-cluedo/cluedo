@@ -1,10 +1,10 @@
-package at.moritzmusel.cluedo;
+package at.moritzmusel.cluedo.entities;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import at.moritzmusel.cluedo.entities.AllTheCards;
+import at.moritzmusel.cluedo.entities.Card;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
 

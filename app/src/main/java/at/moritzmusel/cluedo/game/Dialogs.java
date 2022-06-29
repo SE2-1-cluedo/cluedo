@@ -1,4 +1,4 @@
-package at.moritzmusel.cluedo;
+package at.moritzmusel.cluedo.game;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -17,6 +17,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.moritzmusel.cluedo.R;
+import at.moritzmusel.cluedo.activities.MainActivity;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
@@ -136,7 +138,7 @@ public class Dialogs {
      * @param ac Activity to be called
      */
     public void endGame(Activity ac){
-        Intent intent = new Intent(ac.getApplicationContext(),MainActivity.class);
+        Intent intent = new Intent(ac.getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ac.startActivity(intent);

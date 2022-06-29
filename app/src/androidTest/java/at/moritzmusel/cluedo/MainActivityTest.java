@@ -27,6 +27,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import at.moritzmusel.cluedo.activities.MainActivity;
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {

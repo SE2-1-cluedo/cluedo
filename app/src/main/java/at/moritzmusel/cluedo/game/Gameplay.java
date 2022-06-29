@@ -32,9 +32,9 @@ public class Gameplay {
     private final SecureRandom rand = new SecureRandom();
     private int cardDrawn;
     private String[] turnOrderGame;
-    private GameState gameState;
-    private GameplayCommunicator gameCommunicator;
-    private NetworkCommunicator netCommunicator;
+    private final GameState gameState;
+    private final GameplayCommunicator gameCommunicator;
+    private final NetworkCommunicator netCommunicator;
     //Positions in Array -> {dagger - candlestick - revolver - rope - pipe - wrench}
     private int[] weaponsPos;
 
@@ -108,8 +108,6 @@ public class Gameplay {
         System.out.println(Arrays.toString(turnOrderGame));
         currentPlayer = getCharacterByPlayerID(playerID);
         gameState.setPlayerTurn(playerID, true);
-//        gameCommunicator.setTurnChange(true);
-//        gameCommunicator.notifyList();
         return currentPlayer;
     }
 
@@ -148,23 +146,6 @@ public class Gameplay {
             findPlayerByCharacterName(currentPlayer).setAbleToMove(false);
         }
     }
-
-
-
-   /*
-    //Noch mit frontend und backend über das schicken und verteilen reden
-    public void quitGame(Player player){
-        List<Integer> cards = new ArrayList<>();
-        for (int i = 0; i <players.size();i++){
-            if(players.get(i).equals(player)){
-                cards = players.get(i).getPlayerOwnedCards();
-            }
-        }
-        players.remove(player);
-        distributeCardsEquallyToPlayers(cards);
-        gameState.setPlayerState(players,true);
-        //send all cards to other players
-    }*/
 
     /**
      * Method to ask other Players a Question
@@ -218,32 +199,11 @@ public class Gameplay {
         return "?nobody? :^)";
     }
 
-     /**
-     * Fill a List with numbers from min to max and then randomize it through Collection.shuffle
-     * which randomly permutes elements in a given list.
-     * @param min
-     * smallest Card in deck
-     * @param max
-     * biggest Card in deck
-     * @return
-     * a sorted integer List with the numbers min to max
-     */
-    private ArrayList<Integer> generateRandomCards(int min, int max){
-        ArrayList<Integer> cards = new ArrayList<>();
-        for(int i = min;i <= max;i++){
-            cards.add(i);
-        }
-        Collections.shuffle(cards);
-        return cards;
-    }
-
-
     /**
      * @param character Find the Character belonging to a player if not return null
      * @return Player who playing as the character
      */
     public Player findPlayerByCharacterName(Character character) {
-        int countCharacters = 1;
         while (true) {
             for (int i = 0; i < players.size(); i++) {
                 if (players.get(i).getPlayerCharacterName() == character) {
@@ -260,19 +220,6 @@ public class Gameplay {
                 return p;
             return null;
     }
-
-/*    private void distributeCardsEquallyToPlayers(List<Integer> cards){
-        int i = 0;
-        int j = 0;
-        while(i < cards.size()){
-            if(j >= players.size()){
-                j = 0;
-            }
-            players.get(j).getPlayerOwnedCards().add(cards.get(i));
-            i++;
-            j++;
-        }
-    }*/
 
     public Character getCharacterByPlayerID(String playerID){
         int i = 0;
@@ -293,10 +240,6 @@ public class Gameplay {
             }
         }
     }
-
-  /*  protected void questionChanged(Question newQuestion) {
-        //if(!newQuestion.equals())
-    }*/
 
     protected void checkWeaponChanged(int[] newWeapon) {
         if(!(Arrays.equals(newWeapon, weaponsPos))){

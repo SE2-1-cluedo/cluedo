@@ -1,9 +1,7 @@
 package at.moritzmusel.cluedo.network.pojo;
 
-import android.content.Context;
 import android.util.Log;
 
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -17,13 +15,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import at.moritzmusel.cluedo.AllTheCards;
-import at.moritzmusel.cluedo.Card;
-import at.moritzmusel.cluedo.communication.Communicator;
+import at.moritzmusel.cluedo.entities.AllTheCards;
 import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.network.Network;
-import at.moritzmusel.cluedo.network.data.QuestionCards;
 
 public class GameState {
     private List<Player> playerState;

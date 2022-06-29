@@ -1,4 +1,4 @@
-package at.moritzmusel.cluedo;
+package at.moritzmusel.cluedo.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import at.moritzmusel.cluedo.R;
 import at.moritzmusel.cluedo.network.Network;
 
 public class LobbyDecisionActivity extends AppCompatActivity implements View.OnClickListener {
