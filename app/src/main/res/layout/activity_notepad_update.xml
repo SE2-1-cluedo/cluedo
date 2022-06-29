@@ -78,10 +78,6 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/orchid" />
 
-
-
-
-
         </TableRow>
 
     </TableLayout>

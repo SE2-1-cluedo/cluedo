@@ -14,8 +14,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Character;
+import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
+import at.moritzmusel.cluedo.network.pojo.GameState;
 
 public class CheckboxAdapter extends ArrayAdapter {
     Context context;
@@ -28,6 +31,8 @@ public class CheckboxAdapter extends ArrayAdapter {
     List<String> checkboxItems;
     NotepadActivity.NotepadData notepadData;
     Gameplay gpl;
+    NetworkCommunicator com = NetworkCommunicator.getInstance();
+    GameState gmst = GameState.getInstance();
 
 
     public CheckboxAdapter(Context context, List<String> resource, NotepadActivity.NotepadData notepadData) {
@@ -74,8 +79,6 @@ public class CheckboxAdapter extends ArrayAdapter {
             holder.cb6 = convertView.findViewById(R.id.checkbox6);
 
 
-
-
             gpl = Gameplay.getInstance();
 
 
@@ -90,6 +93,38 @@ public class CheckboxAdapter extends ArrayAdapter {
                     count++;
                 }
             }
+
+            com.register(()->{
+                if(com.isEliminatedChanged()){
+                    int count = 0;
+                    for (int x = 0; x < checkboxItems.size(); x++) {
+                        for (int j = 0; j < gmst.getEliminatedCards().size(); j++) {
+                            if (x == gmst.getEliminatedCards().get(j)) {
+                                notepadData.setAllCheckBoxInLine(gmst.getEliminatedCards().get(j));
+                            }
+                        }
+                        count++;
+                    }
+                }
+                gmst.setEliminatedCards(null, true);
+            });
+
+            List<Player> players = gpl.getPlayers();
+            for (int i = 0; i < checkboxItems.size(); i++) {
+                if (players.size() < 4) {
+                    holder.cb4.setVisibility(View.GONE);
+                    holder.cb5.setVisibility(View.GONE);
+                    holder.cb6.setVisibility(View.GONE);
+                }
+                if (players.size() < 5) {
+                    holder.cb5.setVisibility(View.GONE);
+                    holder.cb6.setVisibility(View.GONE);
+                }
+                if (players.size() < 6) {
+                    holder.cb6.setVisibility(View.GONE);
+                }
+            }
+
 
             convertView.setTag(holder);
         } else {

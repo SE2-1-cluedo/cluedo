@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import at.moritzmusel.cluedo.communication.NetworkCommunicator;
 import at.moritzmusel.cluedo.entities.Character;
 import at.moritzmusel.cluedo.entities.Player;
 import at.moritzmusel.cluedo.game.Gameplay;
@@ -29,6 +30,7 @@ public class NotepadActivity extends AppCompatActivity {
     Gameplay gpl = Gameplay.getInstance();
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,8 @@ public class NotepadActivity extends AppCompatActivity {
         ImageView img_peacock = findViewById(R.id.img_peacock);
         ImageView img_mustard = findViewById(R.id.img_colonel);
         ImageView img_orchid = findViewById(R.id.img_orchid);
+
+
 
 
         String[] stringArray = getResources().getStringArray(R.array.all);
@@ -71,22 +75,22 @@ public class NotepadActivity extends AppCompatActivity {
             if(!inGame[i]){
                 switch(i){
                     case 0:
-                        img_scarlett.setVisibility(View.INVISIBLE);
+                        img_scarlett.setVisibility(View.GONE);
                         break;
                     case 1:
-                        img_plum.setVisibility(View.INVISIBLE);
+                        img_plum.setVisibility(View.GONE);
                         break;
                     case 2:
-                        img_green.setVisibility(View.INVISIBLE);
+                        img_green.setVisibility(View.GONE);
                         break;
                     case 3:
-                        img_peacock.setVisibility(View.INVISIBLE);
+                        img_peacock.setVisibility(View.GONE);
                         break;
                     case 4:
-                        img_mustard.setVisibility(View.INVISIBLE);
+                        img_mustard.setVisibility(View.GONE);
                         break;
                     case 5:
-                        img_orchid.setVisibility(View.INVISIBLE);
+                        img_orchid.setVisibility(View.GONE);
                         break;
                 }
             }
